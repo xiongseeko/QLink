@@ -25,9 +25,13 @@
 
 //文件名字
 #define DBNAME @"QLink.sqlite"
+//场景类型
 #define MACRO @"macro"
+//add 标识
+#define SANSANADD @"SANSAN_ADD"
 
 
+//字体大小
 #define FONTSIZE 14
 
 //处理文本框内容 padding

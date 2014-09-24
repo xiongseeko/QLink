@@ -113,6 +113,20 @@
 +(NSArray *)getRoomList:(NSString *)houseId
              andLayerId:(NSString *)layerId;
 
+//重命名场景
++(BOOL)renameSenceName:(NSString *)senceId
+            andNewName:(NSString *)newName;
+
+//重命名设备
++(BOOL)renameDeviceName:(NSString *)deviceId
+             andNewName:(NSString *)newName;
+
+//删除场景
++(BOOL)removeSence:(NSString *)senceId;
+
+//删除设备
++(BOOL)removeDevice:(NSString *)deviceId;
+
 @end
 
 

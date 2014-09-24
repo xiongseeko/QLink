@@ -37,17 +37,29 @@
 //修改场景URL
 +(NSString *)getChangeSenceName:(NSString *)newName andSenceId:(NSString *)senceId
 {
-    return [NSString stringWithFormat:@"%@&action=savekfchang&dx=2&classname=macro&Id=%@&ChangVar=%@",[self getBaseUrl],senceId,newName];
+    NSString *sUrl = [NSString stringWithFormat:@"%@&action=savekfchang&dx=2&classname=macro&Id=%@&ChangVar=%@",[self getBaseUrl],senceId,newName];
+    sUrl = [sUrl stringByAddingPercentEscapesUsingEncoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)];
+    return sUrl;
 }
 
 //修改设备URL
 +(NSString *)getChangeDeviceName:(NSString *)newName andDeviceId:(NSString *)deviceId
 {
-    return [NSString stringWithFormat:@"%@&action=savekfchang&dx=1&Id=%@&ChangVar=%@",[self getBaseUrl],deviceId,newName];
+    NSString *sUrl = [NSString stringWithFormat:@"%@&action=savekfchang&dx=1&Id=%@&ChangVar=%@",[self getBaseUrl],deviceId,newName];
+    sUrl = [sUrl stringByAddingPercentEscapesUsingEncoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)];
+    return sUrl;
 }
 
-//http://www.qlink.cc/zq/lookmobile.asp?uname=15711515119&upsd=15711515119&passkey=26,69,93,21&action=savekfchang&dx=2&ChangVar=刘MM的电视场景&Id=40963&classname=macro
+//删除场景
++(NSString *)getDelSence:(NSString *)senceId
+{
+    return [NSString stringWithFormat:@"%@&action=savekfchang&dx=4&classname=macro&Id=%@",[self getBaseUrl],senceId];
+}
 
-//http://www.qlink.cc/zq/lookmobile.asp?uname=15711515119&upsd=15711515119&passkey=26,69,93,21&action=savekfchang&dx=1&ChangVar=test&Id=2328
+//删除设备
++(NSString *)getDelDevice:(NSString *)deviceId
+{
+    return [NSString stringWithFormat:@"%@&action=savekfchang&dx=4&guilei=123&Id=%@",[self getBaseUrl],deviceId];
+}
 
 @end

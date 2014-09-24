@@ -372,6 +372,12 @@
     
     [db close];
     
+    //add图标
+    Sence *senceObj = [[Sence alloc] init];
+    senceObj.Type = SANSANADD;
+    senceObj.SenceName = @"添加场景";
+    [senceArr addObject:senceObj];
+    
     return senceArr;
 }
 
@@ -403,6 +409,12 @@
     }
     
     [db close];
+    
+    //add图标
+    Device *deviceObj = [[Device alloc] init];
+    deviceObj.Type = SANSANADD;
+    deviceObj.DeviceName = @"添加设备";
+    [deviceArr addObject:deviceObj];
     
     return deviceArr;
 }
@@ -453,6 +465,72 @@
     [db close];
     
     return roomArr;
+}
+
+//重命名场景
++(BOOL)renameSenceName:(NSString *)senceId
+            andNewName:(NSString *)newName
+{
+    NSString *sql = [NSString stringWithFormat:@"UPDATE SENCE SET SENCENAME='%@' WHERE SENCEID='%@'",newName,senceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//重命名设备
++(BOOL)renameDeviceName:(NSString *)deviceId
+            andNewName:(NSString *)newName
+{
+    NSString *sql = [NSString stringWithFormat:@"UPDATE DEVICE SET DEVICENAME='%@' WHERE DEVICEID='%@'",newName,deviceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//删除场景
++(BOOL)removeSence:(NSString *)senceId
+{
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM SENCE WHERE SENCEID='%@'",senceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//删除设备
++(BOOL)removeDevice:(NSString *)deviceId
+{
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM DEVICE WHERE DEVICEID='%@'",deviceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
 }
 
 @end

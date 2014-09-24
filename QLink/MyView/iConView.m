@@ -39,12 +39,14 @@
     lTitle.font = [UIFont systemFontOfSize:FONTSIZE];
     [self addSubview:lTitle];
     
-    //实例化长按手势监听
-    UILongPressGestureRecognizer *longPress =
-    [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressed:)];
-    longPress.minimumPressDuration = 1.0;//表示最短长按的时间
-    //将长按手势添加到需要实现长按操作的视图里
-    [self addGestureRecognizer:longPress];
+    if (![icon isEqualToString:SANSANADD]) {
+        //实例化长按手势监听
+        UILongPressGestureRecognizer *longPress =
+        [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressed:)];
+        longPress.minimumPressDuration = 1.0;//表示最短长按的时间
+        //将长按手势添加到需要实现长按操作的视图里
+        [self addGestureRecognizer:longPress];
+    }
     
     // 单击的 Recognizer
     UITapGestureRecognizer* singleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapPressed)];

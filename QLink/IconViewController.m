@@ -102,7 +102,7 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                         message:@"请选择要更新的图标."
                                                        delegate:nil
-                                              cancelButtonTitle:@"关闭"
+                                              cancelButtonTitle:@"确定"
                                               otherButtonTitles:nil, nil];
         [alert show];
         
@@ -111,13 +111,21 @@
     
     BOOL bResult = [SQLiteUtil changeIcon:_pDeviceId andType:_pType andNewType:[iconArr_ objectAtIndex:btnSel_.tag]];
     if (bResult) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"图标设置成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"图标设置成功"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil, nil];
         [alert show];
         
         [self.delegate refreshTable:_pType];
         [self.navigationController popViewControllerAnimated:YES];
     }else{
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"操作失败,请稍后再试." delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"操作失败,请稍后再试."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
         [alert show];
     }
 }

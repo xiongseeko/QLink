@@ -103,28 +103,13 @@
     _tvDevice.delegate = self;
     _tvDevice.dataSource = self;
     
-//    //房间下拉
-//    NSMutableArray *items = [NSMutableArray array];
-//    for (int i = 0; i < [roomArr_ count]; i ++) {
-//        Room *obj = [roomArr_ objectAtIndex:i];
-//        REMenuItem *item = [[REMenuItem alloc] initWithTitle:obj.RoomName
-//                                                    subtitle:@""
-//                                                       image:nil
-//                                            highlightedImage:nil
-//                                                      action:^(REMenuItem *item) {
-//                                                          [self pushRoomItem:item];
-//                                                      }];
-//        
-//        item.tag = i;
-//        [items addObject:item];
-//    }
-//    
-//    _menu = [[REMenu alloc] initWithItems:items];
-//    _menu.cornerRadius = 4;
-//    _menu.shadowColor = [UIColor blackColor];
-//    _menu.shadowOffset = CGSizeMake(0, 1);
-//    _menu.shadowOpacity = 1;
-//    _menu.imageOffset = CGSizeMake(5, -1);
+    NSArray *array1 = [[NSBundle mainBundle] loadNibNamed:@"RenameView" owner:self options:nil];
+    renameView_ = [array1 objectAtIndex:0];
+    [renameView_.tfContent setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
+    renameView_.frame = CGRectMake(0, 0, 320, 320);
+    renameView_.delegate = self;
+    renameView_.hidden = YES;
+    [self.view addSubview:renameView_];
 }
 
 -(void)initSence
@@ -329,8 +314,9 @@
                                                        delegate:self
                                               cancelButtonTitle:@"取消"
                                               otherButtonTitles:@"重命名",@"图标重置",@"删除",@"编辑", nil];
-        alert.tag = index;
+        alert.pIndex = index;
         alert.pType = pType;
+        alert.tag = 101;
         [alert show];
     } else{
         MyAlertView *alert = [[MyAlertView alloc] initWithTitle:nil
@@ -338,8 +324,9 @@
                                                        delegate:self
                                               cancelButtonTitle:@"取消"
                                               otherButtonTitles:@"重命名",@"图标重置",@"删除", nil];
-        alert.tag = index;
+        alert.pIndex = index;
         alert.pType = pType;
+        alert.tag = 101;
         [alert show];
     }
 }
@@ -364,38 +351,56 @@
 #pragma mark -
 #pragma mark RenameViewDelegate
 
+//取消
 -(void)handleCanclePressed
 {
-    [renameView_ removeFromSuperview];
+    [self hiddenRenameView];
 }
 
+//确定
 -(void)handleConfirmPressed:(NSString *)deviceId
                  andNewName:(NSString *)newName
                     andType:(NSString *)pType
 {
+    NSString *sUrl = @"";
+    
     if ([pType isEqualToString:MACRO]) {
-        NSString *sUrl = [NetworkUtil getChangeSenceName:newName andSenceId:deviceId];
-        NSURL *url = [NSURL URLWithString:sUrl];
-        NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
-        NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-        NSString *sResult = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
-        if ([[sResult lowercaseString] isEqualToString:@"ok"]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"更新成功." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-            [alert show];
-        }
+        sUrl = [NetworkUtil getChangeSenceName:newName andSenceId:deviceId];
     }else{
-        NSString *sUrl = [NetworkUtil getChangeDeviceName:newName andDeviceId:deviceId];
-        NSURL *url = [NSURL URLWithString:sUrl];
-        NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
-        NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-        NSString *sResult = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
-        if ([[sResult lowercaseString] isEqualToString:@"ok"]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"更新成功." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-            [alert show];
-        }
+        sUrl = [NetworkUtil getChangeDeviceName:newName andDeviceId:deviceId];
     }
-    NSLog(@"===%@\n",deviceId);
-    NSLog(@"===%@\n",newName);
+    
+    NSURL *url = [NSURL URLWithString:sUrl];
+    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+    NSString *sResult = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
+    if ([[sResult lowercaseString] isEqualToString:@"ok"]) {
+        
+        if ([pType isEqualToString:MACRO]) {
+            [SQLiteUtil renameSenceName:deviceId andNewName:newName];
+            [self initSence];
+        }else{
+            [SQLiteUtil renameDeviceName:deviceId andNewName:newName];
+            [self initDevice];
+        }
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"更新成功."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        
+        [self hiddenRenameView];
+    
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"更新失败,请稍后再试."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    }
 }
 
 #pragma mark -
@@ -403,57 +408,108 @@
 
 - (void)alertView:(MyAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSString *deviceId = @"";
-    NSString *deviceType = @"";
-    NSString *deviceName = @"";
-    
-    if ([alertView.pType isEqualToString:MACRO]) {
-        Sence *obj = [senceArr_ objectAtIndex:alertView.tag];
-        deviceId = obj.SenceId;
-        deviceType = obj.Type;
-        deviceName = obj.SenceName;
-    }else{
-        Device *obj = [deviceArr_ objectAtIndex:alertView.tag];
-        deviceId = obj.DeviceId;
-        deviceType = obj.Type;
-        deviceName = obj.DeviceName;
-    }
-    
-    switch (buttonIndex) {
-        case 1://重命名
-        {
-            NSArray *array1 = [[NSBundle mainBundle] loadNibNamed:@"RenameView" owner:self options:nil];
-            renameView_ = [array1 objectAtIndex:0];
-            [renameView_.tfContent setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
-            renameView_.frame = CGRectMake(0, 0, 320, 320);
-            renameView_.tfContent.text = deviceName;
-            renameView_.pDeviceId = deviceId;
-            renameView_.pType = deviceType;
-            renameView_.delegate = self;
-            [self.view addSubview:renameView_];
+    if (alertView.tag == 101) {//长按
+        NSString *deviceId = @"";
+        NSString *deviceType = @"";
+        NSString *deviceName = @"";
+        
+        if ([alertView.pType isEqualToString:MACRO]) {
+            Sence *obj = [senceArr_ objectAtIndex:alertView.pIndex];
+            deviceId = obj.SenceId;
+            deviceType = obj.Type;
+            deviceName = obj.SenceName;
+        }else{
+            Device *obj = [deviceArr_ objectAtIndex:alertView.pIndex];
+            deviceId = obj.DeviceId;
+            deviceType = obj.Type;
+            deviceName = obj.DeviceName;
+        }
+        
+        switch (buttonIndex) {
+            case 1://重命名
+            {
+                renameView_.hidden = NO;
+                renameView_.tfContent.text = deviceName;
+                renameView_.pDeviceId = deviceId;
+                renameView_.pType = deviceType;
+                break;
+            }
+            case 2://重置图标
+            {
+                IconViewController *iconVC = [[IconViewController alloc] init];
+                iconVC.pDeviceId = deviceId;
+                iconVC.pType = deviceType;
+                iconVC.delegate = self;
+                [self.navigationController pushViewController:iconVC animated:YES];
+                
+                break;
+            }
+            case 3://删除
+            {
+                MyAlertView *alert = [[MyAlertView alloc] initWithTitle:@"温馨提示"
+                                                                message:@"确定要删除吗?"
+                                                               delegate:self
+                                                      cancelButtonTitle:@"取消"
+                                                      otherButtonTitles:@"确定", nil];
+                alert.tag = 102;
+                alert.pType = deviceType;
+                alert.pDeviceId = deviceId;
+                [alert show];
+                
+                break;
+            }
+            case 4://编辑
+            {
+                
+                
+                break;
+            }
+            default:
+                break;
+        }
+    }else{//删除
+        if (buttonIndex == 0) {
+            return;
+        }
+        
+        NSString *sUrl = @"";
+        if ([alertView.pType isEqualToString:MACRO]) {
+            sUrl = [NetworkUtil getDelSence:alertView.pDeviceId];
+        }else{
+            sUrl = [NetworkUtil getDelDevice:alertView.pDeviceId];
+        }
+        
+        NSURL *url = [NSURL URLWithString:sUrl];
+        NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+        NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+        NSString *sResult = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
+        if ([[sResult lowercaseString] isEqualToString:@"ok"]) {
             
-           break;
-        }
-        case 2://重置图标
-        {
-            IconViewController *iconVC = [[IconViewController alloc] init];
-            iconVC.pDeviceId = deviceId;
-            iconVC.pType = deviceType;
-            iconVC.delegate = self;
-            [self.navigationController pushViewController:iconVC animated:YES];
+            if ([alertView.pType isEqualToString:MACRO]) {
+                [SQLiteUtil removeSence:alertView.pDeviceId];
+                [self initSence];
+            }else{
+                [SQLiteUtil removeDevice:alertView.pDeviceId];
+                [self initDevice];
+            }
             
-            break;
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"删除成功."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"确定"
+                                                  otherButtonTitles:nil, nil];
+            [alert show];
+            
+            [self hiddenRenameView];
+            
+        }else{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"删除失败.请稍后再试."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"关闭"
+                                                  otherButtonTitles:nil, nil];
+            [alert show];
         }
-        case 3://编辑
-        {
-            break;
-        }
-        case 4://删除
-        {
-            break;
-        }
-        default:
-            break;
     }
 }
 
@@ -565,6 +621,13 @@
 - (void)pushMenuItem:(id)sender
 {
     NSLog(@"*****%@", sender);
+}
+
+//隐藏重命名浮层
+-(void)hiddenRenameView
+{
+    renameView_.hidden = YES;
+    [renameView_.tfContent resignFirstResponder];
 }
 
 #pragma mark -

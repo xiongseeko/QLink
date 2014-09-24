@@ -26,4 +26,10 @@
 //修改设备URL
 +(NSString *)getChangeDeviceName:(NSString *)newName andDeviceId:(NSString *)deviceId;
 
+//删除场景
++(NSString *)getDelSence:(NSString *)senceId;
+
+//删除设备
++(NSString *)getDelDevice:(NSString *)deviceId;
+
 @end

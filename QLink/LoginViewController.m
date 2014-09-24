@@ -119,7 +119,7 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                         message:@"请输入完整的信息"
                                                        delegate:nil
-                                              cancelButtonTitle:@"关闭"
+                                              cancelButtonTitle:@"确定"
                                               otherButtonTitles:nil, nil];
         
         [alert show];
@@ -163,12 +163,16 @@
                 MainViewController *mainVC = [[MainViewController alloc] init];
                 [self.navigationController pushViewController:mainVC animated:YES];
             }else{
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                    message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
                 [alertView show];
             }
         }
     }else{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"连接失败,请确认网络是否连接." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"连接失败,请确认网络是否连接." delegate:nil
+                                                  cancelButtonTitle:@"关闭"
+                                                  otherButtonTitles:nil, nil];
         [alertView show];
         
         [SVProgressHUD dismiss];
@@ -320,7 +324,11 @@
             MainViewController *mainVC = [[MainViewController alloc] init];
             [self.navigationController pushViewController:mainVC animated:YES];
         }else{
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                message:@"解析失败,请重试."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"关闭"
+                                                      otherButtonTitles:nil, nil];
             [alertView show];
             
             [SVProgressHUD dismiss];

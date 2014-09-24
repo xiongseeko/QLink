@@ -10,6 +10,11 @@
 
 @interface MyAlertView : UIAlertView
 
+//长按参数
 @property(nonatomic,strong) NSString *pType;
+@property(nonatomic,assign) int pIndex;
+
+//删除参数
+@property(nonatomic,strong) NSString *pDeviceId;
 
 @end
