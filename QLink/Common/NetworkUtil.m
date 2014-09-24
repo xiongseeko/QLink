@@ -59,7 +59,7 @@
 //删除设备
 +(NSString *)getDelDevice:(NSString *)deviceId
 {
-    return [NSString stringWithFormat:@"%@&action=savekfchang&dx=4&guilei=123&Id=%@",[self getBaseUrl],deviceId];
+    return [NSString stringWithFormat:@"%@&action=savekfchang&dx=4&Id=%@",[self getBaseUrl],deviceId];
 }
 
 @end
