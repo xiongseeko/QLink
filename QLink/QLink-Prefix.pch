@@ -1,0 +1,35 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+
+//执行的操作
+#define LOGIN @"login"
+#define ACTIONNULL @"NULL"
+
+
+//请求次数
+#define iNumberOfTimesToRetryOnTimeout 3
+
+//文件名字
+#define DBNAME @"QLink.sqlite"
+#define MACRO @"macro"
+
+
+#define FONTSIZE 14
+
+//处理文本框内容 padding
+#define IOS7_OR_LATER  ([[[UIDevice currentDevice] systemVersion] compare:@"7.0"] != NSOrderedAscending)
+#define PADDINGLEFT IOS7_OR_LATER ? @"paddingLeft" : @"_paddingLeft"
