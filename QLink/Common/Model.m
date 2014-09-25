@@ -97,6 +97,7 @@
       andOrderCmd:(NSString *)orderCmd
        andAddress:(NSString *)address
       andStudyCmd:(NSString *)studyCmd
+       andOrderNo:(NSString *)orderNo
        andHouseId:(NSString *)houseId
        andLayerId:(NSString *)layerId
         andRoomId:(NSString *)roomId
@@ -110,6 +111,7 @@
     obj.OrderCmd = orderCmd;
     obj.Address = address;
     obj.StudyCmd = studyCmd;
+    obj.OrderNo = orderNo;
     obj.HouseId = houseId;
     obj.LayerId = layerId;
     obj.RoomId = roomId;

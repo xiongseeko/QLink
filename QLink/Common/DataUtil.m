@@ -250,7 +250,7 @@
 //命令表sql拼接
 +(NSString *)connectOrderSql:(Order *)obj
 {
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO ORDERS (\"OrderId\", \"OrderName\", \"Type\", \"SubType\" , \"OrderCmd\", \"Address\", \"StudyCmd\", \"HouseId\", \"LayerId\", \"RoomId\", \"DeviceId\") VALUES  (\"%@\", \"%@\", \"%@\", \"%@\" , \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\")",obj.OrderId, obj.OrderName,obj.Type, obj.SubType , obj.OrderCmd,obj.Address, obj.StudyCmd, obj.HouseId, obj.LayerId, obj.RoomId, obj.DeviceId];
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO ORDERS (\"OrderId\", \"OrderName\", \"Type\", \"SubType\" , \"OrderCmd\", \"Address\", \"StudyCmd\",\"OrderNo\", \"HouseId\", \"LayerId\", \"RoomId\", \"DeviceId\") VALUES  (\"%@\", \"%@\", \"%@\", \"%@\", \"%@\" , \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\")",obj.OrderId, obj.OrderName,obj.Type, obj.SubType , obj.OrderCmd,obj.Address, obj.StudyCmd,obj.OrderNo, obj.HouseId, obj.LayerId, obj.RoomId, obj.DeviceId];
     return sql;
 }
 
@@ -532,5 +532,59 @@
     
     return bResult;
 }
+
+//获取该设备下所有命令类型
++(NSArray *)getOrderTypeGroupOrder:(NSString *)deviceId
+{
+    NSMutableArray *typeArr = [NSMutableArray array];
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT DEVICEID,TYPE FROM ORDERS WHERE DEVICEID='%@' GROUP BY TYPE ORDER BY CAST(ORDERNO AS INT) ASC",deviceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            Order *obj = [[Order alloc] init];
+            obj.DeviceId = [rs stringForColumn:@"DeviceId"];
+            obj.Type = [rs stringForColumn:@"Type"];
+            [typeArr addObject:obj];
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return typeArr;
+}
+
+//获取指定设备下指定类型的命令集合
++(NSArray *)getOrderListByDeviceId:(NSString *)deviceId andType:(NSString *)type
+{
+    NSMutableArray *orderArr = [NSMutableArray array];
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT * FROM ORDERS WHERE DEVICEID='%@' AND TYPE='%@' ORDER BY SUBTYPE ASC",deviceId,type];
+    
+    FMDatabase *db = [self getDB];
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            Order *obj = [[Order alloc] init];
+            obj.DeviceId = [rs stringForColumn:@"DEVICEID"];
+            obj.Type = [rs stringForColumn:@"DEVICEID"];
+            //            obj.OrderNo = [rs stringForColumn:@"Sn"];
+            [orderArr addObject:obj];
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return orderArr;
+}
+
 
 @end

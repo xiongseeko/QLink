@@ -82,6 +82,7 @@
 @property(nonatomic,strong) NSString *LayerId;
 @property(nonatomic,strong) NSString *RoomId;
 @property(nonatomic,strong) NSString *DeviceId;
+@property(nonatomic,strong) NSString *OrderNo;
 
 +(Order *)setOrderId:(NSString *)orderId
         andOrderName:(NSString *)orderName
@@ -90,6 +91,7 @@
          andOrderCmd:(NSString *)orderCmd
           andAddress:(NSString *)address
          andStudyCmd:(NSString *)studyCmd
+          andOrderNo:(NSString *)orderNo
           andHouseId:(NSString *)houseId
           andLayerId:(NSString *)layerId
            andRoomId:(NSString *)roomId

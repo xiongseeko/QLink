@@ -131,6 +131,8 @@
 		35131F2F19D41C60005A3C17 /* LightBc.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35131F2E19D41C60005A3C17 /* LightBc.xib */; };
 		35131F3219D42753005A3C17 /* RemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 35131F3119D42753005A3C17 /* RemoteViewController.m */; };
 		35131F3519D42DF4005A3C17 /* OrderButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 35131F3419D42DF4005A3C17 /* OrderButton.m */; };
+		35131F3719D4321E005A3C17 /* RemotePlist.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35131F3619D4321E005A3C17 /* RemotePlist.plist */; };
+		35131F3919D43B78005A3C17 /* QLink.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 35131F3819D43B78005A3C17 /* QLink.sqlite */; };
 		3534CD0E19CAB476001C83F0 /* 首页_返回.png in Resources */ = {isa = PBXBuildFile; fileRef = 3534CD0419CAB476001C83F0 /* 首页_返回.png */; };
 		3534CD0F19CAB476001C83F0 /* 首页_返回@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3534CD0519CAB476001C83F0 /* 首页_返回@2x.png */; };
 		3534CD1019CAB476001C83F0 /* 首页_三横.png in Resources */ = {isa = PBXBuildFile; fileRef = 3534CD0619CAB476001C83F0 /* 首页_三横.png */; };
@@ -239,7 +241,6 @@
 		35A8A92C19D112180018EB67 /* iCon_底部按钮01_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 35A8A92819D112180018EB67 /* iCon_底部按钮01_select@2x.png */; };
 		35A8A92D19D112180018EB67 /* iCon_底部按钮01.png in Resources */ = {isa = PBXBuildFile; fileRef = 35A8A92919D112180018EB67 /* iCon_底部按钮01.png */; };
 		35A8A92E19D112180018EB67 /* iCon_底部按钮01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 35A8A92A19D112180018EB67 /* iCon_底部按钮01@2x.png */; };
-		35A8A93019D11C510018EB67 /* QLink.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 35A8A92F19D11C510018EB67 /* QLink.sqlite */; };
 		35A8A93319D1480A0018EB67 /* MyAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 35A8A93219D1480A0018EB67 /* MyAlertView.m */; };
 		35A8A9AE19D166470018EB67 /* ac.png in Resources */ = {isa = PBXBuildFile; fileRef = 35A8A93519D166470018EB67 /* ac.png */; };
 		35A8A9AF19D166470018EB67 /* ac@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 35A8A93619D166470018EB67 /* ac@2x.png */; };
@@ -562,6 +563,8 @@
 		35131F3119D42753005A3C17 /* RemoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteViewController.m; sourceTree = "<group>"; };
 		35131F3319D42DF4005A3C17 /* OrderButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderButton.h; sourceTree = "<group>"; };
 		35131F3419D42DF4005A3C17 /* OrderButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OrderButton.m; sourceTree = "<group>"; };
+		35131F3619D4321E005A3C17 /* RemotePlist.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RemotePlist.plist; sourceTree = "<group>"; };
+		35131F3819D43B78005A3C17 /* QLink.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = QLink.sqlite; sourceTree = "<group>"; };
 		3534CD0419CAB476001C83F0 /* 首页_返回.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "首页_返回.png"; sourceTree = "<group>"; };
 		3534CD0519CAB476001C83F0 /* 首页_返回@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "首页_返回@2x.png"; sourceTree = "<group>"; };
 		3534CD0619CAB476001C83F0 /* 首页_三横.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "首页_三横.png"; sourceTree = "<group>"; };
@@ -689,7 +692,6 @@
 		35A8A92819D112180018EB67 /* iCon_底部按钮01_select@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iCon_底部按钮01_select@2x.png"; sourceTree = "<group>"; };
 		35A8A92919D112180018EB67 /* iCon_底部按钮01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iCon_底部按钮01.png"; sourceTree = "<group>"; };
 		35A8A92A19D112180018EB67 /* iCon_底部按钮01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iCon_底部按钮01@2x.png"; sourceTree = "<group>"; };
-		35A8A92F19D11C510018EB67 /* QLink.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = QLink.sqlite; sourceTree = "<group>"; };
 		35A8A93119D1480A0018EB67 /* MyAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAlertView.h; sourceTree = "<group>"; };
 		35A8A93219D1480A0018EB67 /* MyAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAlertView.m; sourceTree = "<group>"; };
 		35A8A93519D166470018EB67 /* ac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ac.png; sourceTree = "<group>"; };
@@ -1325,8 +1327,9 @@
 		8A97414A19CC875800E409A6 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				35A8A92F19D11C510018EB67 /* QLink.sqlite */,
+				35131F3819D43B78005A3C17 /* QLink.sqlite */,
 				3543487B19D10B2900B53359 /* iConPlist.plist */,
+				35131F3619D4321E005A3C17 /* RemotePlist.plist */,
 				8A9D984919CE87C300D50CE6 /* MyURLConnection.h */,
 				8A9D984A19CE87C300D50CE6 /* MyURLConnection.m */,
 				8A97414B19CC877400E409A6 /* NetworkUtil.h */,
@@ -1783,6 +1786,7 @@
 				35131E7219D3B048005A3C17 /* bstc_left@2x.png in Resources */,
 				35A8AA3419D1685D0018EB67 /* alert_bg@2x.png in Resources */,
 				35A8AA1F19D166470018EB67 /* macro_送客@2x.png in Resources */,
+				35131F3919D43B78005A3C17 /* QLink.sqlite in Resources */,
 				35131F2A19D40940005A3C17 /* pl_righttop02@2x.png in Resources */,
 				35131F1719D40940005A3C17 /* pl_middle.png in Resources */,
 				35A8A9E619D166470018EB67 /* ty.png in Resources */,
@@ -1903,7 +1907,6 @@
 				35131EA919D3E5CD005A3C17 /* sw1_top_off.png in Resources */,
 				35A4E57419D2DB16007A3C30 /* sw_ON@2x.png in Resources */,
 				35131E5719D3A760005A3C17 /* sd_top_left02.png in Resources */,
-				35A8A93019D11C510018EB67 /* QLink.sqlite in Resources */,
 				35A8A9C619D166470018EB67 /* light.png in Resources */,
 				35131E4919D3A760005A3C17 /* sd_bottom_left.png in Resources */,
 				35131EE819D4039A005A3C17 /* dt_top@2x.png in Resources */,
@@ -1935,6 +1938,7 @@
 				35A8AA1419D166470018EB67 /* macro_机场_select.png in Resources */,
 				35131EEA19D4039A005A3C17 /* dt_top02@2x.png in Resources */,
 				35A8AA1119D166470018EB67 /* macro_影院_select@2x.png in Resources */,
+				35131F3719D4321E005A3C17 /* RemotePlist.plist in Resources */,
 				355DEDF019CC12BF007ECB87 /* icon.png in Resources */,
 				35131E7419D3B048005A3C17 /* bstc_left02@2x.png in Resources */,
 				35A8AA3519D1685D0018EB67 /* alert_button.png in Resources */,

@@ -26,7 +26,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+}
+
+-(void)initControl
+{
+    //设置背景图
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"首页_bg.png"]];
+    
+    UIScrollView *svBg = [[UIScrollView alloc] init];
+    svBg.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    [self.view addSubview:svBg];
+    
+    int height = 0;
+    
+    
 }
 
 -(void)initData

@@ -301,6 +301,7 @@
                                                     andOrderCmd:[orderDic objectForKey:@"_ordercmd"]
                                                      andAddress:[orderDic objectForKey:@"_ades"]
                                                     andStudyCmd:studyCmd
+                                                     andOrderNo:[orderDic objectForKey:@"_sn"]
                                                      andHouseId:[orderDic objectForKey:@"_houseid"]
                                                      andLayerId:[orderDic objectForKey:@"_layerId"]
                                                       andRoomId:[orderDic objectForKey:@"_roomId"]

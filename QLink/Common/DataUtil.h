@@ -127,6 +127,9 @@
 //删除设备
 +(BOOL)removeDevice:(NSString *)deviceId;
 
+//获取该设备下所有命令类型
++(NSArray *)getOrderTypeGroupOrder:(NSString *)deviceId;
+
 @end
 
 
