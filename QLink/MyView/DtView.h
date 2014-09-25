@@ -7,7 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "OrderButton.h"
 
 @interface DtView : UIView
+
+@property(nonatomic,strong) IBOutlet OrderButton *btnAr_ad;//音量＋
+@property(nonatomic,strong) IBOutlet OrderButton *btnAr_rd;//音量－
+
+@property(nonatomic,strong) IBOutlet OrderButton *btnDt_up;//上
+@property(nonatomic,strong) IBOutlet OrderButton *btnDt_down;//下
+@property(nonatomic,strong) IBOutlet OrderButton *btnDt_left;//左
+@property(nonatomic,strong) IBOutlet OrderButton *btnDt_right;//右
+@property(nonatomic,strong) IBOutlet OrderButton *btnDt_ok;//ok
+
+@property(nonatomic,strong) IBOutlet OrderButton *btnPd_ad;//频道＋
+@property(nonatomic,strong) IBOutlet OrderButton *btnPd_rd;//频道－
+
+
 
 @end

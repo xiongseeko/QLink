@@ -7,6 +7,9 @@
 //
 
 #import "RemoteViewController.h"
+#import "DataUtil.h"
+#import "SwView.h"
+#import "DtView.h"
 
 @interface RemoteViewController ()
 
@@ -39,8 +42,71 @@
     [self.view addSubview:svBg];
     
     int height = 0;
+    BOOL isAddHeight = NO;//音量，频道，方向盘时有判断
     
-    
+    NSArray *typeArr = [SQLiteUtil getOrderTypeGroupOrder:_deviceId];
+    for (Order *obj in typeArr) {
+        NSArray *orderArr = [SQLiteUtil getOrderListByDeviceId:obj.DeviceId andType:obj.Type];
+        //sw开关
+        if ([obj.Type isEqualToString:@"sw"]) {
+            
+            height += 10;
+            
+            NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"SwView" owner:self options:nil];
+            SwView *swView = [controlArr objectAtIndex:0];
+            swView.frame = CGRectMake(0, height, 320, 33);
+            [svBg addSubview:swView];
+            for (Order *obj in orderArr) {
+                if ([obj.SubType isEqualToString:@"on"]) {
+                    swView.btnOn.orderObj = obj;
+                }else if ([obj.Type isEqualToString:@"off"]){
+                    swView.btnOff.orderObj = obj;
+                }
+            }
+        }else if ([obj.Type isEqualToString:@"ar"])//音量
+        {
+            if (!isAddHeight){
+                height += 10;
+                isAddHeight = YES;
+            }
+            
+            NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"DtView" owner:self options:nil];
+            DtView *dtView = [controlArr objectAtIndex:0];
+            dtView.frame = CGRectMake(0, height, 58, 177);
+            [svBg addSubview:dtView];
+            for (Order *obj in orderArr) {
+                if ([obj.SubType isEqualToString:@"ad"]) {
+                    dtView.btnAr_ad.orderObj = obj;
+                }else if ([obj.SubType isEqualToString:@"rd"]){
+                    dtView.btnAr_rd.orderObj = obj;
+                }
+            }
+        }else if ([obj.Type isEqualToString:@"dt"])//方向盘
+        {
+            if (!isAddHeight){
+                height += 10;
+                isAddHeight = YES;
+            }
+            
+            NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"DtView" owner:self options:nil];
+            DtView *dtView = [controlArr objectAtIndex:1];
+            dtView.frame = CGRectMake(0, height, 58, 177);
+            [svBg addSubview:dtView];
+            for (Order *obj in orderArr) {
+                if ([obj.SubType isEqualToString:@"up"]) {
+                    dtView.btnDt_up.orderObj = obj;
+                }else if ([obj.SubType isEqualToString:@"down"]){
+                    
+                }else if ([obj.SubType isEqualToString:@"left"]){
+                    
+                }else if ([obj.SubType isEqualToString:@"right"]){
+                    
+                }else if ([obj.SubType isEqualToString:@"ok"]){
+                    
+                }
+            }
+        }
+    }
 }
 
 -(void)initData

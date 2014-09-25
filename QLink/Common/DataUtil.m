@@ -571,10 +571,18 @@
     if ([db open]) {
         FMResultSet *rs = [db executeQuery:sql];
         while ([rs next]){
-            Order *obj = [[Order alloc] init];
-            obj.DeviceId = [rs stringForColumn:@"DEVICEID"];
-            obj.Type = [rs stringForColumn:@"DEVICEID"];
-            //            obj.OrderNo = [rs stringForColumn:@"Sn"];
+            Order *obj = [Order setOrderId:[rs stringForColumn:@"OrderId"]
+                                   andOrderName:[rs stringForColumn:@"OrderName"]
+                                        andType:[rs stringForColumn:@"Type"]
+                                     andSubType:[rs stringForColumn:@"SubType"]
+                                    andOrderCmd:[rs stringForColumn:@"OrderCmd"]
+                                     andAddress:[rs stringForColumn:@"Address"]
+                                    andStudyCmd:[rs stringForColumn:@"StudyCmd"]
+                                     andOrderNo:[rs stringForColumn:@"OrderNo"]
+                                     andHouseId:[rs stringForColumn:@"HouseId"]
+                                     andLayerId:[rs stringForColumn:@"LayerId"]
+                                      andRoomId:[rs stringForColumn:@"RoomId"]
+                                    andDeviceId:[rs stringForColumn:@"DeviceId"]];
             [orderArr addObject:obj];
         }
         

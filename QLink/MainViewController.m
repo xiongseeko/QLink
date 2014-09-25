@@ -105,9 +105,9 @@
     
     NSArray *array1 = [[NSBundle mainBundle] loadNibNamed:@"RenameView" owner:self options:nil];
     renameView_ = [array1 objectAtIndex:0];
-    [renameView_.tfContent setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
     renameView_.frame = CGRectMake(0, 0, 320, 320);
     renameView_.delegate = self;
+    [renameView_.tfContent setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
     renameView_.hidden = YES;
     [self.view addSubview:renameView_];
 }

@@ -11,6 +11,6 @@
 
 @interface OrderButton : UIButton
 
-@property(nonatomic,strong) Order *obj;
+@property(nonatomic,strong) Order *orderObj;
 
 @end

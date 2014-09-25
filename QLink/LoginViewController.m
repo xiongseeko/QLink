@@ -81,7 +81,7 @@
     NSString *sUrl = [NetworkUtil getActionLogin:_tfName.text andUPwd:_tfPassword.text andUKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];
     
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
     MyURLConnection *connection = [[MyURLConnection alloc]
                                    initWithRequest:request
                                    delegate:self];
@@ -98,7 +98,7 @@
     NSString *sUrl = [NetworkUtil getBaseUrl];
     NSURL *url = [NSURL URLWithString:sUrl];
     
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
     MyURLConnection *connection = [[MyURLConnection alloc]
                                    initWithRequest:request
                                    delegate:self];

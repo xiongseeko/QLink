@@ -130,6 +130,9 @@
 //获取该设备下所有命令类型
 +(NSArray *)getOrderTypeGroupOrder:(NSString *)deviceId;
 
+//获取指定设备下指定类型的命令集合
++(NSArray *)getOrderListByDeviceId:(NSString *)deviceId andType:(NSString *)type;
+
 @end
 
 
