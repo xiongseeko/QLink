@@ -13,4 +13,8 @@
 
 @property(nonatomic,strong) Order *orderObj;
 
+//转型
++(OrderButton *)ModelClassForString:(NSString *)type
+                         andSubType:(NSString *)subType;
+
 @end

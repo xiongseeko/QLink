@@ -7,7 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="eyc-Kn-aUc">
+        <view contentMode="scaleToFill" id="eyc-Kn-aUc" customClass="PlView">
             <rect key="frame" x="0.0" y="0.0" width="320" height="141"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
@@ -85,6 +85,15 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="btnLeftBottom" destination="Uoc-Ag-N85" id="sy1-9w-10S"/>
+                <outlet property="btnLeftMiddle" destination="c7m-Q1-9GG" id="zqm-Wq-CuR"/>
+                <outlet property="btnLeftTop" destination="J1g-8l-hbM" id="E3H-YE-uit"/>
+                <outlet property="btnMiddle" destination="Rsn-Rs-Y3k" id="cql-DB-yUm"/>
+                <outlet property="btnRightBottom" destination="3Wl-EQ-oah" id="SEW-yF-GgL"/>
+                <outlet property="btnRightMiddle" destination="EXl-jY-b4k" id="AKh-QG-0m9"/>
+                <outlet property="btnRightTop" destination="gU9-ew-sgB" id="5c2-kQ-EzN"/>
+            </connections>
         </view>
     </objects>
     <resources>

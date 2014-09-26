@@ -10,4 +10,10 @@
 
 @interface SdView : UIView
 
+@property(nonatomic,strong) IBOutlet OrderButton *btnTopLeft;
+@property(nonatomic,strong) IBOutlet OrderButton *btnTopMiddle;
+@property(nonatomic,strong) IBOutlet OrderButton *btnTopRight;
+@property(nonatomic,strong) IBOutlet OrderButton *btnBottomLeft;
+@property(nonatomic,strong) IBOutlet OrderButton *btnBottomRight;
+
 @end

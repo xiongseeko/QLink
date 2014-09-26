@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OrderButton.h"
 
 @interface DtView : UIView
 

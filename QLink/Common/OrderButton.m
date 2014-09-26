@@ -19,6 +19,18 @@
     return self;
 }
 
++(OrderButton *)ModelClassForString:(NSString *)type
+                         andSubType:(NSString *)subType
+{
+    NSString *className = [NSString stringWithFormat:@"btn%@_%@",type,subType];
+    
+    id orderBtn = NSClassFromString(className);
+    if (!orderBtn) {
+        return nil;
+    }
+    return (OrderButton *)orderBtn;
+}
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

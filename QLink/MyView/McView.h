@@ -10,4 +10,9 @@
 
 @interface McView : UIView
 
+@property(nonatomic,strong) IBOutlet OrderButton *btnMc1;
+@property(nonatomic,strong) IBOutlet OrderButton *btnMc2;
+@property(nonatomic,strong) IBOutlet OrderButton *btnMc3;
+@property(nonatomic,strong) IBOutlet OrderButton *btnMc4;
+
 @end
