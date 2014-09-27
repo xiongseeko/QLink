@@ -21,6 +21,9 @@
 //判断节点类型并且转换为数组
 +(NSArray *)changeDicToArray:(NSObject *)obj;
 
+//判断是否为nil,nil则返回空
++(NSString *)getDefaultValue:(NSString *)value;
+
 @end
 
 /************************************************************************************/
@@ -84,6 +87,9 @@
 
 //场景表sql拼接
 +(NSString *)connectSenceSql:(Sence *)obj;
+
+//获取当前版本号
++(NSString *)getCurVersionNo;
 
 //获取设置当前默认楼层和房间号码
 +(void)setDefaultLayerIdAndRoomId;

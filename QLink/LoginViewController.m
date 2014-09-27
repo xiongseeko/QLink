@@ -155,8 +155,8 @@
         {
             [SVProgressHUD dismiss];
             
-            Config *configLocalObj = [Config getConfig];
-            if (configLocalObj) {
+            NSString *curVersion = [SQLiteUtil getCurVersionNo];
+            if (![DataUtil checkNullOrEmpty:curVersion]) {
                 //读取本地配置
                 [SQLiteUtil setDefaultLayerIdAndRoomId];
                 
@@ -198,19 +198,18 @@
             return;
         }
         
-        //设置登录信息
-        [Member setUdMember:_tfName.text
-                    andUPwd:_tfPassword.text
-                    andUKey:_tfKey.text
-               andIsRemeber:_btnRemeber.selected];
+        Member *curMember = [Member getMember];
         
         //处理配置信息
-        Config *configLocalObj = [Config getConfig];
         configTempObj_ = [Config getTempConfig:configArr];
+        NSString *curVersion = [SQLiteUtil getCurVersionNo];
         
         //重新解析配置文件
-        if ((configLocalObj && ![configLocalObj.configVersion isEqualToString:configTempObj_.configVersion])
-            || !configLocalObj)
+        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
+            //清除本地配置数据
+            [SQLiteUtil clearData];
+        }
+        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
         {
             self.iRetryCount = 1;
             [SVProgressHUD showWithStatus:@"正在解析..."];
@@ -223,6 +222,13 @@
             MainViewController *mainVC = [[MainViewController alloc] init];
             [self.navigationController pushViewController:mainVC animated:YES];
         }
+        
+        //设置登录信息
+        [Member setUdMember:_tfName.text
+                    andUPwd:_tfPassword.text
+                    andUKey:_tfKey.text
+               andIsRemeber:_btnRemeber.selected];
+        
     }else if ([connection.sTag isEqualToString:ACTIONNULL])//解析数据文件返回
     {
         //清除本地配置数据

@@ -39,6 +39,16 @@
     }
 }
 
+//判断是否为nil,nil则返回空
++(NSString *)getDefaultValue:(NSString *)value
+{
+    if ([DataUtil checkNullOrEmpty:value]) {
+        return  @"";
+    }else{
+        return value;
+    }
+}
+
 @end
 
 /************************************************************************************/
@@ -268,6 +278,31 @@
     return sql;
 }
 
+//获取当前版本号
++(NSString *)getCurVersionNo
+{
+    FMDatabase *db = [self getDB];
+ 
+    NSString *versionNo = @"";
+    NSString *sql = @"SELECT UPDATEVER FROM CONTROL LIMIT 1";
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            
+            versionNo = [rs stringForColumn:@"Updatever"];
+            
+            break;
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return versionNo;
+}
+
 //获取设置当前默认楼层和房间号码
 +(void)setDefaultLayerIdAndRoomId
 {
@@ -280,9 +315,9 @@
         while ([rs next]){
             
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-            [dic setObject:[rs stringForColumn:@"LayerId"] forKey:@"LayerId"];
-            [dic setObject:[rs stringForColumn:@"RoomId"] forKey:@"RoomId"];
-            [dic setObject:[rs stringForColumn:@"HouseId"] forKey:@"HouseId"];
+            [dic setObject:[DataUtil getDefaultValue:[rs stringForColumn:@"LayerId"]] forKey:@"LayerId"];
+            [dic setObject:[DataUtil getDefaultValue:[rs stringForColumn:@"RoomId"]] forKey:@"RoomId"];
+            [dic setObject:[DataUtil getDefaultValue:[rs stringForColumn:@"HouseId"]] forKey:@"HouseId"];
             
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
             [ud setObject:dic forKey:@"GLOBALATTR_UD"];
@@ -593,6 +628,5 @@
     
     return orderArr;
 }
-
 
 @end
