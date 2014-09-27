@@ -151,8 +151,7 @@
         if (iNumberOfTimesToRetryOnTimeout > [self iRetryCount]) {
             [self setIRetryCount:[self iRetryCount] + 1];
             [self initRequestActionNULL];
-        }else if ([self iRetryCount] == iNumberOfTimesToRetryOnTimeout)
-        {
+        } else if ([self iRetryCount] == iNumberOfTimesToRetryOnTimeout) {
             [SVProgressHUD dismiss];
             
             NSString *curVersion = [SQLiteUtil getCurVersionNo];
