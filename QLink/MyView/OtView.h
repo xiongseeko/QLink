@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "OrderButton.h"
 
 @interface OtView : UIView
+
+@property(nonatomic,strong) IBOutlet OrderButton *btnLeft;
+@property(nonatomic,strong) IBOutlet OrderButton *btnRight;
 
 @end

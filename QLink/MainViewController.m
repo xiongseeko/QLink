@@ -13,6 +13,7 @@
 #import "DataUtil.h"
 #import "MyAlertView.h"
 #import "NetworkUtil.h"
+#import "RemoteViewController.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -334,6 +335,17 @@
 -(void)handleSingleTapPressed:(int)index andType:(NSString *)pType
 {
     NSLog(@"单击====%d",index);
+    
+    if ([pType isEqualToString:MACRO]) {//场景
+        
+    }else{ // 设备
+        Device *obj = [deviceArr_ objectAtIndex:index];
+        
+        RemoteViewController *remoteVC = [[RemoteViewController alloc] init];
+        remoteVC.deviceId = obj.DeviceId;
+        remoteVC.deviceName = obj.DeviceName;
+        [self.navigationController pushViewController:remoteVC animated:YES];
+    }
 }
 
 #pragma mark -

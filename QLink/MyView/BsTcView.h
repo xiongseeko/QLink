@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "OrderButton.h"
 
 @interface BsTcView : UIView
+
+@property (nonatomic,strong) IBOutlet OrderButton *btnAd;
+@property (nonatomic,strong) IBOutlet OrderButton *btnRd;
+@property (strong, nonatomic) IBOutlet OrderButton *btnTitle;
 
 @end

@@ -11,5 +11,6 @@
 @interface RemoteViewController : UIViewController
 
 @property(nonatomic,strong) NSString *deviceId;
+@property(nonatomic,strong) NSString *deviceName;
 
 @end
