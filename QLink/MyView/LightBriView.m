@@ -1,14 +1,14 @@
 //
-//  Light1View.m
+//  LightBriView.m
 //  QLink
 //
-//  Created by 尤日华 on 14-9-28.
+//  Created by SANSAN on 14-9-28.
 //  Copyright (c) 2014年 SANSAN. All rights reserved.
 //
 
-#import "Light1View.h"
+#import "LightBriView.h"
 
-@implementation Light1View
+@implementation LightBriView
 
 - (id)initWithFrame:(CGRect)frame
 {

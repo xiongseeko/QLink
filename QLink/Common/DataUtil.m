@@ -425,9 +425,12 @@
     
     FMDatabase *db = [self getDB];
     
-    NSString *sql = [NSString stringWithFormat:@"SELECT D.*,I.NewType FROM DEVICE D LEFT JOIN ICON I ON D.DEVICEID=I.DEVICEID AND I.TYPE !='%@' WHERE D.HOUSEID='%@' AND D.LAYERID='%@' AND D.ROOMID='%@'",MACRO,houseId,layerId,roomId];
+    NSString *lightKeyWord = @"%light%";
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT D.*,I.NewType FROM DEVICE D LEFT JOIN ICON I ON D.DEVICEID=I.DEVICEID AND I.TYPE !='%@' WHERE D.HOUSEID='%@' AND D.LAYERID='%@' AND D.ROOMID='%@' AND D.TYPE NOT LIKE '%@'",MACRO,houseId,layerId,roomId,lightKeyWord];
     
     if ([db open]) {
+        
         FMResultSet *rs = [db executeQuery:sql];
         while ([rs next]){
             Device *obj = [Device setDeviceId:[rs stringForColumn:@"DeviceId"]
@@ -441,6 +444,24 @@
         }
         
         [rs close];
+    }
+    
+    sql = @"SELECT COUNT(*) FROM DEVICE WHERE TYPE LIKE '%light%'";
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        if ([rs next]) {
+            int totalCount = [rs intForColumnIndex:0];
+            if (totalCount > 0) {
+                Device *obj = [Device setDeviceId:@""
+                                    andDeviceName:@"照明"
+                                          andType:@"light"
+                                       andHouseId:@""
+                                       andLayerId:@""
+                                        andRoomId:@""
+                                      andIconType:nil];
+                [deviceArr addObject:obj];
+            }
+        }
     }
     
     [db close];

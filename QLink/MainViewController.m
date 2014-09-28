@@ -14,6 +14,7 @@
 #import "MyAlertView.h"
 #import "NetworkUtil.h"
 #import "RemoteViewController.h"
+#import "LightViewController.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -338,7 +339,10 @@
     
     if ([pType isEqualToString:MACRO]) {//场景
         
-    }else{ // 设备
+    }else if([pType isEqualToString:@"light"]){ // 照明
+        LightViewController *lightVC = [[LightViewController alloc] init];
+        [self.navigationController pushViewController:lightVC animated:YES];
+    } else { //设备
         Device *obj = [deviceArr_ objectAtIndex:index];
         
         RemoteViewController *remoteVC = [[RemoteViewController alloc] init];

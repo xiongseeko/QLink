@@ -1,14 +1,14 @@
 //
-//  LightBcView.m
+//  LightBbView.m
 //  QLink
 //
-//  Created by SANSAN on 14-9-25.
+//  Created by SANSAN on 14-9-28.
 //  Copyright (c) 2014年 SANSAN. All rights reserved.
 //
 
-#import "LightBcView.h"
+#import "LightBbView.h"
 
-@implementation LightBcView
+@implementation LightBbView
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -17,12 +17,6 @@
         // Initialization code
     }
     return self;
-}
-
--(void)setSliderStyle
-{
-    [_btnBr setThumbImage:[UIImage imageNamed:@"light_roundButton.png"] forState:UIControlStateNormal];
-    [_btnCo setThumbImage:[UIImage imageNamed:@"light_roundButton.png"] forState:UIControlStateNormal];
 }
 
 /*
