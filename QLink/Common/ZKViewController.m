@@ -1,39 +1,34 @@
 //
-//  BaseViewController.m
+//  ZKViewController.m
 //  QLink
 //
 //  Created by 尤日华 on 14-10-12.
 //  Copyright (c) 2014年 SANSAN. All rights reserved.
 //
 
-#import "BaseViewController.h"
+#import "ZKViewController.h"
+#import "DataUtil.h"
 #import "NSString+NSStringHexToBytes.h"
-#import "NSData+NSDataBytesToHex.h"
-#import "AFNetworking.h"
 #import "SVProgressHUD.h"
 #import "NetworkUtil.h"
 #import "XMLDictionary.h"
+#import "AFNetworking.h"
 
 #define ECHO_MSG 1
 #define READ_TIMEOUT 15.0
 
-@interface BaseViewController ()
+@interface ZKViewController ()
 {
-    //场景，设备参数
-    Control *controlObj_;
-    Config *configObj_;
-    NSString *sendContent_;
-    
-    //中控参数
     NSMutableArray *cmdReadArr_;
     NSMutableArray *cmdOperArr_;
+    
     NSDictionary *sendCmdDic_;//当前发送的对象
+    
     Control *zkConfig_;
-    BOOL isSendZKFailAndSendLast_;
 }
 @end
 
-@implementation BaseViewController
+@implementation ZKViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -49,29 +44,22 @@
     [super viewDidLoad];
 }
 
--(void)initDomain
-{
-    controlObj_ = [SQLiteUtil getControlObj];
-}
-
--(void)initRequestZK1
+-(void)initZhongKong
 {
     [self sendSocketOrder];
 }
 
--(void)initRequestZK
+-(void)initZhongKong1
 {
-    self.iTimeoutCount = 1;
-    self.isZK = YES;
-    isSendZKFailAndSendLast_ = NO;
-    
     [SVProgressHUD showWithStatus:@"正在写入中控..."];
+    
+    self.iRetryCount = 1;
     
     NSURL *url = [NSURL URLWithString:[[NetworkUtil getAction:ACTIONSETUPZK] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    __weak __typeof(self)weakSelf = self;
+    
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         NSString *strXML = operation.responseString;
@@ -98,10 +86,9 @@
             return;
         }
         
-//        [weakSelf sendSocketOrder];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf sendSocketOrder];
-        });
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            [self sendSocketOrder];
+//        });
         
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"发生错误！%@",error);
@@ -111,48 +98,31 @@
     [queue addOperation:operation];
 }
 
--(void)sendSocketOrder
+#pragma mark -
+#pragma mark Socket
+
+-(void)sendSocketOrder1
 {
-//    sendContent_ = @"5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B";
-//    [self sendTcp:@"xmhdjsj.3322.org" andPort:@"30000"];
+    sendCmdDic_ = [NSDictionary dictionaryWithObjectsAndKeys:@"5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A",@"sdcmd",@"3055C50F",@"bkcmd", nil]; // [cmdOperArr_ objectAtIndex:0];
     
+    [self sendTcp:@"117.25.254.193" andPort:@"30000"];
     
-    sendCmdDic_ = [cmdOperArr_ objectAtIndex:0];
-    sendContent_ = [sendCmdDic_ objectForKey:@"_sdcmd"];
-    
-    if ([[zkConfig_.SendType lowercaseString] isEqualToString:@"tcp"]) {
+//    if ([[zkConfig_.SendType lowercaseString] isEqualToString:@"tcp"]) {
 //        [self sendTcp:zkConfig_.Ip andPort:zkConfig_.Port];
-        [self sendTcp:@"xmhdjsj.3322.org" andPort:@"30000"];
-    }
-    else{
-        [self sendUdp:zkConfig_.Ip andPort:zkConfig_.Port];
-    }
+//    }
+//    else{
+//        [self sendUdp:zkConfig_.Ip andPort:zkConfig_.Port andContent:[sendCmdDic_ objectForKey:@"sdcmd"]];
+//    }
 }
 
-//场景设备发送
--(void)sendSocketOrder:(NSString *)cmd
+-(void)sendSocketOrder
 {
-    self.isZK = NO;
-    
-    configObj_ = [Config getConfig];
-    if (configObj_.isBuyCenterControl) {
-        [self initDomain];
-    }
-    
-    sendContent_ = cmd;
-    
-    if (controlObj_) {//中控，远程发送
-        if ([[controlObj_.SendType lowercaseString] isEqualToString:@"tcp"]) {
-            [self sendTcp:controlObj_.Domain andPort:controlObj_.Port];
-        }
-        else{
-            [self sendUdp:controlObj_.Domain andPort:controlObj_.Port];
-        }
-    }
+    [self sendTcp:@"117.25.254.193" andPort:@"30000"];
 }
 
 -(void)sendUdp:(NSString *)host
        andPort:(NSString *)port
+    andContent:(NSString *)content
 {
     /**************创建连接**************/
     
@@ -176,16 +146,15 @@
     
     /**************发送数据**************/
     
-//    NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
-//    //    NSData *data = [self HexConvertToASCII:msg];
-//    [udpSocket_ sendData:data toHost:host port:[port integerValue] withTimeout:-1 tag:udpTag_];//传递数据
-//    
-//    NSLog(@"SENT (%i): %@", (int)udpTag_, content);
+    NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
+    //    NSData *data = [self HexConvertToASCII:msg];
+    [udpSocket_ sendData:data toHost:host port:[port integerValue] withTimeout:-1 tag:udpTag_];//传递数据
+    
+    NSLog(@"SENT (%i): %@", (int)udpTag_, content);
     
     udpTag_++;
 }
 
-//中控发送
 -(void)sendTcp:(NSString *)host
        andPort:(NSString *)port
 {
@@ -194,7 +163,7 @@
     asyncSocket_ = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     
     NSError *error = nil;
-    if (![asyncSocket_ connectToHost:@"121.204.154.81" onPort:[port integerValue] error:&error])
+    if (![asyncSocket_ connectToHost:host onPort:[port integerValue] error:&error])
     {
         NSLog(@"Error connecting");
         return;
@@ -242,7 +211,7 @@
     NSLog(@"连接成功\n");
 	NSLog(@"已连接到 －－ socket:%p didConnectToHost:%@ port:%hu \n", sock, host, port);
     
-    NSData *data = [sendContent_ hexToBytes];
+    NSData *data = [@"5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A" hexToBytes];
     
     [asyncSocket_ writeData:data withTimeout:-1 tag:ECHO_MSG];//发送数据;  withTimeout:超时时间，设置为－1代表永不超时;  tag:区别该次读取与其他读取的标志,通常我们在设计视图上的控件时也会有这样的一个属性就是tag;
 }
@@ -251,27 +220,13 @@
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
 {
     if (err) {
-        if (self.isZK) {
-            if (NumberOfTimeout > [self iTimeoutCount]) {
-                [self setITimeoutCount:[self iTimeoutCount] + 1];
-                sleep(1);
-                [self sendSocketOrder];
-            } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                    message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
-                alert.tag = 999;
-                [alert show];
-                
-                [SVProgressHUD dismiss];
-            }
-        } else {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"连接服务器失败."
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
-        }
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"连接服务器失败."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
         
         NSLog(@"连接失败\n");
         NSLog(@"错误信息 －－ socketDidDisconnect:%p withError: %@", sock, err);
@@ -282,73 +237,29 @@
 
 - (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag
 {
-    if (_isZK) {
-        [sock readDataWithTimeout:3 tag:-1];
-    } else {
-        [self disConnectionTCP];
-    }
+    [self disConnectionTCP];
+    
+    //	NSLog(@"socket:%p didWriteDataWithTag:%ld", sock, tag);
+    
+    //    [sock readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:0];
 }
 
 //接收数据
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
 {
-    NSData *bkcCmd = [[sendCmdDic_ objectForKey:@"_bkcmd"] hexToBytes];
-    NSData *top3Cmd = [bkcCmd subdataWithRange:NSMakeRange(0, 3)];
-    NSData *readTop3 = [data subdataWithRange:NSMakeRange(0, 3)];
-
-    if ([top3Cmd isEqualToData: readTop3])
+    NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 2)];
+    NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
+    
+    if (msg)
     {
-        [cmdOperArr_ removeObject:sendCmdDic_];
-        
-        //发送完成，关闭连接
-        if ([cmdOperArr_ count] == 0) {
-            
-            if (!isSendZKFailAndSendLast_) {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                    message:@"写入中控成功."
-                                                                   delegate:self
-                                                          cancelButtonTitle:@"确定"
-                                                          otherButtonTitles:@"重试", nil];
-                [alertView show];
-            }
-            
-            [self disConnectionTCP];
-            [SVProgressHUD dismiss];
-            
-            return;
-        }
-        
-        self.iTimeoutCount = 1;
-        [self sendSocketOrder];
+        NSLog(@"%@", msg);
     }
     else
     {
-        [self sendSocketOrder];
+        NSLog(@"Error converting received data into UTF-8 String");
     }
-}
-
-#pragma mark -
-#pragma mark UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (alertView.tag == 999) {
-        if (buttonIndex == 0) {//关闭
-            isSendZKFailAndSendLast_ = YES;
-            
-            sendCmdDic_ = [cmdOperArr_ lastObject];
-            [cmdOperArr_ removeAllObjects];
-            [cmdOperArr_ addObject:sendCmdDic_];
-            
-            [self sendSocketOrder];
-        } else if (buttonIndex == 1) {//重试
-            [SVProgressHUD showWithStatus:@"正在写入中控..."];
-            
-            cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
-            self.iTimeoutCount = 1;
-            [self sendSocketOrder];
-        }
-    }
+    
+    [self disConnectionTCP];
 }
 
 #pragma mark -
@@ -371,16 +282,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

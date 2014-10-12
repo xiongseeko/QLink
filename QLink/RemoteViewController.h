@@ -17,16 +17,9 @@
 #import "NmView.h"
 #import "BsTcView.h"
 #import "TrView.h"
-#import "GCDAsyncSocket.h"
-#import "GCDAsyncUdpSocket.h"
+#import "BaseViewController.h"
 
-@interface RemoteViewController : UIViewController<SwViewDelegate,DtViewDelegate,McViewDelegate,PlViewDelegate,SdViewDelegate,OtViewDelegate,HsViewDelegate,NmViewDelegate,BsTcViewDelegate,TrViewDelegate,UIAlertViewDelegate>
-{
-    long udpTag_;
-    
-    GCDAsyncUdpSocket *udpSocket_;
-    GCDAsyncSocket *asyncSocket_;
-}
+@interface RemoteViewController : BaseViewController<SwViewDelegate,DtViewDelegate,McViewDelegate,PlViewDelegate,SdViewDelegate,OtViewDelegate,HsViewDelegate,NmViewDelegate,BsTcViewDelegate,TrViewDelegate,UIAlertViewDelegate>
 
 @property(nonatomic,strong) NSString *deviceId;
 @property(nonatomic,strong) NSString *deviceName;

@@ -10,7 +10,6 @@
 #import "ILBarButtonItem.h"
 #import "REMenuItem.h"
 #import "KxMenu.h"
-#import "DataUtil.h"
 #import "MyAlertView.h"
 #import "NetworkUtil.h"
 #import "RemoteViewController.h"
@@ -18,6 +17,7 @@
 #import "DeviceConfigViewController.h"
 #import "AboutViewController.h"
 #import "SenceConfigViewController.h"
+#import "ZKViewController.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -368,7 +368,8 @@
     NSLog(@"单击====%d",index);
     
     if ([pType isEqualToString:MACRO]) {//场景
-        
+        Sence *obj = [senceArr_ objectAtIndex:index];
+        [self sendSocketOrder:obj.Macrocmd];
     } else if([pType isEqualToString:@"light"]){ // 照明
         LightViewController *lightVC = [[LightViewController alloc] init];
         [self.navigationController pushViewController:lightVC animated:YES];
@@ -533,7 +534,7 @@
             default:
                 break;
         }
-    }else{//删除
+    }else if(alertView.tag == 102){//删除
         if (buttonIndex == 0) {
             return;
         }
@@ -702,7 +703,20 @@
 - (void)pushMenuItem:(KxMenuItem *)sender
 {
     NSLog(@"*****%@", sender);
-    if ([sender.title isEqualToString:@"关于"]) {
+    if ([sender.title isEqualToString:@"正常模式"]) {//写入中控
+        
+    } else if ([sender.title isEqualToString:@"紧急模式"])
+    {
+        
+    } else if ([sender.title isEqualToString:@"写入中控"])
+    {
+        [self initRequestZK];
+        
+    } else if ([sender.title isEqualToString:@"初始化"])
+    {
+        
+    } else if ([sender.title isEqualToString:@"关于"])
+    {
         AboutViewController *aboutVC = [[AboutViewController alloc] init];
         [self.navigationController pushViewController:aboutVC animated:YES];
     }
@@ -724,7 +738,6 @@
     CGRect rect = CGRectMake(0, 0, 320, _svBig.frame.size.height);
     [_svBig scrollRectToVisible:rect animated:NO];
 }
-
 
 #pragma mark -
 

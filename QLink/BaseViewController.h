@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "DataUtil.h"
 #import "GCDAsyncSocket.h"
 #import "GCDAsyncUdpSocket.h"
 
@@ -18,4 +18,11 @@
     GCDAsyncUdpSocket *udpSocket_;
     GCDAsyncSocket *asyncSocket_;
 }
+
+@property(nonatomic,assign) BOOL isZK;
+@property(nonatomic,assign) int iTimeoutCount;
+
+-(void)sendSocketOrder:(NSString *)cmd;
+-(void)initRequestZK;
+
 @end

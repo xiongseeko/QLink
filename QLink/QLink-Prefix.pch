@@ -24,7 +24,7 @@
 #define ACTIONSETUPZK @"setupzk"
 
 //请求次数
-#define iNumberOfTimesToRetryOnTimeout 3
+#define NumberOfTimeout 3
 
 //文件名字
 #define DBNAME @"QLink.sqlite"

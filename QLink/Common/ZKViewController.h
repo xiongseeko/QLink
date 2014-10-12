@@ -1,23 +1,16 @@
 //
-//  SocketUtil.h
+//  ZKViewController.h
 //  QLink
 //
 //  Created by 尤日华 on 14-10-12.
 //  Copyright (c) 2014年 SANSAN. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "GCDAsyncSocket.h"
 #import "GCDAsyncUdpSocket.h"
 
-@protocol SocketUtilDelegate <NSObject>
-
--(void)success;
--(void)fail;
-
-@end
-
-@interface SocketUtil : NSObject
+@interface ZKViewController : UIViewController<UIAlertViewDelegate>
 {
     long udpTag_;
     
@@ -25,14 +18,14 @@
     GCDAsyncSocket *asyncSocket_;
 }
 
-@property(nonatomic,assign) id<SocketUtilDelegate>delegate;
+@property(nonatomic,assign) int iRetryCount;
 
--(void)sendTcp:(NSString *)host
-       andPort:(NSString *)port
-    andContent:(NSString *)content;
+-(void)initZhongKong;
 
 -(void)sendUdp:(NSString *)host
        andPort:(NSString *)port
     andContent:(NSString *)content;
 
+-(void)sendTcp:(NSString *)host
+       andPort:(NSString *)port;
 @end

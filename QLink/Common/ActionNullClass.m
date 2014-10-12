@@ -56,10 +56,10 @@
     
     [connection cancel];
     
-    if (iNumberOfTimesToRetryOnTimeout > [self iRetryCount]) {
+    if (NumberOfTimeout > [self iRetryCount]) {
         [self setIRetryCount:[self iRetryCount] + 1];
         [self initRequestActionNULL];
-    } else if ([self iRetryCount] == iNumberOfTimesToRetryOnTimeout) {
+    } else if ([self iRetryCount] == NumberOfTimeout) {
         [SVProgressHUD dismiss];
         
         if (self.delegate) {

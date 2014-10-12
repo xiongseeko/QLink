@@ -10,7 +10,6 @@
 #import "SenceConfigViewController.h"
 #import "ILBarButtonItem.h"
 #import "NetworkUtil.h"
-#import "DataUtil.h"
 #import "LightBcView.h"
 #import "LightBbView.h"
 #import "LightBriView.h"
@@ -350,12 +349,12 @@
 -(void)orderDelegatePressed:(OrderButton *)sender
 {
     if (!sender.orderObj) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"此按钮无效."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"关闭"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+//                                                        message:@"此按钮无效."
+//                                                       delegate:nil
+//                                              cancelButtonTitle:@"关闭"
+//                                              otherButtonTitles:nil, nil];
+//        [alert show];
         return;
     }
     
@@ -382,7 +381,7 @@
             [alert show];
         }
     } else {
-        NSLog(@"执行命令");
+        [self sendSocketOrder:sender.orderObj.OrderCmd];
     }
 }
 

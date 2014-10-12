@@ -15,12 +15,14 @@
 @end
 
 @interface ZKClass : NSObject
-{
-    NSMutableData *responseData_;
-}
+//{
+//    NSMutableData *responseData_;
+//}
 
 @property(nonatomic,assign) id<ZKClassDelegate>delegate;
-@property(nonatomic,assign) int iRetryCount;//连接次数
+@property(nonatomic,assign) NSOperationQueue *queue;
+//@property(nonatomic,assign) int iRetryCount;//连接次数
+
 
 -(id)init;
 -(void)initZhongKong;
