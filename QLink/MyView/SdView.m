@@ -28,4 +28,10 @@
 }
 */
 
+- (IBAction)btnPressed:(OrderButton *)sender
+{
+    if (self.delegate) {
+        [self.delegate orderDelegatePressed:sender];
+    }
+}
 @end

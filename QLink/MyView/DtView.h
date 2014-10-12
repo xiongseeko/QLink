@@ -8,7 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DtViewDelegate <NSObject>
+
+-(void)orderDelegatePressed:(OrderButton *)sender;
+
+@end
+
 @interface DtView : UIView
+
+@property(nonatomic,assign) id<DtViewDelegate>delegate;
 
 @property(nonatomic,strong) IBOutlet OrderButton *btnAr_ad;//音量＋
 @property(nonatomic,strong) IBOutlet OrderButton *btnAr_rd;//音量－
@@ -23,5 +31,6 @@
 @property(nonatomic,strong) IBOutlet OrderButton *btnPd_rd;//频道－
 
 
+- (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

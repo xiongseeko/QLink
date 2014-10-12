@@ -7,7 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SwView1.h"
+#import "RenameView.h"
+#import "GCDAsyncSocket.h"
+#import "GCDAsyncUdpSocket.h"
 
-@interface LightViewController : UIViewController
+@interface LightViewController : UIViewController<Sw1Delegate,RenameViewDelegate>
+{
+    long udpTag_;
+    
+    GCDAsyncUdpSocket *udpSocket_;
+    GCDAsyncSocket *asyncSocket_;
+}
 
 @end

@@ -30,7 +30,7 @@
 //
 
 #import "XMLDictionary.h"
-
+#import "DataUtil.h"
 
 #pragma GCC diagnostic ignored "-Wobjc-missing-property-synthesis"
 #pragma GCC diagnostic ignored "-Wdirect-ivar-access"
@@ -113,7 +113,7 @@
 
 - (NSDictionary *)dictionaryWithString:(NSString *)string
 {
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [string dataUsingEncoding:[DataUtil getGB2312Code]];
     return [self dictionaryWithData:data];
 }
 

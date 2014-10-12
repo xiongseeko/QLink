@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OrderButton.h"
 
 @interface LightBcView : UIView
 
@@ -17,5 +16,7 @@
 
 @property(nonatomic,strong) IBOutlet UISlider *btnBr;//亮度
 @property(nonatomic,strong) IBOutlet UISlider *btnCo;//色调
+
+- (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

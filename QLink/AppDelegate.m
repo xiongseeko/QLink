@@ -35,6 +35,11 @@
     }
     
     [self.window makeKeyAndVisible];
+    
+    //处理为正常模式
+    [DataUtil setGlobalModel:@""];//设置当前为正常模式
+    [SQLiteUtil removeShoppingCar];
+    
     return YES;
 }
 

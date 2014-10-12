@@ -20,7 +20,8 @@
 //执行的操作
 #define LOGIN @"login"
 #define ACTIONNULL @"NULL"
-
+#define ACTIONSETUP @"kfsetup"
+#define ACTIONSETUPZK @"setupzk"
 
 //请求次数
 #define iNumberOfTimesToRetryOnTimeout 3
@@ -30,8 +31,8 @@
 //场景类型
 #define MACRO @"macro"
 //add 标识
-#define SANSANADD @"SANSAN_ADD"
-
+#define SANSANADDMACRO @"SANSAN_MACRO_ADD"
+#define SANSANADDDEVICE @"SANSAN_DEVICE_ADD"
 
 //字体大小
 #define FONTSIZE 14
@@ -39,3 +40,12 @@
 //处理文本框内容 padding
 #define IOS7_OR_LATER  ([[[UIDevice currentDevice] systemVersion] compare:@"7.0"] != NSOrderedAscending)
 #define PADDINGLEFT IOS7_OR_LATER ? @"paddingLeft" : @"_paddingLeft"
+
+//全局变量Room属性名称
+#define GLOBALROOMATTR @"GLOBALATTRROOM_UD"
+#define GLOBALMODALATTR @"GLOBALATTRMODAL_UD"
+#define Model_AddSence @"Model_AddSence"//全局变量值
+#define Model_Study @"Model_Study"
+
+
+

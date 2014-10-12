@@ -11,8 +11,9 @@
 #import "iConView.h"
 #import "IconViewController.h"
 #import "RenameView.h"
+#import "SenceConfigViewController.h"
 
-@interface MainViewController : UIViewController<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,iConViewDelegate,UIAlertViewDelegate,IconViewControllerDelegate,RenameViewDelegate>
+@interface MainViewController : UIViewController<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,iConViewDelegate,UIAlertViewDelegate,IconViewControllerDelegate,RenameViewDelegate,SenceConfigViewControllerDelegate>
 
 @property (strong, nonatomic) REMenu *menu;
 

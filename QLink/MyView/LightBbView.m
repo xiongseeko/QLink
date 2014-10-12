@@ -28,4 +28,19 @@
 }
 */
 
+- (IBAction)btnPressed:(OrderButton *)sender
+{
+    NSLog(@"=====%@",sender.orderObj.OrderName);
+}
+
+- (IBAction)btnLightPressed:(OrderButton *)sender
+{
+    NSLog(@"=====%@",sender.orderObj.OrderName);
+}
+
+-(IBAction)btnColorPressed:(OrderButton *)sender
+{
+    NSLog(@"=====%@",sender.orderObj.OrderName);
+}
+
 @end

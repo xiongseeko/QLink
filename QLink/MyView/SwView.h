@@ -8,9 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol SwViewDelegate <NSObject>
+
+-(void)orderDelegatePressed:(OrderButton *)sender;
+
+@end
+
 @interface SwView : UIView
+
+@property(nonatomic,assign) id<SwViewDelegate>delegate;
 
 @property(nonatomic,strong) IBOutlet OrderButton *btnOn;
 @property(nonatomic,strong) IBOutlet OrderButton *btnOff;
+
+
+- (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

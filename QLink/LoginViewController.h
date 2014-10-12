@@ -7,15 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ActionNullClass.h"
 
-@interface LoginViewController : UIViewController<UITextFieldDelegate>
+@interface LoginViewController : UIViewController<UITextFieldDelegate,ActionNullClassDelegate>
 
 @property(nonatomic,strong) IBOutlet UITextField *tfKey;
 @property(nonatomic,strong) IBOutlet UITextField *tfName;
 @property(nonatomic,strong) IBOutlet UITextField *tfPassword;
 @property(nonatomic,strong) IBOutlet UIButton *btnRemeber;
-
-@property(nonatomic,assign) int iRetryCount;//连接次数
 
 -(IBAction)btnLogin;
 -(IBAction)btnRemeberPressed:(UIButton *)sender;

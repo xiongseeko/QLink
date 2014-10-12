@@ -24,6 +24,26 @@
 //判断是否为nil,nil则返回空
 +(NSString *)getDefaultValue:(NSString *)value;
 
+//全局变量
++(GlobalAttr *)shareInstanceToRoom;
+
+//更新房间号
++(void)setGlobalAttrRoom:(NSString *)roomId;
+
+//设置全局模式
++(void)setGlobalModel:(NSString *)global;
+
+//获取全局模式类型
++(NSString *)getGlobalModel;
+
++(NSStringEncoding)getGB2312Code;
+
+//设置编辑的场景id
++(void)setUpdateInsertSenceInfo:(NSString *)senceId
+                   andSenceName:(NSString *)senceName;
+
++ (NSString *)hexStringFromString:(NSString *)string;
+
 @end
 
 /************************************************************************************/
@@ -105,6 +125,15 @@
               andLayerId:(NSString *)layerId
                andRoomId:(NSString *)roomId;
 
+//获取具体场景命令集合
++(NSMutableArray *)getOrderBySenceId:(NSString *)senceId;
+
+//更新场景下命令和时间
++(BOOL)updateCmdListBySenceId:(NSString *)senceId andSenceName:(NSString *)senceName andCmdList:(NSString *)cmdLists;
+
+//添加场景
++(BOOL)insertSence:(Sence *)obj;
+
 //获取设备列表
 +(NSArray *)getDeviceList:(NSString *)houseId
                andLayerId:(NSString *)layerId
@@ -136,8 +165,39 @@
 //获取该设备下所有命令类型
 +(NSArray *)getOrderTypeGroupOrder:(NSString *)deviceId;
 
-//获取指定设备下指定类型的命令集合
+//获取指定设备下指定类型的命令集合,用于非照明设备命令查询
 +(NSArray *)getOrderListByDeviceId:(NSString *)deviceId andType:(NSString *)type;
+
+//获取指定设备下指定类型的命令集合,用于照明设备命令查询
++(NSArray *)getOrderListByDeviceId:(NSString *)deviceId;
+
+//获取当前房间下所有的照明设备
++(NSArray *)getLightDevice:(NSString *)houseId
+                andLayerId:(NSString *)layerId
+                 andRoomId:(NSString *)roomId;
+
+//获取当前房间下所有的照明设备(除了type＝‘light’)，考虑到先加载type＝‘light’的照明控件，所以分开取数据
++(NSArray *)getLightComplexDevice:(NSString *)houseId
+                       andLayerId:(NSString *)layerId
+                        andRoomId:(NSString *)roomId;
+
+//添加命令到购物车表，用于构建场景
++(BOOL)addOrderToShoppingCar:(NSString *)orderId andDeviceId:(NSString *)deviceId;
+
+//获取购物车里的命令
++(NSMutableArray *)getShoppingCarOrder;
+
+//删除所有添加的场景命令
++(BOOL)removeShoppingCar;
+
+//获取购物车数量
++(int)getShoppingCarCount;
+
+//移除购物车的某条命令
++(BOOL)removeShoppingCarByOrderId:(NSString *)orderId;
+
+//获取全局配置信息
++(Control *)getControlObj;
 
 @end
 

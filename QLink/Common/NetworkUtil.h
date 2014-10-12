@@ -20,11 +20,17 @@
 //获取 Action URL
 +(NSString *)getAction:(NSString *)action;
 
-//修改场景URL
+//修改场景名称URL
 +(NSString *)getChangeSenceName:(NSString *)newName andSenceId:(NSString *)senceId;
 
-//修改设备URL
+//修改设备名称URL
 +(NSString *)getChangeDeviceName:(NSString *)newName andDeviceId:(NSString *)deviceId;
+
+//编辑场景
++(NSString *)getEditSence:(NSString *)senceId
+             andSenceName:(NSString *)senceName
+                   andCmd:(NSString *)cmds
+                  andTime:(NSString *)times;
 
 //删除场景
 +(NSString *)getDelSence:(NSString *)senceId;

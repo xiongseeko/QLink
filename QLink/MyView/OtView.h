@@ -9,9 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "OrderButton.h"
 
+@protocol OtViewDelegate <NSObject>
+
+-(void)orderDelegatePressed:(OrderButton *)sender;
+
+@end
+
 @interface OtView : UIView
+
+@property(nonatomic,assign) id<OtViewDelegate>delegate;
 
 @property(nonatomic,strong) IBOutlet OrderButton *btnLeft;
 @property(nonatomic,strong) IBOutlet OrderButton *btnRight;
+
+- (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

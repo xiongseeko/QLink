@@ -15,6 +15,9 @@
 #import "NetworkUtil.h"
 #import "RemoteViewController.h"
 #import "LightViewController.h"
+#import "DeviceConfigViewController.h"
+#import "AboutViewController.h"
+#import "SenceConfigViewController.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -32,6 +35,8 @@
     int deviceRowCount_;
     
     RenameView *renameView_;
+    
+    int svHeight_;
 }
 @end
 
@@ -55,6 +60,8 @@
     [self initNavigation];
     
     [self initControl];
+    
+    [self registerNotification];
 }
 
 #pragma mark -
@@ -92,12 +99,24 @@
     self.navigationItem.rightBarButtonItem = rightBtn;
 }
 
+-(void)setAddSenceModelNavigation
+{
+    ILBarButtonItem *senceModel =
+    [ILBarButtonItem barItemWithImage:[UIImage imageNamed:@"sence_cancle.png"]
+                        selectedImage:[UIImage imageNamed:@"sence_cancle.png"]
+                               target:self
+                               action:@selector(btnCancleSenceModel)];
+    
+    self.navigationItem.leftBarButtonItem = senceModel;
+}
+
 //设置控件
 -(void)initControl
 {
     self.navigationItem.titleView.hidden = YES;
     
-    _svBig.contentSize = CGSizeMake(640, _svBig.frame.size.height);
+    _svBig.frame = CGRectMake(0, 29, 320, svHeight_);
+    _svBig.contentSize = CGSizeMake(640, svHeight_);
     _svBig.delegate = self;
     
     _tvScene.delegate = self;
@@ -116,7 +135,7 @@
 
 -(void)initSence
 {
-    GlobalAttr *obj = [GlobalAttr shareInstance];
+    GlobalAttr *obj = [DataUtil shareInstanceToRoom];
     senceArr_ = [SQLiteUtil getSenceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
     
     senceCount_ = [senceArr_ count];
@@ -127,7 +146,7 @@
 
 -(void)initDevice
 {
-    GlobalAttr *obj = [GlobalAttr shareInstance];
+    GlobalAttr *obj = [DataUtil shareInstanceToRoom];
     deviceArr_ = [SQLiteUtil getDeviceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
     
     deviceCount_ = [deviceArr_ count];
@@ -138,7 +157,7 @@
 
 -(void)initData
 {
-    GlobalAttr *obj = [GlobalAttr shareInstance];
+    GlobalAttr *obj = [DataUtil shareInstanceToRoom];
     
     senceArr_ = [SQLiteUtil getSenceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
     senceCount_ = [senceArr_ count];
@@ -149,6 +168,13 @@
     deviceRowCount_ = deviceCount_%3 == 0 ? deviceCount_/3 : (deviceCount_/3 + 1);
     
     roomArr_ = [SQLiteUtil getRoomList:obj.HouseId andLayerId:obj.LayerId];
+    
+    svHeight_ = [UIScreen mainScreen].applicationFrame.size.height - 44 - 29;
+}
+
+-(void)registerNotification
+{
+    [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(refreshSenceTab) name:@"refreshSenceTab" object:nil];
 }
 
 #pragma mark -
@@ -165,7 +191,7 @@
     self.navigationItem.titleView.hidden = YES;
     
     CGRect rect = CGRectMake(0, 0,
-                             320, _svBig.frame.size.height);
+                             320, svHeight_);
     [_svBig scrollRectToVisible:rect animated:NO];
 }
 -(IBAction)btnDevicePressed:(UIButton *)sender
@@ -179,7 +205,7 @@
     self.navigationItem.titleView.hidden = NO;
     
     CGRect rect = CGRectMake(320, 0,
-                             320, _svBig.frame.size.height);
+                             320, svHeight_);
     [_svBig scrollRectToVisible:rect animated:NO];
 }
 
@@ -188,6 +214,10 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if ([scrollView isKindOfClass:[UITableView class]]) {
+        return;
+    }
+    
     // 根据当前的x坐标和页宽度计算出当前页数
     int currentPage = floor((scrollView.contentOffset.x - 320 / 2) / 320) + 1;
     if (currentPage == 0) {
@@ -211,7 +241,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (tableView.tag == 101) {//场景
         return senceRowCount_;
-    }else{
+    }else{//设备
         return deviceRowCount_;
     }
 }
@@ -339,9 +369,26 @@
     
     if ([pType isEqualToString:MACRO]) {//场景
         
-    }else if([pType isEqualToString:@"light"]){ // 照明
+    } else if([pType isEqualToString:@"light"]){ // 照明
         LightViewController *lightVC = [[LightViewController alloc] init];
         [self.navigationController pushViewController:lightVC animated:YES];
+    } else if([pType isEqualToString:SANSANADDDEVICE]){ // 添加设备
+        DeviceConfigViewController *deviceConfigVC = [[DeviceConfigViewController alloc] init];
+        [self.navigationController pushViewController:deviceConfigVC animated:YES];
+    } else if([pType isEqualToString:SANSANADDMACRO]){ // 添加场景
+        
+        [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
+        
+        [DataUtil setGlobalModel:Model_AddSence];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"您已进入选择模式,所有按键失效,请选择您要构成场景的动作."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        CGRect rect = CGRectMake(320, 0, 320, _svBig.frame.size.height);
+        [_svBig scrollRectToVisible:rect animated:NO];
+        [self setAddSenceModelNavigation];
     } else { //设备
         Device *obj = [deviceArr_ objectAtIndex:index];
         
@@ -380,9 +427,9 @@
 {
     NSString *sUrl = @"";
     
-    if ([pType isEqualToString:MACRO]) {
+    if ([pType isEqualToString:MACRO]) {//场景
         sUrl = [NetworkUtil getChangeSenceName:newName andSenceId:deviceId];
-    }else{
+    }else{//设备
         sUrl = [NetworkUtil getChangeDeviceName:newName andDeviceId:deviceId];
     }
     
@@ -476,8 +523,11 @@
             }
             case 4://编辑
             {
+                [DataUtil setUpdateInsertSenceInfo:deviceId andSenceName:deviceName];
                 
-                
+                SenceConfigViewController *configVC = [[SenceConfigViewController alloc] init];
+                configVC.delegate = self;
+                [self.navigationController pushViewController:configVC animated:YES];
                 break;
             }
             default:
@@ -516,8 +566,6 @@
                                                   otherButtonTitles:nil, nil];
             [alert show];
             
-            [self hiddenRenameView];
-            
         }else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                             message:@"删除失败.请稍后再试."
@@ -527,6 +575,23 @@
             [alert show];
         }
     }
+}
+
+#pragma mark -
+#pragma mark SenDelegate
+
+-(void)refreshSenceTab
+{
+    [self btnCancleSenceModel];
+    
+    [self initSence];
+}
+
+-(void)goOnChoose
+{
+    [DataUtil setGlobalModel:Model_AddSence];
+    CGRect rect = CGRectMake(320, 0, 320, _svBig.frame.size.height);
+    [_svBig scrollRectToVisible:rect animated:NO];
 }
 
 #pragma mark -
@@ -578,8 +643,8 @@
       
       [KxMenuItem menuItem:@"正常模式"
                      image:nil
-                    target:nil
-                    action:NULL],
+                    target:self
+                    action:@selector(pushMenuItem:)],
       
       [KxMenuItem menuItem:@"紧急模式"
                      image:nil
@@ -626,7 +691,7 @@
     
     [btnTitle setTitle:obj.RoomName forState:UIControlStateNormal];
     
-    [GlobalAttr setGlobalAttr:obj.RoomId];
+    [DataUtil setGlobalAttrRoom:obj.RoomId];
     
     [self initSence];
     
@@ -634,9 +699,13 @@
 }
 
 //点击下拉事件
-- (void)pushMenuItem:(id)sender
+- (void)pushMenuItem:(KxMenuItem *)sender
 {
     NSLog(@"*****%@", sender);
+    if ([sender.title isEqualToString:@"关于"]) {
+        AboutViewController *aboutVC = [[AboutViewController alloc] init];
+        [self.navigationController pushViewController:aboutVC animated:YES];
+    }
 }
 
 //隐藏重命名浮层
@@ -645,6 +714,17 @@
     renameView_.hidden = YES;
     [renameView_.tfContent resignFirstResponder];
 }
+
+//取消场景模式
+-(void)btnCancleSenceModel
+{
+    [DataUtil setGlobalModel:@""];
+    [SQLiteUtil removeShoppingCar];
+    self.navigationItem.leftBarButtonItem = nil;
+    CGRect rect = CGRectMake(0, 0, 320, _svBig.frame.size.height);
+    [_svBig scrollRectToVisible:rect animated:NO];
+}
+
 
 #pragma mark -
 

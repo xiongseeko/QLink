@@ -21,6 +21,10 @@
 
 -(void)setIcon:(NSString *)icon andTitle:(NSString *)title
 {
+    if ([icon isEqualToString:@"nodefine"]) {
+        icon = @"other";
+    }
+    
     self.imgName = [icon stringByAppendingString:@".png"];
     self.imgNameSel = [icon stringByAppendingString:@"_select.png"];
     
@@ -39,7 +43,7 @@
     lTitle.font = [UIFont systemFontOfSize:FONTSIZE];
     [self addSubview:lTitle];
     
-    if (![icon isEqualToString:SANSANADD]) {
+    if (![icon isEqualToString:SANSANADDMACRO] && ![icon isEqualToString:@"light"] && ![icon isEqualToString:SANSANADDDEVICE]) {
         //实例化长按手势监听
         UILongPressGestureRecognizer *longPress =
         [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressed:)];

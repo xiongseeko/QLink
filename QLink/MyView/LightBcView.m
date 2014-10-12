@@ -19,11 +19,12 @@
     return self;
 }
 
--(void)setSliderStyle
+-(void)awakeFromNib
 {
     [_btnBr setThumbImage:[UIImage imageNamed:@"light_roundButton.png"] forState:UIControlStateNormal];
     [_btnCo setThumbImage:[UIImage imageNamed:@"light_roundButton.png"] forState:UIControlStateNormal];
 }
+
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -33,5 +34,10 @@
     // Drawing code
 }
 */
+
+- (IBAction)btnPressed:(OrderButton *)sender
+{
+    NSLog(@"=====%@",sender.orderObj.OrderName);
+}
 
 @end

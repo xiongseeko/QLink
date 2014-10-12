@@ -13,30 +13,6 @@
 
 @implementation GlobalAttr
 
-+(GlobalAttr *)shareInstance
-{
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *globalAttrDic = [ud objectForKey:@"GLOBALATTR_UD"];
-    
-    GlobalAttr *obj = [[GlobalAttr alloc] init];
-    obj.LayerId = [globalAttrDic objectForKey:@"LayerId"];
-    obj.RoomId = [globalAttrDic objectForKey:@"RoomId"];
-    obj.HouseId = [globalAttrDic objectForKey:@"HouseId"];
-    
-    return obj;
-}
-
-//更新房间号
-+(void)setGlobalAttr:(NSString *)roomId
-{
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *globalAttrDic = [ud objectForKey:@"GLOBALATTR_UD"];
-    NSMutableDictionary *newDic = [NSMutableDictionary dictionaryWithDictionary:globalAttrDic];
-    [newDic setObject:roomId forKey:@"RoomId"];
-    [ud setObject:newDic forKey:@"GLOBALATTR_UD"];
-    [ud synchronize];
-}
-
 @end
 
 @implementation Control

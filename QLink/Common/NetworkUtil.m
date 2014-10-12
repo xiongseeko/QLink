@@ -33,8 +33,7 @@
     return [NSString stringWithFormat:@"%@&action=%@",[self getBaseUrl],action];
 }
 
-
-//修改场景URL
+//修改场景名称URL
 +(NSString *)getChangeSenceName:(NSString *)newName andSenceId:(NSString *)senceId
 {
     NSString *sUrl = [NSString stringWithFormat:@"%@&action=savekfchang&dx=2&classname=macro&Id=%@&ChangVar=%@",[self getBaseUrl],senceId,newName];
@@ -42,10 +41,18 @@
     return sUrl;
 }
 
-//修改设备URL
+//修改设备名称URL
 +(NSString *)getChangeDeviceName:(NSString *)newName andDeviceId:(NSString *)deviceId
 {
     NSString *sUrl = [NSString stringWithFormat:@"%@&action=savekfchang&dx=1&Id=%@&ChangVar=%@",[self getBaseUrl],deviceId,newName];
+    sUrl = [sUrl stringByAddingPercentEscapesUsingEncoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)];
+    return sUrl;
+}
+
+//编辑场景
++(NSString *)getEditSence:(NSString *)senceId andSenceName:(NSString *)senceName andCmd:(NSString *)cmds andTime:(NSString *)times
+{
+    NSString *sUrl = [NSString stringWithFormat:@"%@&action=macro&macroid=%@&macroname=%@&mcmd=%@&mtime=%@",[self getBaseUrl],senceId,senceName,cmds,times];
     sUrl = [sUrl stringByAddingPercentEscapesUsingEncoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)];
     return sUrl;
 }

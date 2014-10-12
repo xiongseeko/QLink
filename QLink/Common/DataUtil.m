@@ -49,6 +49,88 @@
     }
 }
 
+//全局变量
++(GlobalAttr *)shareInstanceToRoom
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSDictionary *globalAttrDic = [ud objectForKey:GLOBALROOMATTR];
+    
+    GlobalAttr *obj = [[GlobalAttr alloc] init];
+    obj.LayerId = [globalAttrDic objectForKey:@"LayerId"];
+    obj.RoomId = [globalAttrDic objectForKey:@"RoomId"];
+    obj.HouseId = [globalAttrDic objectForKey:@"HouseId"];
+    
+    return obj;
+}
+
+//更新房间号
++(void)setGlobalAttrRoom:(NSString *)roomId
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSDictionary *globalAttrDic = [ud objectForKey:GLOBALROOMATTR];
+    NSMutableDictionary *newDic = [NSMutableDictionary dictionaryWithDictionary:globalAttrDic];
+    [newDic setObject:roomId forKey:@"RoomId"];
+    [ud setObject:newDic forKey:GLOBALROOMATTR];
+    [ud synchronize];
+}
+
+//设置全局模式
++(void)setGlobalModel:(NSString *)global
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setObject:global forKey:GLOBALMODALATTR];
+    [ud synchronize];
+}
+
+//获取全局模式类型
++(NSString *)getGlobalModel
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSString *model = [ud objectForKey:GLOBALMODALATTR];
+    if ([self checkNullOrEmpty:model]) {
+        return @"";
+    }
+    return model;
+}
+
++(NSStringEncoding)getGB2312Code
+{
+    NSStringEncoding enc = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
+    return enc;
+}
+
+//设置编辑的场景id
++(void)setUpdateInsertSenceInfo:(NSString *)senceId
+                   andSenceName:(NSString *)senceName
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setObject:senceId forKey:@"SenceId"];
+    [ud setObject:senceName forKey:@"SenceName"];
+    [ud synchronize];
+}
+
++ (NSString *)hexStringFromString:(NSString *)string
+{
+    NSData *myD = [string dataUsingEncoding:NSUTF8StringEncoding];
+    Byte *bytes = (Byte *)[myD bytes];
+    //下面是Byte 转换为16进制。
+    NSString *hexStr=@"";
+    for(int i=0;i<[myD length];i++)
+        
+    {
+        NSString *newHexStr = [NSString stringWithFormat:@"%x",bytes[i]&0xff];///16进制数
+        
+        if([newHexStr length]==1)
+            
+            hexStr = [NSString stringWithFormat:@"%@0%@",hexStr,newHexStr];
+        
+        else
+            
+            hexStr = [NSString stringWithFormat:@"%@%@",hexStr,newHexStr]; 
+    } 
+    return hexStr; 
+}
+
 @end
 
 /************************************************************************************/
@@ -92,7 +174,7 @@
 
 @end
 
-/************************************************************************************/
+/*************************************** 配置信息 *********************************************/
 
 @implementation Config
 
@@ -320,7 +402,7 @@
             [dic setObject:[DataUtil getDefaultValue:[rs stringForColumn:@"HouseId"]] forKey:@"HouseId"];
             
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-            [ud setObject:dic forKey:@"GLOBALATTR_UD"];
+            [ud setObject:dic forKey:GLOBALROOMATTR];
             [ud synchronize];
             
             break;
@@ -409,11 +491,96 @@
     
     //add图标
     Sence *senceObj = [[Sence alloc] init];
-    senceObj.Type = SANSANADD;
+    senceObj.Type = SANSANADDMACRO;
     senceObj.SenceName = @"添加场景";
     [senceArr addObject:senceObj];
     
     return senceArr;
+}
+
+//获取具体场景命令集合
++(NSMutableArray *)getOrderBySenceId:(NSString *)senceId
+{
+    NSMutableArray *orderArr = [NSMutableArray array];
+    
+    FMDatabase *db = [self getDB];
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT SENCEID, SENCENAME, CMDLIST FROM SENCE WHERE SENCEID='%@'",senceId];
+    
+    Sence *obj = [[Sence alloc] init];
+    
+    if ([db open]) {
+        
+        FMResultSet *rs = [db executeQuery:sql];
+        if ([rs next]){
+            obj.SenceId = [rs stringForColumn:@"SenceId"];
+            obj.SenceName = [rs stringForColumn:@"SenceName"];
+            obj.CmdList = [rs stringForColumn:@"CmdList"];
+        }
+        
+        [rs close];
+        
+        NSArray *cmdListArr = [obj.CmdList componentsSeparatedByString:@"|"];
+        NSArray *orderIdArr = [[cmdListArr objectAtIndex:0] componentsSeparatedByString:@","];
+        NSArray *timerArr = [[cmdListArr objectAtIndex:1] componentsSeparatedByString:@","];
+        
+        for (int i = 0; i < [orderIdArr count];i ++) {
+            NSString *subSql = [NSString stringWithFormat:@"SELECT O.ORDERID,O.ORDERNAME,D.DEVICEID,D.DEVICENAME,D.TYPE,I.NEWTYPE FROM ORDERS O LEFT JOIN DEVICE D ON O.DEVICEID=D.DEVICEID  LEFT JOIN ICON I ON O.DEVICEID=I.DEVICEID  WHERE O.ORDERID='%@'",[orderIdArr objectAtIndex:i]];
+            FMResultSet *rs = [db executeQuery:subSql];
+            if ([rs next])
+            {
+                Sence *subobj = [[Sence alloc] init];
+                subobj.SenceId = [rs stringForColumn:@"DeviceId"];
+                subobj.OrderId = [rs stringForColumn:@"OrderId"];
+                subobj.SenceName = [rs stringForColumn:@"DeviceName"];
+                subobj.OrderName = [rs stringForColumn:@"OrderName"];
+                subobj.Type = [rs stringForColumn:@"Type"];
+                subobj.IconType = [rs stringForColumn:@"NewType"];
+                subobj.Timer = [timerArr objectAtIndex:i];
+                [orderArr addObject:subobj];
+            }
+            
+            [rs close];
+        }
+    }
+    
+    [db close];
+    
+    return orderArr;
+}
+
+//更新场景下命令和时间
++(BOOL)updateCmdListBySenceId:(NSString *)senceId andSenceName:(NSString *)senceName andCmdList:(NSString *)cmdLists
+{
+    NSString *sql = [NSString stringWithFormat:@"UPDATE SENCE SET CMDLIST='%@' , SENCENAME='%@' WHERE SENCEID='%@'",cmdLists,senceName,senceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//添加场景
++(BOOL)insertSence:(Sence *)obj
+{
+    GlobalAttr *globalAttr = [DataUtil shareInstanceToRoom];
+    
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO SENCE (SENCEID,SENCENAME,MACROCMD,TYPE,CMDLIST,HOUSEID,LAYERID,ROOMID) VALUES('%@','%@','%@','%@','%@','%@','%@','%@')",obj.SenceId,obj.SenceName,obj.Macrocmd,@"macro",obj.CmdList,globalAttr.HouseId,globalAttr.LayerId,globalAttr.RoomId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
 }
 
 //获取设备列表
@@ -468,7 +635,7 @@
     
     //add图标
     Device *deviceObj = [[Device alloc] init];
-    deviceObj.Type = SANSANADD;
+    deviceObj.Type = SANSANADDDEVICE;
     deviceObj.DeviceName = @"添加设备";
     [deviceArr addObject:deviceObj];
     
@@ -615,7 +782,7 @@
     return typeArr;
 }
 
-//获取指定设备下指定类型的命令集合
+//获取指定设备下指定类型的命令集合,用于非照明设备命令查询
 +(NSArray *)getOrderListByDeviceId:(NSString *)deviceId andType:(NSString *)type
 {
     NSMutableArray *orderArr = [NSMutableArray array];
@@ -648,6 +815,224 @@
     [db close];
     
     return orderArr;
+}
+
+//获取指定设备下指定类型的命令集合,用于照明设备命令查询
++(NSArray *)getOrderListByDeviceId:(NSString *)deviceId
+{
+    NSMutableArray *orderArr = [NSMutableArray array];
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT * FROM ORDERS WHERE DEVICEID='%@' ORDER BY SUBTYPE ASC",deviceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            Order *obj = [Order setOrderId:[rs stringForColumn:@"OrderId"]
+                              andOrderName:[rs stringForColumn:@"OrderName"]
+                                   andType:[rs stringForColumn:@"Type"]
+                                andSubType:[rs stringForColumn:@"SubType"]
+                               andOrderCmd:[rs stringForColumn:@"OrderCmd"]
+                                andAddress:[rs stringForColumn:@"Address"]
+                               andStudyCmd:[rs stringForColumn:@"StudyCmd"]
+                                andOrderNo:[rs stringForColumn:@"OrderNo"]
+                                andHouseId:[rs stringForColumn:@"HouseId"]
+                                andLayerId:[rs stringForColumn:@"LayerId"]
+                                 andRoomId:[rs stringForColumn:@"RoomId"]
+                               andDeviceId:[rs stringForColumn:@"DeviceId"]];
+            [orderArr addObject:obj];
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return orderArr;
+}
+
+//获取当前房间下所有的照明设备
++(NSArray *)getLightDevice:(NSString *)houseId
+                andLayerId:(NSString *)layerId
+                 andRoomId:(NSString *)roomId
+{
+    NSMutableArray *deviceArr = [NSMutableArray array];
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT DeviceId,DeviceName,Type FROM DEVICE WHERE TYPE IN ('light','light_1','light_check') AND HOUSEID='%@' AND LAYERID='%@' AND ROOMID='%@' ORDER BY TYPE ASC",houseId,layerId,roomId];
+    FMDatabase *db = [self getDB];
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            
+            Device *obj = [[Device alloc] init];
+            obj.DeviceId = [rs stringForColumn:@"DeviceId"];
+            obj.DeviceName = [rs stringForColumn:@"DeviceName"];
+            obj.Type = [rs stringForColumn:@"Type"];
+            
+            [deviceArr addObject:obj];
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return deviceArr;
+}
+
+//获取当前房间下所有的照明设备(除了type＝‘light’)，考虑到先加载type＝‘light’的照明控件，所以分开取数据
++(NSArray *)getLightComplexDevice:(NSString *)houseId
+                andLayerId:(NSString *)layerId
+                 andRoomId:(NSString *)roomId
+{
+    NSMutableArray *deviceArr = [NSMutableArray array];
+    
+    NSString *keyWord = @"%light%";
+    NSString *sql = [NSString stringWithFormat:@"SELECT DeviceId,DeviceName,Type FROM DEVICE WHERE TYPE LIKE '%@' AND HOUSEID='%@' AND LAYERID='%@' AND ROOMID='%@' AND TYPE NOT IN ('light','light_1','light_check') ORDER BY TYPE ASC",keyWord,houseId,layerId,roomId];
+    FMDatabase *db = [self getDB];
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            
+            Device *obj = [[Device alloc] init];
+            obj.DeviceId = [rs stringForColumn:@"DeviceId"];
+            obj.DeviceName = [rs stringForColumn:@"DeviceName"];
+            obj.Type = [rs stringForColumn:@"Type"];
+            
+            [deviceArr addObject:obj];
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return deviceArr;
+}
+
+//添加命令到购物车表，用于构建场景
++(BOOL)addOrderToShoppingCar:(NSString *)orderId andDeviceId:(NSString *)deviceId
+{
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO SHOPPINGCAR (ORDERID,DEVICEID) VALUES ('%@','%@')",orderId,deviceId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//获取购物车里的命令
++(NSMutableArray *)getShoppingCarOrder
+{
+    NSMutableArray *orderArr = [NSMutableArray array];
+    
+    NSString *sql = @"SELECT S.ORDERID,S.DEVICEID,O.ORDERNAME,D.DEVICENAME,D.TYPE,I.NEWTYPE FROM SHOPPINGCAR S LEFT JOIN ORDERS O ON S.ORDERID=O.ORDERID LEFT JOIN DEVICE D ON S.DEVICEID=D.DEVICEID LEFT JOIN ICON I ON S.DEVICEID=I.DEVICEID";
+    FMDatabase *db = [self getDB];
+    
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        while ([rs next]){
+            
+            Sence *obj = [[Sence alloc] init];
+            obj.SenceId = [rs stringForColumn:@"DeviceId"];
+            obj.OrderId = [rs stringForColumn:@"OrderId"];
+            obj.SenceName = [rs stringForColumn:@"DeviceName"];
+            obj.OrderName = [rs stringForColumn:@"OrderName"];
+            obj.Type = [rs stringForColumn:@"Type"];
+            obj.IconType = [rs stringForColumn:@"NewType"];
+            obj.Timer = @"5";
+            [orderArr addObject:obj];
+        }
+        
+        [rs close];
+    }
+    
+    [db close];
+    
+    return orderArr;
+}
+
+//删除所有添加的场景命令
++(BOOL)removeShoppingCar
+{
+    NSString *sql = @"DELETE FROM SHOPPINGCAR";
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//获取购物车数量
++(int)getShoppingCarCount
+{
+    int totalCount = 0;
+    
+    FMDatabase *db = [self getDB];
+    
+    NSString *sql = @"SELECT COUNT(*) FROM SHOPPINGCAR";
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        if ([rs next]) {
+            totalCount = [rs intForColumnIndex:0];
+        }
+    }
+    
+    [db close];
+    
+    return totalCount;
+}
+
+//移除购物车的某条命令
++(BOOL)removeShoppingCarByOrderId:(NSString *)orderId
+{
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM SHOPPINGCAR WHERE ORDERID='%@'",orderId];
+    
+    FMDatabase *db = [self getDB];
+    
+    [db open];
+    
+    BOOL bResult = [db executeUpdate:sql];
+    
+    [db close];
+    
+    return bResult;
+}
+
+//获取全局配置信息
++(Control *)getControlObj
+{
+    FMDatabase *db = [self getDB];
+    Control *obj = nil;
+    NSString *sql = @"SELECT * FROM Control";
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        if ([rs next]) {
+            obj = [Control setIp:[rs stringForColumn:@"Ip"]
+                     andSendType:[rs stringForColumn:@"SendType"]
+                         andPort:[rs stringForColumn:@"Port"]
+                       andDomain:[rs stringForColumn:@"Domain"]
+                          andUrl:[rs stringForColumn:@"Url"]
+                    andUpdatever:[rs stringForColumn:@"Updatever"]];
+        }
+    }
+    
+    [db close];
+    
+    return obj;
 }
 
 @end

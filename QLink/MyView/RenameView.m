@@ -7,6 +7,7 @@
 //
 
 #import "RenameView.h"
+#import "DataUtil.h"
 
 @implementation RenameView
 
@@ -31,8 +32,22 @@
 
 -(IBAction)btnConfirm
 {
+    if ([DataUtil checkNullOrEmpty:_tfContent.text]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"您还没有输入名称." delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        
+        return;
+    }
+    
     if (self.delegate) {
-        [self.delegate handleConfirmPressed:_pDeviceId andNewName:_tfContent.text andType:_pType];
+        if (_lTitle) {//照明重命名
+            [self.delegate handleConfirmPressed:_pDeviceId andNewName:_tfContent.text andLabel:_lTitle];
+        }else{
+            [self.delegate handleConfirmPressed:_pDeviceId andNewName:_tfContent.text andType:_pType];
+        }
     }
 }
 

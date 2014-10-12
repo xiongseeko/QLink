@@ -8,6 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol NmViewDelegate <NSObject>
+
+-(void)orderDelegatePressed:(OrderButton *)sender;
+
+@end
+
 @interface NmView : UIView
+
+@property(nonatomic,assign) id<NmViewDelegate>delegate;
+
+- (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

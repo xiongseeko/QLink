@@ -10,4 +10,11 @@
 
 @interface LightBriView : UIView
 
+@property(nonatomic,strong) IBOutlet UILabel *lTitle;
+@property(nonatomic,strong) IBOutlet OrderButton *btnOn;
+@property(nonatomic,strong) IBOutlet OrderButton *btnOff;
+@property (strong, nonatomic) IBOutlet UISlider *sliderLight;
+
+- (IBAction)btnPressed:(OrderButton *)sender;
+
 @end

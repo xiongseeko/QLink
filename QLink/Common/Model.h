@@ -13,14 +13,10 @@
 //存储全局变量
 @interface GlobalAttr : NSObject
 
+//当前房间信息
 @property(nonatomic,strong) NSString *LayerId;
 @property(nonatomic,strong) NSString *RoomId;
 @property(nonatomic,strong) NSString *HouseId;
-
-+(GlobalAttr *)shareInstance;
-
-//更新房间号
-+(void)setGlobalAttr:(NSString *)roomId;
 
 @end
 
@@ -131,6 +127,9 @@
 @property(nonatomic,strong) NSString *RoomId;
 @property(nonatomic,strong) NSString *IconType;
 
+@property(nonatomic,strong) NSString *OrderId;
+@property(nonatomic,strong) NSString *OrderName;
+@property(nonatomic,strong) NSString *Timer;
 
 +(Sence *)setSenceId:(NSString *)senceId
         andSenceName:(NSString *)senceName

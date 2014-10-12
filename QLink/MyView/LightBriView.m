@@ -28,4 +28,14 @@
 }
 */
 
+-(void)awakeFromNib
+{
+    _sliderLight.frame = CGRectMake(100, 44, 206, 5);
+    [_sliderLight setThumbImage:[UIImage imageNamed:@"light_roundButton.png"] forState:UIControlStateNormal];
+}
+
+- (IBAction)btnPressed:(OrderButton *)sender
+{
+    NSLog(@"=====%@",sender.orderObj.OrderName);
+}
 @end

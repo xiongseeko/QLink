@@ -12,7 +12,7 @@
 #import "NetworkUtil.h"
 #import "SVProgressHUD.h"
 #import "MyURLConnection.h"
-#import "XMLDictionary.h"
+#import "ASIHTTPRequest.h"
 
 @interface LoginViewController ()
 {
@@ -79,31 +79,15 @@
     [SVProgressHUD showWithStatus:@"正在验证..."];
     
     NSString *sUrl = [NetworkUtil getActionLogin:_tfName.text andUPwd:_tfPassword.text andUKey:_tfKey.text];
-    NSURL *url = [NSURL URLWithString:sUrl];
     
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
+    NSURL *url = [NSURL URLWithString:sUrl];
+
+    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:50];
     MyURLConnection *connection = [[MyURLConnection alloc]
                                    initWithRequest:request
                                    delegate:self];
     connection.sTag = LOGIN;
-    
-    if (connection) {
-        responseData_ = [NSMutableData new];
-    }
-}
 
-//配置文件请求
--(void)initRequestActionNULL
-{
-    NSString *sUrl = [NetworkUtil getBaseUrl];
-    NSURL *url = [NSURL URLWithString:sUrl];
-    
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
-    MyURLConnection *connection = [[MyURLConnection alloc]
-                                   initWithRequest:request
-                                   delegate:self];
-    connection.sTag = ACTIONNULL;
-    
     if (connection) {
         responseData_ = [NSMutableData new];
     }
@@ -147,198 +131,63 @@
     
     [connection cancel];
     
-    if ([connection.sTag isEqualToString:ACTIONNULL]) {
-        if (iNumberOfTimesToRetryOnTimeout > [self iRetryCount]) {
-            [self setIRetryCount:[self iRetryCount] + 1];
-            [self initRequestActionNULL];
-        } else if ([self iRetryCount] == iNumberOfTimesToRetryOnTimeout) {
-            [SVProgressHUD dismiss];
-            
-            NSString *curVersion = [SQLiteUtil getCurVersionNo];
-            if (![DataUtil checkNullOrEmpty:curVersion]) {
-                //读取本地配置
-                [SQLiteUtil setDefaultLayerIdAndRoomId];
-                
-                MainViewController *mainVC = [[MainViewController alloc] init];
-                [self.navigationController pushViewController:mainVC animated:YES];
-            }else{
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                    message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        }
-    }else{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"连接失败,请确认网络是否连接." delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-        [alertView show];
-        
-        [SVProgressHUD dismiss];
-    }
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"连接失败\n请确认网络是否连接." delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+    [alertView show];
+    
+    [SVProgressHUD dismiss];
 }
 - (void)connectionDidFinishLoading: (MyURLConnection*)connection
 {
-    if ([connection.sTag isEqualToString:LOGIN])
-    {
-        [SVProgressHUD dismiss];
+    [SVProgressHUD dismiss];
+    
+    NSString *sConfig = [[NSString alloc] initWithData:responseData_ encoding:NSUTF8StringEncoding];
+    
+    NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
+    if ([configArr count] < 2) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"您输入的信息有误,请联系厂家"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
         
-        NSString *sConfig = [[NSString alloc] initWithData:responseData_ encoding:NSUTF8StringEncoding];
-        
-        NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
-        if ([configArr count] < 2) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"您输入的信息有误,请联系厂家"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
-            
-            return;
-        }
-        
-        Member *curMember = [Member getMember];
-        
-        //处理配置信息
-        configTempObj_ = [Config getTempConfig:configArr];
-        NSString *curVersion = [SQLiteUtil getCurVersionNo];
-        
-        //重新解析配置文件
-        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
-            //清除本地配置数据
-            [SQLiteUtil clearData];
-        }
-        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
-        {
-            self.iRetryCount = 1;
-            [SVProgressHUD showWithStatus:@"正在解析..."];
-            [self initRequestActionNULL];
-        }else{//读取本地数据配置
-            NSLog(@"读取本地");
-            
-            [SQLiteUtil setDefaultLayerIdAndRoomId];
-            
-            MainViewController *mainVC = [[MainViewController alloc] init];
-            [self.navigationController pushViewController:mainVC animated:YES];
-        }
-        
-        //设置登录信息
-        [Member setUdMember:_tfName.text
-                    andUPwd:_tfPassword.text
-                    andUKey:_tfKey.text
-               andIsRemeber:_btnRemeber.selected];
-        
-    }else if ([connection.sTag isEqualToString:ACTIONNULL])//解析数据文件返回
-    {
+        return;
+    }
+    
+    Member *curMember = [Member getMember];
+    
+    //处理配置信息
+    configTempObj_ = [Config getTempConfig:configArr];
+    NSString *curVersion = [SQLiteUtil getCurVersionNo];
+    
+    //重新解析配置文件
+    if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
         //清除本地配置数据
         [SQLiteUtil clearData];
+    }
+    
+    //设置登录信息
+    [Member setUdMember:_tfName.text
+                andUPwd:_tfPassword.text
+                andUKey:_tfKey.text
+           andIsRemeber:_btnRemeber.selected];
+    
+    if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
+    {
+        ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
+        actionNullClass.delegate = self;
+        [actionNullClass initRequestActionNULL];
         
-        //解析存到数据库
-        NSMutableArray *sqlArr = [NSMutableArray array];
-        NSDictionary *dict = [NSDictionary dictionaryWithXMLData:responseData_];
-        if (!dict) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"解析出错,请重试."
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
-            
-            [SVProgressHUD dismiss];
-            return;
-        }
-        //配置表
-        NSDictionary *info = [dict objectForKey:@"info"];
-        Control *controlObj = [Control setIp:[info objectForKey:@"_ip"]
-                                 andSendType:[info objectForKey:@"_tu"]
-                                     andPort:[info objectForKey:@"_port"]
-                                   andDomain:[info objectForKey:@"_domain"]
-                                      andUrl:[info objectForKey:@"_url"]
-                                andUpdatever:[info objectForKey:@"_updatever"]];
-        [sqlArr addObject:[SQLiteUtil connectControlSql:controlObj]];
+    }else{//读取本地数据配置
+        NSLog(@"读取本地");
         
-        NSArray *layerArr = [DataUtil changeDicToArray:[info objectForKey:@"layer"]];
-        for (NSDictionary *layerDic in layerArr) {
-            //room
-            NSArray *roomArr = [DataUtil changeDicToArray:[layerDic objectForKey:@"room"]];
-            for (NSDictionary *roomDic in roomArr) {
-                Room *roomObj = [Room setRoomId:[roomDic objectForKey:@"_Id"]
-                                    andRoomName:[roomDic objectForKey:@"_name"]
-                                     andHouseId:[roomDic objectForKey:@"_houseid"]
-                                     andLayerId:[roomDic objectForKey:@"_layerId"]];
-                [sqlArr addObject:[SQLiteUtil connectRoomSql:roomObj]];
-                
-                //device
-                NSArray *deviceArr = [DataUtil changeDicToArray:[roomDic objectForKey:@"device"]];
-                for (NSDictionary *deviceDic in deviceArr) {
-                    if ([[deviceDic objectForKey:@"_type"] isEqualToString:MACRO]) {
-                        Sence *senceObj = [Sence setSenceId:[deviceDic objectForKey:@"_id"]
-                                               andSenceName:[deviceDic objectForKey:@"_name"]
-                                                andMacrocmd:[deviceDic objectForKey:@"_macrocmd"]
-                                                    andType:[deviceDic objectForKey:@"_type"]
-                                                 andCmdList:[deviceDic objectForKey:@"_cmdlist"]
-                                                 andHouseId:[deviceDic objectForKey:@"_houseid"]
-                                                 andLayerId:[deviceDic objectForKey:@"_layerId"]
-                                                  andRoomId:[deviceDic objectForKey:@"_roomId"]
-                                                andIconType:@""];
-                        [sqlArr addObject:[SQLiteUtil connectSenceSql:senceObj]];
-                    }else{
-                        Device *deviceObj = [Device setDeviceId:[deviceDic objectForKey:@"_id"]
-                                                  andDeviceName:[deviceDic objectForKey:@"_name"]
-                                                        andType:[deviceDic objectForKey:@"_type"]
-                                                     andHouseId:[deviceDic objectForKey:@"_houseid"]
-                                                     andLayerId:[deviceDic objectForKey:@"_layerId"]
-                                                      andRoomId:[deviceDic objectForKey:@"_roomId"]
-                                                    andIconType:@""];
-                        [sqlArr addObject:[SQLiteUtil connectDeviceSql:deviceObj]];
-                        
-                        //order
-                        NSArray *orderArr = [DataUtil changeDicToArray:[deviceDic objectForKey:@"order"]];
-                        for (NSDictionary *orderDic in orderArr) {
-                            NSString *studyCmd = [orderDic objectForKey:@"_studycmd"];
-                            if ([DataUtil checkNullOrEmpty:studyCmd]) {
-                                studyCmd = @"";
-                            }
-                            Order *orderObj = [Order setOrderId:[orderDic objectForKey:@"_id"]
-                                                   andOrderName:[orderDic objectForKey:@"_name"]
-                                                        andType:[orderDic objectForKey:@"_type"]
-                                                     andSubType:[orderDic objectForKey:@"_subtype"]
-                                                    andOrderCmd:[orderDic objectForKey:@"_ordercmd"]
-                                                     andAddress:[orderDic objectForKey:@"_ades"]
-                                                    andStudyCmd:studyCmd
-                                                     andOrderNo:[orderDic objectForKey:@"_sn"]
-                                                     andHouseId:[orderDic objectForKey:@"_houseid"]
-                                                     andLayerId:[orderDic objectForKey:@"_layerId"]
-                                                      andRoomId:[orderDic objectForKey:@"_roomId"]
-                                                    andDeviceId:[orderDic objectForKey:@"_deviceid"]];
-                            [sqlArr addObject:[SQLiteUtil connectOrderSql:orderObj]];
-                        }
-                    }
-                }
-            }
-        }
+        [SQLiteUtil setDefaultLayerIdAndRoomId];
         
-        BOOL bResult = [SQLiteUtil handleConfigToDataBase:sqlArr];
-        if (bResult) {
-            //解析存储成功，覆盖本地配置数据
-            [Config setConfigObj:configTempObj_];
-            
-            [SVProgressHUD dismissWithSuccess:@"解析完成."];
-            
-            [SQLiteUtil setDefaultLayerIdAndRoomId];
-            
-            MainViewController *mainVC = [[MainViewController alloc] init];
-            [self.navigationController pushViewController:mainVC animated:YES];
-        }else{
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                message:@"解析失败,请重试."
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"关闭"
-                                                      otherButtonTitles:nil, nil];
-            [alertView show];
-            
-            [SVProgressHUD dismiss];
-        }
+        MainViewController *mainVC = [[MainViewController alloc] init];
+        [self.navigationController pushViewController:mainVC animated:YES];
     }
 }
 
@@ -353,6 +202,38 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     textField.background = [UIImage imageNamed:@"登录页_输入框01.png"];
+}
+
+#pragma mark -
+#pragma mark ActionNullClassDelegate
+
+-(void)failOper
+{
+    NSString *curVersion = [SQLiteUtil getCurVersionNo];
+    if (![DataUtil checkNullOrEmpty:curVersion]) {
+        //读取本地配置
+        [SQLiteUtil setDefaultLayerIdAndRoomId];
+        
+        MainViewController *mainVC = [[MainViewController alloc] init];
+        [self.navigationController pushViewController:mainVC animated:YES];
+    }else{
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+        [alertView show];
+    }
+}
+
+-(void)successOper
+{
+    //解析存储成功，覆盖本地配置数据
+    [Config setConfigObj:configTempObj_];
+    
+    [SVProgressHUD dismissWithSuccess:@"解析完成."];
+    
+    [SQLiteUtil setDefaultLayerIdAndRoomId];
+    
+    MainViewController *mainVC = [[MainViewController alloc] init];
+    [self.navigationController pushViewController:mainVC animated:YES];
 }
 
 #pragma mark -
