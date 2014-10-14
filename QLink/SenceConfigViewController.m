@@ -72,6 +72,9 @@
     _tbOrder.delegate = self;
     _tbOrder.dataSource = self;
     [_tbOrder setEditing:YES animated:YES];
+    if ([_tbOrder respondsToSelector:@selector(setSeparatorInset:)]) {
+        [_tbOrder setSeparatorInset:UIEdgeInsetsZero];
+    }
     
     senceConfigArr_ = [NSMutableArray array];
     
@@ -400,7 +403,7 @@
     if (alertView.tag == 101 && buttonIndex == 1) {//确定，则删除数据库中所有命令
         BOOL bResult = [SQLiteUtil removeShoppingCar];
         if (bResult) {
-            [DataUtil setGlobalModel:@""];//设置当前为正常模式
+            [DataUtil setGlobalIsAddSence:NO];//设置当前为非添加模式
             MainViewController *mainVC = [[MainViewController alloc] init];
             [self.navigationController pushViewController:mainVC animated:NO];
         } else {

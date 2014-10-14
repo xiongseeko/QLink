@@ -139,9 +139,9 @@
             if ([sResult isEqualToString:@"ok"]) {
                 NSLog(@"==ok==");
                 
-                ZKClass *zkClass = [[ZKClass alloc] init];
-                zkClass.delegate = self;
-                [zkClass initZhongKong];
+//                ZKClass *zkClass = [[ZKClass alloc] init];
+//                zkClass.delegate = self;
+//                [zkClass initZhongKong];
                 
             } else {
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"

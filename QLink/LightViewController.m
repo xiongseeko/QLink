@@ -359,7 +359,7 @@
     }
     
     NSLog(@"====%@",sender.orderObj.OrderName);
-    if ([[DataUtil getGlobalModel] isEqualToString:Model_AddSence]) {//添加场景模式
+    if ([DataUtil getGlobalIsAddSence]) {//添加场景模式
         if ([SQLiteUtil getShoppingCarCount] >= 40) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                             message:@"最多添加40个命令,请删除后再添加."

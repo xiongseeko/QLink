@@ -18,10 +18,14 @@
 #import "BsTcView.h"
 #import "TrView.h"
 #import "BaseViewController.h"
+#import "REMenu.h"
+#import "StudyTimerView.h"
 
-@interface RemoteViewController : BaseViewController<SwViewDelegate,DtViewDelegate,McViewDelegate,PlViewDelegate,SdViewDelegate,OtViewDelegate,HsViewDelegate,NmViewDelegate,BsTcViewDelegate,TrViewDelegate,UIAlertViewDelegate>
+@interface RemoteViewController : BaseViewController<SwViewDelegate,DtViewDelegate,McViewDelegate,PlViewDelegate,SdViewDelegate,OtViewDelegate,HsViewDelegate,NmViewDelegate,BsTcViewDelegate,TrViewDelegate,UIAlertViewDelegate,StudyTimerDelegate>
 
 @property(nonatomic,strong) NSString *deviceId;
 @property(nonatomic,strong) NSString *deviceName;
+
+@property (strong, nonatomic) REMenu *menu;
 
 @end

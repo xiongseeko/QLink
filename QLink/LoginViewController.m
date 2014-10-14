@@ -12,7 +12,6 @@
 #import "NetworkUtil.h"
 #import "SVProgressHUD.h"
 #import "MyURLConnection.h"
-#import "ASIHTTPRequest.h"
 
 @interface LoginViewController ()
 {

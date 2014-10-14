@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ZKClass.h"
 #import "ActionNullClass.h"
 
-@interface DeviceConfigViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,ZKClassDelegate,ActionNullClassDelegate>
+@interface DeviceConfigViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,ActionNullClassDelegate>
 
 @property (strong, nonatomic) IBOutlet UITableView *tbDevice;
 

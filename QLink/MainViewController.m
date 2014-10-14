@@ -17,7 +17,6 @@
 #import "DeviceConfigViewController.h"
 #import "AboutViewController.h"
 #import "SenceConfigViewController.h"
-#import "ZKViewController.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -170,6 +169,15 @@
     roomArr_ = [SQLiteUtil getRoomList:obj.HouseId andLayerId:obj.LayerId];
     
     svHeight_ = [UIScreen mainScreen].applicationFrame.size.height - 44 - 29;
+    
+    //设置当前模式
+    Config *configObj = [Config getConfig];
+    if (configObj.isBuyCenterControl) {//购买中控
+        [DataUtil setGlobalModel:Model_ZK];//设置为中控模式
+    }
+    
+    //设置是否添加场景模式
+    [DataUtil setGlobalIsAddSence:NO];
 }
 
 -(void)registerNotification
@@ -380,7 +388,7 @@
         
         [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
         
-        [DataUtil setGlobalModel:Model_AddSence];
+        [DataUtil setGlobalIsAddSence:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                         message:@"您已进入选择模式,所有按键失效,请选择您要构成场景的动作."
                                                        delegate:nil
@@ -590,7 +598,7 @@
 
 -(void)goOnChoose
 {
-    [DataUtil setGlobalModel:Model_AddSence];
+    [DataUtil setGlobalIsAddSence:YES];
     CGRect rect = CGRectMake(320, 0, 320, _svBig.frame.size.height);
     [_svBig scrollRectToVisible:rect animated:NO];
 }
@@ -639,34 +647,55 @@
         return [KxMenu dismissMenu];
     }
     
-    NSArray *menuItems =
-    @[
-      
-      [KxMenuItem menuItem:@"正常模式"
-                     image:nil
-                    target:self
-                    action:@selector(pushMenuItem:)],
-      
-      [KxMenuItem menuItem:@"紧急模式"
-                     image:nil
-                    target:self
-                    action:@selector(pushMenuItem:)],
-      
-      [KxMenuItem menuItem:@"写入中控"
-                     image:nil
-                    target:self
-                    action:@selector(pushMenuItem:)],
-      
-      [KxMenuItem menuItem:@"初始化"
-                     image:nil
-                    target:self
-                    action:@selector(pushMenuItem:)],
-      
-      [KxMenuItem menuItem:@"关于"
-                     image:nil
-                    target:self
-                    action:@selector(pushMenuItem:)],
-      ];
+    NSMutableArray *menuItems = [NSMutableArray arrayWithObjects:[KxMenuItem menuItem:@"紧急模式"
+                                                                                image:nil
+                                                                               target:self
+                                                                               action:@selector(pushMenuItem:)],
+                                 
+                                 [KxMenuItem menuItem:@"写入中控"
+                                                image:nil
+                                               target:self
+                                               action:@selector(pushMenuItem:)],
+                                 
+                                 [KxMenuItem menuItem:@"初始化"
+                                                image:nil
+                                               target:self
+                                               action:@selector(pushMenuItem:)],
+                                 
+                                 [KxMenuItem menuItem:@"关于"
+                                                image:nil
+                                               target:self
+                                               action:@selector(pushMenuItem:)], nil];
+//    @[
+//      [KxMenuItem menuItem:@"紧急模式"
+//                     image:nil
+//                    target:self
+//                    action:@selector(pushMenuItem:)],
+//      
+//      [KxMenuItem menuItem:@"写入中控"
+//                     image:nil
+//                    target:self
+//                    action:@selector(pushMenuItem:)],
+//      
+//      [KxMenuItem menuItem:@"初始化"
+//                     image:nil
+//                    target:self
+//                    action:@selector(pushMenuItem:)],
+//      
+//      [KxMenuItem menuItem:@"关于"
+//                     image:nil
+//                    target:self
+//                    action:@selector(pushMenuItem:)]
+//      ];
+    
+    Config *configObj = [Config getConfig];
+    if (configObj.isBuyCenterControl) {
+        KxMenuItem *item = [KxMenuItem menuItem:@"正常模式"
+                                      image:nil
+                                     target:self
+                                     action:@selector(pushMenuItem:)];
+        [menuItems insertObject:item atIndex:0];
+    }
     
     KxMenuItem *first = menuItems[0];
     first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
@@ -732,7 +761,7 @@
 //取消场景模式
 -(void)btnCancleSenceModel
 {
-    [DataUtil setGlobalModel:@""];
+    [DataUtil setGlobalIsAddSence:NO];
     [SQLiteUtil removeShoppingCar];
     self.navigationItem.leftBarButtonItem = nil;
     CGRect rect = CGRectMake(0, 0, 320, _svBig.frame.size.height);

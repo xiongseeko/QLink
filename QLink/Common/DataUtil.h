@@ -36,6 +36,12 @@
 //获取全局模式类型
 +(NSString *)getGlobalModel;
 
+//设置是否添加场景
++(void)setGlobalIsAddSence:(BOOL)isAdd;
+
+//获取是否添加场景模式
++(BOOL)getGlobalIsAddSence;
+
 +(NSStringEncoding)getGB2312Code;
 
 //设置编辑的场景id
@@ -198,6 +204,9 @@
 
 //获取全局配置信息
 +(Control *)getControlObj;
+
+//当前设备是否有学习模式
++(BOOL)isStudyModel:(NSString *)deviceId;
 
 @end
 

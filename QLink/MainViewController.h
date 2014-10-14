@@ -13,7 +13,6 @@
 #import "RenameView.h"
 #import "SenceConfigViewController.h"
 #import "BaseViewController.h"
-#import "ZKViewController.h"
 
 @interface MainViewController : BaseViewController<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,iConViewDelegate,UIAlertViewDelegate,IconViewControllerDelegate,RenameViewDelegate,SenceConfigViewControllerDelegate>
 

@@ -53,7 +53,7 @@
 +(GlobalAttr *)shareInstanceToRoom
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *globalAttrDic = [ud objectForKey:GLOBALROOMATTR];
+    NSDictionary *globalAttrDic = [ud objectForKey:Global_Room_Attr];
     
     GlobalAttr *obj = [[GlobalAttr alloc] init];
     obj.LayerId = [globalAttrDic objectForKey:@"LayerId"];
@@ -67,10 +67,10 @@
 +(void)setGlobalAttrRoom:(NSString *)roomId
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *globalAttrDic = [ud objectForKey:GLOBALROOMATTR];
+    NSDictionary *globalAttrDic = [ud objectForKey:Global_Room_Attr];
     NSMutableDictionary *newDic = [NSMutableDictionary dictionaryWithDictionary:globalAttrDic];
     [newDic setObject:roomId forKey:@"RoomId"];
-    [ud setObject:newDic forKey:GLOBALROOMATTR];
+    [ud setObject:newDic forKey:Global_Room_Attr];
     [ud synchronize];
 }
 
@@ -78,7 +78,7 @@
 +(void)setGlobalModel:(NSString *)global
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    [ud setObject:global forKey:GLOBALMODALATTR];
+    [ud setObject:global forKey:Global_Model_Attr];
     [ud synchronize];
 }
 
@@ -86,11 +86,24 @@
 +(NSString *)getGlobalModel
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSString *model = [ud objectForKey:GLOBALMODALATTR];
-    if ([self checkNullOrEmpty:model]) {
-        return @"";
-    }
+    NSString *model = [ud objectForKey:Global_Model_Attr];
     return model;
+}
+
+//设置是否添加场景
++(void)setGlobalIsAddSence:(BOOL)isAdd
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setBool:isAdd forKey:Global_Model_IsAddSence];
+    [ud synchronize];
+}
+
+//获取是否添加场景模式
++(BOOL)getGlobalIsAddSence
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    BOOL bResult = [[ud objectForKey:Global_Model_IsAddSence] boolValue];
+    return bResult;
 }
 
 +(NSStringEncoding)getGB2312Code
@@ -402,7 +415,7 @@
             [dic setObject:[DataUtil getDefaultValue:[rs stringForColumn:@"HouseId"]] forKey:@"HouseId"];
             
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-            [ud setObject:dic forKey:GLOBALROOMATTR];
+            [ud setObject:dic forKey:Global_Room_Attr];
             [ud synchronize];
             
             break;
@@ -1033,6 +1046,31 @@
     [db close];
     
     return obj;
+}
+
+//当前设备是否有学习模式
++(BOOL)isStudyModel:(NSString *)deviceId
+{
+    BOOL isResult = NO;
+    int totalCount = 0;
+    
+    FMDatabase *db = [self getDB];
+    
+    NSString *sql = [NSString stringWithFormat:@"select count(studycmd) from Orders where deviceid='%@' and studycmd<>''",deviceId];
+    if ([db open]) {
+        FMResultSet *rs = [db executeQuery:sql];
+        if ([rs next]) {
+            totalCount = [rs intForColumnIndex:0];
+        }
+    }
+    
+    [db close];
+    
+    if (totalCount > 0) {
+        isResult = YES;
+    }
+    
+    return isResult;
 }
 
 @end
