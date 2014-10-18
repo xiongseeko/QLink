@@ -176,17 +176,23 @@
             bcView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:bcView];
             
+            NSMutableArray *brOrderArr = [NSMutableArray array];
+            NSMutableArray *coOrderArr = [NSMutableArray array];
+            
             for (Order *obj in orderArr) {
                 if ([obj.SubType isEqualToString:@"on"]) {
                     bcView.btnOn.orderObj = obj;
                 } else if ([obj.SubType isEqualToString:@"off"]) {
                     bcView.btnOFF.orderObj = obj;
-                } else if ([obj.SubType isEqualToString:@""]) {
-                    
-                } else if ([obj.SubType isEqualToString:@""]) {
-                    
+                } else if ([obj.SubType isEqualToString:@"br"]) {
+                    [brOrderArr addObject:obj];
+                } else if ([obj.SubType isEqualToString:@"co"]) {
+                    [coOrderArr addObject:obj];
                 }
             }
+            
+            bcView.brOrderArr = brOrderArr;
+            bcView.coOrderArr = coOrderArr;
             
             height += 113;
             
@@ -236,17 +242,19 @@
             briView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:briView];
             
+            NSMutableArray *brOrderArr = [NSMutableArray array];
+            
             for (Order *obj in orderArr) {
                 if ([obj.SubType isEqualToString:@"on"]) {
                     briView.btnOn.orderObj = obj;
                 } else if ([obj.SubType isEqualToString:@"off"]) {
                     briView.btnOff.orderObj = obj;
-                } else if ([obj.SubType isEqualToString:@""]) {
-                    
-                } else if ([obj.SubType isEqualToString:@""]) {
-                    
+                } else if ([obj.SubType isEqualToString:@"br"]) {
+                    [brOrderArr addObject:obj];
                 }
             }
+            
+            briView.orderArr = brOrderArr;
             
             height += 113;
         }
@@ -381,7 +389,8 @@
             [alert show];
         }
     } else {
-        [self sendSocketOrder:sender.orderObj.OrderCmd];
+//        [self sendSocketOrder:sender.orderObj.OrderCmd];
+        [self load_typeSocket:999 andOrderObj:sender.orderObj];
     }
 }
 

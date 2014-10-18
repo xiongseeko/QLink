@@ -504,7 +504,8 @@ typedef enum {
             titleLabel.text = menuItem.title;
             titleLabel.font = titleFont;
             titleLabel.textAlignment = menuItem.alignment;
-            titleLabel.textColor = menuItem.foreColor ? menuItem.foreColor : [UIColor whiteColor];
+//            titleLabel.textColor = menuItem.foreColor ? menuItem.foreColor : [UIColor whiteColor];
+            titleLabel.textColor = [UIColor whiteColor];
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.autoresizingMask = UIViewAutoresizingNone;
             //titleLabel.backgroundColor = [UIColor greenColor];

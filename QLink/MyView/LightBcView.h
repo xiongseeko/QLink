@@ -17,6 +17,9 @@
 @property(nonatomic,strong) IBOutlet UISlider *btnBr;//亮度
 @property(nonatomic,strong) IBOutlet UISlider *btnCo;//色调
 
+@property(nonatomic,strong) NSArray *coOrderArr;
+@property(nonatomic,strong) NSArray *brOrderArr;
+
 - (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

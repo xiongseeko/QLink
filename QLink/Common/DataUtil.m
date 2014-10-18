@@ -511,7 +511,7 @@
     return senceArr;
 }
 
-//获取具体场景命令集合
+//获取具体场景命令集合，用于紧急模式下发送
 +(NSMutableArray *)getOrderBySenceId:(NSString *)senceId
 {
     NSMutableArray *orderArr = [NSMutableArray array];
@@ -538,13 +538,15 @@
         NSArray *timerArr = [[cmdListArr objectAtIndex:1] componentsSeparatedByString:@","];
         
         for (int i = 0; i < [orderIdArr count];i ++) {
-            NSString *subSql = [NSString stringWithFormat:@"SELECT O.ORDERID,O.ORDERNAME,D.DEVICEID,D.DEVICENAME,D.TYPE,I.NEWTYPE FROM ORDERS O LEFT JOIN DEVICE D ON O.DEVICEID=D.DEVICEID  LEFT JOIN ICON I ON O.DEVICEID=I.DEVICEID  WHERE O.ORDERID='%@'",[orderIdArr objectAtIndex:i]];
+            NSString *subSql = [NSString stringWithFormat:@"SELECT O.ORDERID,O.ORDERNAME,O.ORDERCMD,O.ADDRESS,D.DEVICEID,D.DEVICENAME,D.TYPE,I.NEWTYPE FROM ORDERS O LEFT JOIN DEVICE D ON O.DEVICEID=D.DEVICEID  LEFT JOIN ICON I ON O.DEVICEID=I.DEVICEID  WHERE O.ORDERID='%@'",[orderIdArr objectAtIndex:i]];
             FMResultSet *rs = [db executeQuery:subSql];
             if ([rs next])
             {
                 Sence *subobj = [[Sence alloc] init];
                 subobj.SenceId = [rs stringForColumn:@"DeviceId"];
                 subobj.OrderId = [rs stringForColumn:@"OrderId"];
+                subobj.OrderCmd = [rs stringForColumn:@"OrderCmd"];
+                subobj.Address = [rs stringForColumn:@"Address"];
                 subobj.SenceName = [rs stringForColumn:@"DeviceName"];
                 subobj.OrderName = [rs stringForColumn:@"OrderName"];
                 subobj.Type = [rs stringForColumn:@"Type"];

@@ -11,6 +11,13 @@
 #import "GCDAsyncSocket.h"
 #import "GCDAsyncUdpSocket.h"
 
+typedef NS_ENUM(NSInteger, SocketType){
+    SocketTypeNormal = 1,
+    SocketTypeEmergency = 2,
+    SocketTypeWriteZk = 3,
+    SocketTypeStudy = 4
+};
+
 @interface BaseViewController : UIViewController
 {
     long udpTag_;
@@ -19,10 +26,12 @@
     GCDAsyncSocket *asyncSocket_;
 }
 
-@property(nonatomic,assign) BOOL isZK;
+@property(nonatomic,assign) SocketType socketType;
+@property(nonatomic,assign) BOOL isSence;
+
+//写入中控，重复尝试 3 次
 @property(nonatomic,assign) int iTimeoutCount;
 
--(void)sendSocketOrder:(NSString *)cmd;
--(void)initRequestZK;
+-(void)load_typeSocket:(SocketType)socket andOrderObj:(Order *)order;
 
 @end

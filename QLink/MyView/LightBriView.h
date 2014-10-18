@@ -15,6 +15,8 @@
 @property(nonatomic,strong) IBOutlet OrderButton *btnOff;
 @property (strong, nonatomic) IBOutlet UISlider *sliderLight;
 
+@property(nonatomic,strong) NSArray *orderArr;
+
 - (IBAction)btnPressed:(OrderButton *)sender;
 
 @end

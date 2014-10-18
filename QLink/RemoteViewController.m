@@ -15,8 +15,9 @@
 
 @interface RemoteViewController ()
 {
-    BOOL isStudyModel_;
+//    BOOL isStudyModel_;
     StudyTimerView *studyTimerView_;
+    NSString *strCurModel_;//记录当前的发送socket模式
 }
 @end
 
@@ -44,7 +45,8 @@
 
 -(void)initData
 {
-    isStudyModel_ = NO;
+//    isStudyModel_ = NO;
+    strCurModel_ = [DataUtil getGlobalModel];
 }
 
 //设置导航
@@ -461,7 +463,6 @@
     studyTimerView_.frame = CGRectMake(0, 90, 320, 190);
     studyTimerView_.hidden = YES;
     studyTimerView_.delegate = self;
-//    studyTimerView_.pTime = 30;
     [self.view addSubview:studyTimerView_];
 }
 
@@ -502,7 +503,11 @@
             [alert show];
         }
     } else {
-        [self sendSocketOrder:sender.orderObj.OrderCmd];
+        if ([[DataUtil getGlobalModel] isEqualToString:Model_Study]) {
+            studyTimerView_.hidden = NO;
+            [studyTimerView_ startTimer];
+        }
+        [self load_typeSocket:999 andOrderObj:sender.orderObj];
     }
 }
 
@@ -522,7 +527,7 @@
 
 -(void)done
 {
-    isStudyModel_ = NO;
+    [DataUtil setGlobalModel:strCurModel_];
     studyTimerView_.hidden = YES;
 }
 
@@ -568,12 +573,19 @@
 {
     if ([sender.title isEqualToString:@"学习模式"])
     {
-        isStudyModel_ = YES;
-        studyTimerView_.hidden = NO;
-        [studyTimerView_ startTimer];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"您已处于学习模式状态."
+                                                       delegate:self
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil, nil];
+        alert.tag = 102;
+        [alert show];
+        
+        [DataUtil setGlobalModel:Model_Study];
+        
     } else if ([sender.title isEqualToString:@"正常模式"])
     {
-        isStudyModel_ = NO;
+        [DataUtil setGlobalModel:strCurModel_];
     }
 }
 

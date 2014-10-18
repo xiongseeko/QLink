@@ -11,11 +11,10 @@
 #import "DataUtil.h"
 #import "NetworkUtil.h"
 #import "SVProgressHUD.h"
-#import "MyURLConnection.h"
+#import "AFNetworking.h"
 
 @interface LoginViewController ()
 {
-    NSMutableData *responseData_;
     Config *configTempObj_;//临时变量，存储Action=login请求对象
 }
 @end
@@ -72,24 +71,77 @@
                                                object:nil];
 }
 
-//action=login
 -(void)initRequestActionLogin
 {
     [SVProgressHUD showWithStatus:@"正在验证..."];
     
     NSString *sUrl = [NetworkUtil getActionLogin:_tfName.text andUPwd:_tfPassword.text andUKey:_tfKey.text];
-    
     NSURL *url = [NSURL URLWithString:sUrl];
-
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:50];
-    MyURLConnection *connection = [[MyURLConnection alloc]
-                                   initWithRequest:request
-                                   delegate:self];
-    connection.sTag = LOGIN;
-
-    if (connection) {
-        responseData_ = [NSMutableData new];
-    }
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    __weak __typeof(self)weakSelf = self;
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
+    {
+        [SVProgressHUD dismiss];
+        
+        NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+        
+        NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
+        if ([configArr count] < 2) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"您输入的信息有误,请联系厂家"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"关闭"
+                                                  otherButtonTitles:nil, nil];
+            [alert show];
+            
+            return;
+        }
+        
+        Member *curMember = [Member getMember];
+        
+        //处理配置信息
+        configTempObj_ = [Config getTempConfig:configArr];
+        NSString *curVersion = [SQLiteUtil getCurVersionNo];
+        
+        //重新解析配置文件
+        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
+            //清除本地配置数据
+            [SQLiteUtil clearData];
+        }
+        
+        //设置登录信息
+        [Member setUdMember:_tfName.text
+                    andUPwd:_tfPassword.text
+                    andUKey:_tfKey.text
+               andIsRemeber:_btnRemeber.selected];
+        
+        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
+        {
+            ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
+            actionNullClass.delegate = weakSelf;
+            [actionNullClass initRequestActionNULL];
+            
+        }else{//读取本地数据配置
+            NSLog(@"读取本地");
+            
+            [SQLiteUtil setDefaultLayerIdAndRoomId];
+            
+            MainViewController *mainVC = [[MainViewController alloc] init];
+            [weakSelf.navigationController pushViewController:mainVC animated:YES];
+        }
+    }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"连接失败\n请确认网络是否连接." delegate:nil
+                                                  cancelButtonTitle:@"关闭"
+                                                  otherButtonTitles:nil, nil];
+        [alertView show];
+        
+        [SVProgressHUD dismiss];
+    }];
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:operation];
 }
 
 #pragma mark -
@@ -116,78 +168,6 @@
 -(IBAction)btnRemeberPressed:(UIButton *)sender
 {
     sender.selected = !sender.selected;
-}
-
-#pragma mark -
-#pragma mark NSURLConnection 回调方法
-- (void)connection:(MyURLConnection *)connection didReceiveData:(NSData *)data
-{
-    [responseData_ appendData:data];
-}
--(void) connection:(MyURLConnection *)connection didFailWithError: (NSError *)error
-{
-    NSLog(@"====fail");
-    
-    [connection cancel];
-    
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"连接失败\n请确认网络是否连接." delegate:nil
-                                              cancelButtonTitle:@"关闭"
-                                              otherButtonTitles:nil, nil];
-    [alertView show];
-    
-    [SVProgressHUD dismiss];
-}
-- (void)connectionDidFinishLoading: (MyURLConnection*)connection
-{
-    [SVProgressHUD dismiss];
-    
-    NSString *sConfig = [[NSString alloc] initWithData:responseData_ encoding:NSUTF8StringEncoding];
-    
-    NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
-    if ([configArr count] < 2) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"您输入的信息有误,请联系厂家"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"关闭"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-        
-        return;
-    }
-    
-    Member *curMember = [Member getMember];
-    
-    //处理配置信息
-    configTempObj_ = [Config getTempConfig:configArr];
-    NSString *curVersion = [SQLiteUtil getCurVersionNo];
-    
-    //重新解析配置文件
-    if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
-        //清除本地配置数据
-        [SQLiteUtil clearData];
-    }
-    
-    //设置登录信息
-    [Member setUdMember:_tfName.text
-                andUPwd:_tfPassword.text
-                andUKey:_tfKey.text
-           andIsRemeber:_btnRemeber.selected];
-    
-    if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
-    {
-        ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
-        actionNullClass.delegate = self;
-        [actionNullClass initRequestActionNULL];
-        
-    }else{//读取本地数据配置
-        NSLog(@"读取本地");
-        
-        [SQLiteUtil setDefaultLayerIdAndRoomId];
-        
-        MainViewController *mainVC = [[MainViewController alloc] init];
-        [self.navigationController pushViewController:mainVC animated:YES];
-    }
 }
 
 #pragma mark -

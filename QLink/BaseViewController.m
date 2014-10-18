@@ -20,14 +20,14 @@
 @interface BaseViewController ()
 {
     //场景，设备参数
-    Control *controlObj_;
-    Config *configObj_;
     NSString *sendContent_;
     
-    //中控参数
+    //中控参数&紧急模式
     NSMutableArray *cmdReadArr_;
     NSMutableArray *cmdOperArr_;
-    NSDictionary *sendCmdDic_;//当前发送的对象
+    
+    NSDictionary *sendCmdDic_;//当前发送的对象,用于中控参数
+    Sence *sendSenceObj_;//紧急模式下发送的场景对象
     Control *zkConfig_;
     BOOL isSendZKFailAndSendLast_;
 }
@@ -49,20 +49,40 @@
     [super viewDidLoad];
 }
 
--(void)initDomain
+-(void)load_typeSocket:(SocketType)socket andOrderObj:(Order *)order
 {
-    controlObj_ = [SQLiteUtil getControlObj];
+    switch (socket) {
+        case SocketTypeWriteZk://写入中控
+        {
+            self.socketType = SocketTypeWriteZk;
+            [self initRequestWriteZK];
+            break;
+        }
+        default:
+        {
+            NSString *so = [DataUtil getGlobalModel];
+            if ([so isEqualToString:Model_ZK]) {
+                self.socketType = SocketTypeNormal;
+                [self sendNormalSocketOrder:order.OrderCmd];
+            } else if([so isEqualToString:Model_JJ]) { //紧急模式
+                self.socketType = SocketTypeEmergency;
+                [self initEmergencySocketOrder:order];
+            } else if ([so isEqualToString:Model_Study])
+            {
+                self.socketType = SocketTypeStudy;
+                [self initStudySocketOrder:order.StudyCmd andAddress:order.Address];
+            }
+            break;
+        }
+    }
 }
 
--(void)initRequestZK1
-{
-    [self sendSocketOrder];
-}
+#pragma mark -
+#pragma mark 写入中控
 
--(void)initRequestZK
+-(void)initRequestWriteZK
 {
     self.iTimeoutCount = 1;
-    self.isZK = YES;
     isSendZKFailAndSendLast_ = NO;
     
     [SVProgressHUD showWithStatus:@"正在写入中控..."];
@@ -99,7 +119,7 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf initSocketOrder];
+            [weakSelf firstSendZkSocketOrder];
         });
         
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -110,7 +130,8 @@
     [queue addOperation:operation];
 }
 
--(void)initSocketOrder
+//第一次发送中控命令
+-(void)firstSendZkSocketOrder
 {
     sendCmdDic_ = [cmdOperArr_ objectAtIndex:0];
     sendContent_ = [sendCmdDic_ objectForKey:@"_sdcmd"];
@@ -120,11 +141,12 @@
 //        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
     }
     else{
-        [self sendUdp:zkConfig_.Ip andPort:zkConfig_.Port];
+        [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
     }
 }
 
--(void)sendSocketOrder
+//循环发送调用方法
+-(void)sendZkSocketOrder
 {
     sendCmdDic_ = [cmdOperArr_ objectAtIndex:0];
     sendContent_ = [sendCmdDic_ objectForKey:@"_sdcmd"];
@@ -133,29 +155,95 @@
     [asyncSocket_ writeData:data withTimeout:-1 tag:ECHO_MSG];
 }
 
-//场景设备发送
--(void)sendSocketOrder:(NSString *)cmd
+#pragma mark -
+#pragma mark 正常模式发送场景，设备socket，也就是购买中控，全局发送Domain
+
+-(void)sendNormalSocketOrder:(NSString *)cmd
 {
-    self.isZK = NO;
-    
-    configObj_ = [Config getConfig];
-    if (configObj_.isBuyCenterControl) {
-        [self initDomain];
-    }
-    
     sendContent_ = cmd;
     
-    if (controlObj_) {//中控，远程发送
-        if ([[controlObj_.SendType lowercaseString] isEqualToString:@"tcp"]) {
-            [self initTcp:controlObj_.Domain andPort:controlObj_.Port];
+    Control *controlObj = [SQLiteUtil getControlObj];
+    
+    if ([[controlObj.SendType lowercaseString] isEqualToString:@"tcp"]) {
+        [self initTcp:controlObj.Domain andPort:controlObj.Port];
+    }
+    else{
+        [self initUdp:controlObj.Domain andPort:controlObj.Port];
+    }
+}
+
+#pragma mark -
+#pragma mark 紧急模式发送场景，设备socket
+
+-(void)initEmergencySocketOrder:(Order *)order
+{
+    if (self.isSence) {
+        self.iTimeoutCount = 1;
+        
+        //拼接队列
+        cmdReadArr_ = [NSMutableArray arrayWithArray:[SQLiteUtil getOrderBySenceId:order.senceId]];
+        cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
+        
+        [self sendEmergencySocketOrder];
+    } else {
+        sendContent_ = order.OrderCmd;
+        sendContent_ = [sendContent_ substringFromIndex:4];
+        
+        NSArray *addArr = [order.Address componentsSeparatedByString:@":"];
+        NSString *type = addArr[0];
+        NSString *ip = addArr[1];
+        NSString *port = addArr[2];
+        if ([[type lowercaseString] isEqualToString:@"tcp"]) {
+            [self initTcp:ip andPort:port];
+            //        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
         }
         else{
-            [self sendUdp:controlObj_.Domain andPort:controlObj_.Port];
+            [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
         }
     }
 }
 
--(void)sendUdp:(NSString *)host
+
+-(void)sendEmergencySocketOrder
+{
+    sendSenceObj_ = [cmdOperArr_ objectAtIndex:0];
+    sendContent_ = sendSenceObj_.OrderCmd;
+    sendContent_ = [sendContent_ substringFromIndex:4];
+    
+    NSArray *addArr = [sendSenceObj_.Address componentsSeparatedByString:@":"];
+    NSString *type = addArr[0];
+    NSString *ip = addArr[1];
+    NSString *port = addArr[2];
+    if ([[type lowercaseString] isEqualToString:@"tcp"]) {
+        [self initTcp:ip andPort:port];
+        //        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
+    }
+    else{
+        [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
+    }
+}
+
+#pragma mark -
+#pragma mark 设备学习模式
+
+-(void)initStudySocketOrder:(NSString *)cmd andAddress:(NSString *)address
+{
+    NSArray *addArr = [address componentsSeparatedByString:@":"];
+    NSString *type = addArr[0];
+    NSString *ip = addArr[1];
+    NSString *port = addArr[2];
+    
+    if ([[type lowercaseString] isEqualToString:@"tcp"]) {
+        [self initTcp:ip andPort:port];
+    } else {
+        [self initUdp:ip andPort:port];
+    }
+}
+
+#pragma mark -
+#pragma mark 发送方法（UDP／TCP）
+
+-(void)initUdp:(NSString *)host
        andPort:(NSString *)port
 {
     /**************创建连接**************/
@@ -189,7 +277,6 @@
     udpTag_++;
 }
 
-//中控发送
 -(void)initTcp:(NSString *)host
        andPort:(NSString *)port
 {
@@ -255,26 +342,52 @@
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
 {
     if (err) {
-        if (self.isZK) {
-            if (NumberOfTimeout > [self iTimeoutCount]) {
-                [self setITimeoutCount:[self iTimeoutCount] + 1];
-                sleep(1);
-                [self initSocketOrder];
-            } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+        switch (self.socketType) {
+            case SocketTypeWriteZk:
+            {
+                if (NumberOfTimeout > [self iTimeoutCount]) {
+                    [self setITimeoutCount:[self iTimeoutCount] + 1];
+                    sleep(1);
+                    [self firstSendZkSocketOrder];
+                } else if ([self iTimeoutCount] >= NumberOfTimeout) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                                     message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
-                alert.tag = 999;
-                [alert show];
+                    alert.tag = 999;
+                    [alert show];
+                    
+                    [SVProgressHUD dismiss];
+                }
                 
-                [SVProgressHUD dismiss];
+                break;
             }
-        } else {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"连接服务器失败."
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
+            case SocketTypeNormal:
+            {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                message:@"连接服务器失败."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"关闭"
+                                                      otherButtonTitles:nil, nil];
+                [alert show];
+                break;
+            }
+            case SocketTypeEmergency:
+            {
+                if (NumberOfTimeout > [self iTimeoutCount]) {
+                    [self setITimeoutCount:[self iTimeoutCount] + 1];
+                    sleep(1);
+                    [self sendEmergencySocketOrder];
+                } else if ([self iTimeoutCount] >= NumberOfTimeout) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                    message:@"紧急模式发送失败." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+                    [alert show];
+                    
+                    [SVProgressHUD dismiss];
+                }
+                
+                break;
+            }
+            default:
+                break;
         }
         
         NSLog(@"连接失败\n");
@@ -286,60 +399,98 @@
 
 - (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag
 {
-    if (_isZK) {
-        [sock readDataWithTimeout:3 tag:-1];
-    } else {
-        [self disConnectionTCP];
+    switch (self.socketType) {
+        case SocketTypeWriteZk:
+        {
+            [sock readDataWithTimeout:3 tag:-1];
+            break;
+        }
+        case SocketTypeNormal:
+        {
+            [self disConnectionTCP];
+            break;
+        }
+        case SocketTypeEmergency:
+        {
+            [self disConnectionTCP];
+            
+            if (self.isSence) {
+                sleep([sendSenceObj_.Timer intValue] * 0.05);
+                [cmdOperArr_ removeObject:sendCmdDic_];
+                self.iTimeoutCount = 1;
+                [self sendEmergencySocketOrder];
+            }
+            break;
+        }
+        default:
+            break;
     }
 }
 
 //接收数据
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
 {
-    NSData *bkcCmd = [[sendCmdDic_ objectForKey:@"_bkcmd"] hexToBytes];
-    NSData *top3Cmd = [bkcCmd subdataWithRange:NSMakeRange(0, 3)];
-    NSData *readTop3 = [data subdataWithRange:NSMakeRange(0, 3)];
-
-    if ([top3Cmd isEqualToData: readTop3])
-    {
-        [cmdOperArr_ removeObject:sendCmdDic_];
-        
-        NSLog(@"====%d",[cmdOperArr_ count]);
-        
-        //发送完成，关闭连接
-        if ([cmdOperArr_ count] == 0) {
+    switch (self.socketType) {
+        case SocketTypeWriteZk:
+        {
+            NSData *bkcCmd = [[sendCmdDic_ objectForKey:@"_bkcmd"] hexToBytes];
+            NSData *top3Cmd = [bkcCmd subdataWithRange:NSMakeRange(0, 3)];
+            NSData *readTop3 = [data subdataWithRange:NSMakeRange(0, 3)];
             
-            if (!isSendZKFailAndSendLast_) {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                    message:@"写入中控成功."
-                                                                   delegate:nil
-                                                          cancelButtonTitle:@"确定"
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
+            if ([top3Cmd isEqualToData: readTop3])
+            {
+                [cmdOperArr_ removeObject:sendCmdDic_];
+                
+                NSLog(@"====%d",[cmdOperArr_ count]);
+                
+                //发送完成，关闭连接
+                if ([cmdOperArr_ count] == 0) {
+                    
+                    if (!isSendZKFailAndSendLast_) {
+                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                            message:@"写入中控成功."
+                                                                           delegate:nil
+                                                                  cancelButtonTitle:@"确定"
+                                                                  otherButtonTitles:nil, nil];
+                        [alertView show];
+                    }
+                    
+                    [self disConnectionTCP];
+                    [SVProgressHUD dismiss];
+                    
+                    return;
+                }
+                
+                self.iTimeoutCount = 1;
+                [self sendZkSocketOrder];
+            }
+            else
+            {
+                if (NumberOfTimeout > [self iTimeoutCount]) {
+                    [self setITimeoutCount:[self iTimeoutCount] + 1];
+                    [self sendZkSocketOrder];
+                } else if ([self iTimeoutCount] >= NumberOfTimeout) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                    message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
+                    alert.tag = 999;
+                    [alert show];
+                    
+                    [SVProgressHUD dismiss];
+                }
             }
             
-            [self disConnectionTCP];
-            [SVProgressHUD dismiss];
-            
-            return;
+            break;
         }
-        
-        self.iTimeoutCount = 1;
-        [self sendSocketOrder];
-    }
-    else
-    {
-        if (NumberOfTimeout > [self iTimeoutCount]) {
-            [self setITimeoutCount:[self iTimeoutCount] + 1];
-            [self sendSocketOrder];
-        } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
-            alert.tag = 999;
-            [alert show];
-            
-            [SVProgressHUD dismiss];
+        case SocketTypeNormal:
+        {
+            break;
         }
+        case SocketTypeEmergency:
+        {
+            break;
+        }
+        default:
+            break;
     }
 }
 
@@ -356,13 +507,13 @@
             [cmdOperArr_ removeAllObjects];
             [cmdOperArr_ addObject:sendCmdDic_];
             
-            [self sendSocketOrder];
+            [self sendZkSocketOrder];
         } else if (buttonIndex == 1) {//重试
             [SVProgressHUD showWithStatus:@"正在写入中控..."];
             
             cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
             self.iTimeoutCount = 1;
-            [self initSocketOrder];
+            [self firstSendZkSocketOrder];
         }
     }
 }

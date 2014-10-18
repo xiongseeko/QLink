@@ -80,6 +80,9 @@
 @property(nonatomic,strong) NSString *DeviceId;
 @property(nonatomic,strong) NSString *OrderNo;
 
+//紧急模式下配置参数
+@property(nonatomic,strong) NSString *senceId;
+
 +(Order *)setOrderId:(NSString *)orderId
         andOrderName:(NSString *)orderName
              andType:(NSString *)type
@@ -126,9 +129,11 @@
 @property(nonatomic,strong) NSString *LayerId;
 @property(nonatomic,strong) NSString *RoomId;
 @property(nonatomic,strong) NSString *IconType;
-
+//场景下命令
 @property(nonatomic,strong) NSString *OrderId;
 @property(nonatomic,strong) NSString *OrderName;
+@property(nonatomic,strong) NSString *OrderCmd;
+@property(nonatomic,strong) NSString *Address;
 @property(nonatomic,strong) NSString *Timer;
 
 +(Sence *)setSenceId:(NSString *)senceId

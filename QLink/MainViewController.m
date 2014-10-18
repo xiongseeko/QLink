@@ -377,7 +377,11 @@
     
     if ([pType isEqualToString:MACRO]) {//场景
         Sence *obj = [senceArr_ objectAtIndex:index];
-        [self sendSocketOrder:obj.Macrocmd];
+        Order *orderObj = [[Order alloc] init];
+        orderObj.OrderCmd = obj.Macrocmd;
+        orderObj.senceId = obj.SenceId;
+        self.isSence = YES;
+        [self load_typeSocket:999 andOrderObj:orderObj];
     } else if([pType isEqualToString:@"light"]){ // 照明
         LightViewController *lightVC = [[LightViewController alloc] init];
         [self.navigationController pushViewController:lightVC animated:YES];
@@ -666,27 +670,6 @@
                                                 image:nil
                                                target:self
                                                action:@selector(pushMenuItem:)], nil];
-//    @[
-//      [KxMenuItem menuItem:@"紧急模式"
-//                     image:nil
-//                    target:self
-//                    action:@selector(pushMenuItem:)],
-//      
-//      [KxMenuItem menuItem:@"写入中控"
-//                     image:nil
-//                    target:self
-//                    action:@selector(pushMenuItem:)],
-//      
-//      [KxMenuItem menuItem:@"初始化"
-//                     image:nil
-//                    target:self
-//                    action:@selector(pushMenuItem:)],
-//      
-//      [KxMenuItem menuItem:@"关于"
-//                     image:nil
-//                    target:self
-//                    action:@selector(pushMenuItem:)]
-//      ];
     
     Config *configObj = [Config getConfig];
     if (configObj.isBuyCenterControl) {
@@ -733,13 +716,13 @@
 {
     NSLog(@"*****%@", sender);
     if ([sender.title isEqualToString:@"正常模式"]) {//写入中控
-        
+        [DataUtil setGlobalModel:Model_ZK];
     } else if ([sender.title isEqualToString:@"紧急模式"])
     {
-        
+        [DataUtil setGlobalModel:Model_JJ];
     } else if ([sender.title isEqualToString:@"写入中控"])
     {
-        [self initRequestZK];
+        [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
         
     } else if ([sender.title isEqualToString:@"初始化"])
     {
