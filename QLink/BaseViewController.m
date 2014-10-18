@@ -14,7 +14,6 @@
 #import "NetworkUtil.h"
 #import "XMLDictionary.h"
 
-#define ECHO_MSG 1
 #define READ_TIMEOUT 15.0
 
 @interface BaseViewController ()
@@ -152,7 +151,7 @@
     sendContent_ = [sendCmdDic_ objectForKey:@"_sdcmd"];
     
     NSData *data = [sendContent_ hexToBytes];
-    [asyncSocket_ writeData:data withTimeout:-1 tag:ECHO_MSG];
+    [asyncSocket_ writeData:data withTimeout:-1 tag:-1];
 }
 
 #pragma mark -
@@ -195,10 +194,10 @@
         NSString *port = addArr[2];
         if ([[type lowercaseString] isEqualToString:@"tcp"]) {
             [self initTcp:ip andPort:port];
-            //        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
-        }
-        else{
-            [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
+//            [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
+        } else {
+//            [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
+            [self initUdp:ip andPort:port];
         }
     }
 }
@@ -216,10 +215,11 @@
     NSString *port = addArr[2];
     if ([[type lowercaseString] isEqualToString:@"tcp"]) {
         [self initTcp:ip andPort:port];
-        //        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
+//        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
     }
     else{
-        [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
+//        [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
+        [self initUdp:ip andPort:port];
     }
 }
 
@@ -268,13 +268,8 @@
     
     /**************发送数据**************/
     
-//    NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
-//    //    NSData *data = [self HexConvertToASCII:msg];
-//    [udpSocket_ sendData:data toHost:host port:[port integerValue] withTimeout:-1 tag:udpTag_];//传递数据
-//    
-//    NSLog(@"SENT (%i): %@", (int)udpTag_, content);
-    
-    udpTag_++;
+    NSData *data = [sendContent_ hexToBytes];
+    [udpSocket_ sendData: data toHost: host port: [port integerValue] withTimeout:-1 tag: -1];
 }
 
 -(void)initTcp:(NSString *)host
@@ -308,19 +303,19 @@
 //接收UDP数据
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext
 {
-	NSString *msg = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	if (msg)
-	{
-		NSLog(@"RECV: %@", msg);
-	}
-	else
-	{
-		NSString *host = nil;
-		uint16_t port = 0;
-		[GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
-		
-		NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
-	}
+//	NSString *msg = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//	if (msg)
+//	{
+//		NSLog(@"RECV: %@", msg);
+//	}
+//	else
+//	{
+//		NSString *host = nil;
+//		uint16_t port = 0;
+//		[GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
+//		
+//		NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
+//	}
 }
 
 #pragma mark -
@@ -335,7 +330,7 @@
     
     NSData *data = [sendContent_ hexToBytes];
     
-    [asyncSocket_ writeData:data withTimeout:-1 tag:ECHO_MSG];//发送数据;  withTimeout:超时时间，设置为－1代表永不超时;  tag:区别该次读取与其他读取的标志,通常我们在设计视图上的控件时也会有这样的一个属性就是tag;
+    [asyncSocket_ writeData:data withTimeout:-1 tag:-1];//发送数据;  withTimeout:超时时间，设置为－1代表永不超时;  tag:区别该次读取与其他读取的标志,通常我们在设计视图上的控件时也会有这样的一个属性就是tag;
 }
 
 //未成功连接
