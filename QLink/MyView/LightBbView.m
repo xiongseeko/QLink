@@ -30,17 +30,23 @@
 
 - (IBAction)btnPressed:(OrderButton *)sender
 {
-    NSLog(@"=====%@",sender.orderObj.OrderName);
+    if (self.delegate) {
+        [self.delegate orderDelegatePressed:sender];
+    }
 }
 
 - (IBAction)btnLightPressed:(OrderButton *)sender
 {
-    NSLog(@"=====%@",sender.orderObj.OrderName);
+    if (self.delegate) {
+        [self.delegate orderDelegatePressed:sender];
+    }
 }
 
 -(IBAction)btnColorPressed:(OrderButton *)sender
 {
-    NSLog(@"=====%@",sender.orderObj.OrderName);
+    if (self.delegate) {
+        [self.delegate orderDelegatePressed:sender];
+    }
 }
 
 @end

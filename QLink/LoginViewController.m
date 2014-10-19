@@ -12,6 +12,7 @@
 #import "NetworkUtil.h"
 #import "SVProgressHUD.h"
 #import "AFNetworking.h"
+#import "XMLDictionary.h"
 
 @interface LoginViewController ()
 {
@@ -102,33 +103,37 @@
         
         //处理配置信息
         configTempObj_ = [Config getTempConfig:configArr];
-        NSString *curVersion = [SQLiteUtil getCurVersionNo];
-        
-        //重新解析配置文件
-        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
-            //清除本地配置数据
-            [SQLiteUtil clearData];
-        }
-        
-        //设置登录信息
-        [Member setUdMember:_tfName.text
-                    andUPwd:_tfPassword.text
-                    andUKey:_tfKey.text
-               andIsRemeber:_btnRemeber.selected];
-        
-        if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
-        {
-            ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
-            actionNullClass.delegate = weakSelf;
-            [actionNullClass initRequestActionNULL];
+        if (configTempObj_.isSetIp) {//需要配置ip
+            [self initSetUpIp];
+        } else {
+            NSString *curVersion = [SQLiteUtil getCurVersionNo];
             
-        }else{//读取本地数据配置
-            NSLog(@"读取本地");
+            //重新解析配置文件
+            if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
+                //清除本地配置数据
+                [SQLiteUtil clearData];
+            }
             
-            [SQLiteUtil setDefaultLayerIdAndRoomId];
+            //设置登录信息
+            [Member setUdMember:_tfName.text
+                        andUPwd:_tfPassword.text
+                        andUKey:_tfKey.text
+                   andIsRemeber:_btnRemeber.selected];
             
-            MainViewController *mainVC = [[MainViewController alloc] init];
-            [weakSelf.navigationController pushViewController:mainVC animated:YES];
+            if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
+            {
+                ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
+                actionNullClass.delegate = weakSelf;
+                [actionNullClass initRequestActionNULL];
+                
+            }else{//读取本地数据配置
+                NSLog(@"读取本地");
+                
+                [SQLiteUtil setDefaultLayerIdAndRoomId];
+                
+                MainViewController *mainVC = [[MainViewController alloc] init];
+                [weakSelf.navigationController pushViewController:mainVC animated:YES];
+            }
         }
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
@@ -230,6 +235,48 @@
     [UIView animateWithDuration:0.2 animations:^(void){
         self.view.frame = CGRectMake(0, 0, 320, self.view.frame.size.height);
     }];
+}
+
+#pragma mark -
+#pragma mark Custom Methods
+
+-(void)initSetUpIp
+{
+    NSString *sIpUrl = [NetworkUtil getAction:ACTIONSETUPIP];
+    NSURL *ipUrl = [NSURL URLWithString:sIpUrl];
+    NSURLRequest *ipRequest = [NSURLRequest requestWithURL:ipUrl];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:ipRequest];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
+     {
+         NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+         strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
+         NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
+         NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
+         
+         if (!dict) {
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                             message:@"配置ip出错,请重试."
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"关闭"
+                                                   otherButtonTitles:nil, nil];
+             [alert show];
+             
+             [SVProgressHUD dismiss];
+             return;
+         }
+         
+         //设置Ip Socket
+         [self load_setIpSocket:dict];
+         
+     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                             message:@"连接失败\n请确认网络是否连接." delegate:nil
+                                                   cancelButtonTitle:@"关闭"
+                                                   otherButtonTitles:nil, nil];
+         [alertView show];
+         
+         [SVProgressHUD dismiss];
+     }];
 }
 
 #pragma mark -

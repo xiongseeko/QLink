@@ -196,7 +196,6 @@
             [self initTcp:ip andPort:port];
 //            [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
         } else {
-//            [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
             [self initUdp:ip andPort:port];
         }
     }
@@ -215,10 +214,8 @@
     NSString *port = addArr[2];
     if ([[type lowercaseString] isEqualToString:@"tcp"]) {
         [self initTcp:ip andPort:port];
-//        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
     }
     else{
-//        [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
         [self initUdp:ip andPort:port];
     }
 }
@@ -435,8 +432,6 @@
             if ([top3Cmd isEqualToData: readTop3])
             {
                 [cmdOperArr_ removeObject:sendCmdDic_];
-                
-                NSLog(@"====%d",[cmdOperArr_ count]);
                 
                 //发送完成，关闭连接
                 if ([cmdOperArr_ count] == 0) {

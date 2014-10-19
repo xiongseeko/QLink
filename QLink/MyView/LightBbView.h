@@ -8,10 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol LightBbViewDelegate <NSObject>
+
+-(void)orderDelegatePressed:(OrderButton *)sender;
+
+@end
+
 @interface LightBbView : UIView
 
-@property(nonatomic,strong) IBOutlet UILabel *lTitle;
+@property(nonatomic,assign) id<LightBbViewDelegate>delegate;
 
+@property(nonatomic,strong) IBOutlet UILabel *lTitle;
 @property(nonatomic,strong) IBOutlet OrderButton *btnOn;
 @property(nonatomic,strong) IBOutlet OrderButton *btnOff;
 @property(nonatomic,strong) IBOutlet OrderButton *btnUp;

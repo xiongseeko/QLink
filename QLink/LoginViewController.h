@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "ActionNullClass.h"
+#import "SetupIpViewController.h"
 
-@interface LoginViewController : UIViewController<UITextFieldDelegate,ActionNullClassDelegate>
+@interface LoginViewController : SetupIpViewController<UITextFieldDelegate,ActionNullClassDelegate>
 
 @property(nonatomic,strong) IBOutlet UITextField *tfKey;
 @property(nonatomic,strong) IBOutlet UITextField *tfName;

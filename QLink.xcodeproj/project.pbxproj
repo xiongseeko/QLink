@@ -388,6 +388,9 @@
 		8A0738FF19DEEEE3001E6F45 /* DeviceConfigIconPlist.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8A0738FE19DEEEE3001E6F45 /* DeviceConfigIconPlist.plist */; };
 		8A07390319DEF043001E6F45 /* DeviceConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A07390119DEF043001E6F45 /* DeviceConfigViewController.m */; };
 		8A07390419DEF043001E6F45 /* DeviceConfigViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A07390219DEF043001E6F45 /* DeviceConfigViewController.xib */; };
+		8A15D7D519F356BE002A2E41 /* SetupIpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7D419F356BE002A2E41 /* SetupIpViewController.m */; };
+		8A15D7DF19F36743002A2E41 /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7DC19F36743002A2E41 /* SimplePing.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8A15D7E019F36743002A2E41 /* SimplePingHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7DE19F36743002A2E41 /* SimplePingHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8A1ED4F719DA71AA0091DBB6 /* SANSAN_MACRO_ADD.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F319DA71AA0091DBB6 /* SANSAN_MACRO_ADD.png */; };
 		8A1ED4F819DA71AA0091DBB6 /* SANSAN_MACRO_ADD@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F419DA71AA0091DBB6 /* SANSAN_MACRO_ADD@2x.png */; };
 		8A1ED4F919DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */; };
@@ -926,6 +929,12 @@
 		8A07390019DEF043001E6F45 /* DeviceConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceConfigViewController.h; sourceTree = "<group>"; };
 		8A07390119DEF043001E6F45 /* DeviceConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceConfigViewController.m; sourceTree = "<group>"; };
 		8A07390219DEF043001E6F45 /* DeviceConfigViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DeviceConfigViewController.xib; sourceTree = "<group>"; };
+		8A15D7D319F356BE002A2E41 /* SetupIpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupIpViewController.h; sourceTree = "<group>"; };
+		8A15D7D419F356BE002A2E41 /* SetupIpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetupIpViewController.m; sourceTree = "<group>"; };
+		8A15D7DB19F36743002A2E41 /* SimplePing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplePing.h; sourceTree = "<group>"; };
+		8A15D7DC19F36743002A2E41 /* SimplePing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
+		8A15D7DD19F36743002A2E41 /* SimplePingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplePingHelper.h; sourceTree = "<group>"; };
+		8A15D7DE19F36743002A2E41 /* SimplePingHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePingHelper.m; sourceTree = "<group>"; };
 		8A1ED4F319DA71AA0091DBB6 /* SANSAN_MACRO_ADD.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SANSAN_MACRO_ADD.png; sourceTree = "<group>"; };
 		8A1ED4F419DA71AA0091DBB6 /* SANSAN_MACRO_ADD@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SANSAN_MACRO_ADD@2x.png"; sourceTree = "<group>"; };
 		8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SANSAN_MACRO_ADD_select.png; sourceTree = "<group>"; };
@@ -1542,6 +1551,17 @@
 			path = MyView;
 			sourceTree = "<group>";
 		};
+		8A15D7DA19F36743002A2E41 /* SimplePingHelper */ = {
+			isa = PBXGroup;
+			children = (
+				8A15D7DB19F36743002A2E41 /* SimplePing.h */,
+				8A15D7DC19F36743002A2E41 /* SimplePing.m */,
+				8A15D7DD19F36743002A2E41 /* SimplePingHelper.h */,
+				8A15D7DE19F36743002A2E41 /* SimplePingHelper.m */,
+			);
+			path = SimplePingHelper;
+			sourceTree = "<group>";
+		};
 		8A25548319EA1C360031B9F4 /* Socket */ = {
 			isa = PBXGroup;
 			children = (
@@ -1722,6 +1742,8 @@
 				8A378F7D19E0455B0089317B /* AboutViewController.xib */,
 				8A25549419EA453E0031B9F4 /* BaseViewController.h */,
 				8A25549519EA453E0031B9F4 /* BaseViewController.m */,
+				8A15D7D319F356BE002A2E41 /* SetupIpViewController.h */,
+				8A15D7D419F356BE002A2E41 /* SetupIpViewController.m */,
 			);
 			path = QLink;
 			sourceTree = "<group>";
@@ -1770,6 +1792,7 @@
 		8AAEE81B19C9CABA00B01890 /* Package */ = {
 			isa = PBXGroup;
 			children = (
+				8A15D7DA19F36743002A2E41 /* SimplePingHelper */,
 				8A2554A119EA84790031B9F4 /* AFNetworking */,
 				8A25548319EA1C360031B9F4 /* Socket */,
 				8A9D985919CEA58800D50CE6 /* fmdb */,
@@ -2410,6 +2433,7 @@
 				8A9D985819CE98EC00D50CE6 /* Model.m in Sources */,
 				35131E3019D3A407005A3C17 /* SdView.m in Sources */,
 				8AAEE82C19C9CB0A00B01890 /* REMenuItem.m in Sources */,
+				8A15D7DF19F36743002A2E41 /* SimplePing.m in Sources */,
 				8A25548919EA1C360031B9F4 /* GCDAsyncUdpSocket.m in Sources */,
 				8A9D986719CEA58800D50CE6 /* FMDatabasePool.m in Sources */,
 				35A4E60819D2F8F6007A3C30 /* OtView.m in Sources */,
@@ -2445,7 +2469,9 @@
 				8A40C70719EC25810076B06E /* StudyTimerView.m in Sources */,
 				35131F3219D42753005A3C17 /* RemoteViewController.m in Sources */,
 				8A2554B619EA84790031B9F4 /* AFHTTPRequestOperationManager.m in Sources */,
+				8A15D7E019F36743002A2E41 /* SimplePingHelper.m in Sources */,
 				8A07390319DEF043001E6F45 /* DeviceConfigViewController.m in Sources */,
+				8A15D7D519F356BE002A2E41 /* SetupIpViewController.m in Sources */,
 				8AAEE82B19C9CB0A00B01890 /* REMenuContainerView.m in Sources */,
 				352F557719D7E9210027EB38 /* LightBbView.m in Sources */,
 				8A9D986919CEA58800D50CE6 /* FMResultSet.m in Sources */,

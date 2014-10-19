@@ -22,6 +22,7 @@
 #define ACTIONNULL @"NULL"
 #define ACTIONSETUP @"kfsetup"
 #define ACTIONSETUPZK @"setupzk"
+#define ACTIONSETUPIP @"setupip"
 
 //请求次数
 #define NumberOfTimeout 3

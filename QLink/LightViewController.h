@@ -10,7 +10,10 @@
 #import "SwView1.h"
 #import "RenameView.h"
 #import "BaseViewController.h"
+#import "LightBcView.h"
+#import "LightBbView.h"
+#import "LightBriView.h"
 
-@interface LightViewController : BaseViewController<Sw1Delegate,RenameViewDelegate>
+@interface LightViewController : BaseViewController<Sw1Delegate,RenameViewDelegate,LightBcViewDelegate,LightBbViewDelegate,LightBriViewDelegate>
 
 @end

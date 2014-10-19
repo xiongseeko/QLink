@@ -10,9 +10,6 @@
 #import "SenceConfigViewController.h"
 #import "ILBarButtonItem.h"
 #import "NetworkUtil.h"
-#import "LightBcView.h"
-#import "LightBbView.h"
-#import "LightBriView.h"
 #import "MyAlertView.h"
 
 @interface LightViewController ()
@@ -173,6 +170,7 @@
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"LightBcView" owner:self options:nil];
             LightBcView *bcView = [controlArr objectAtIndex:0];
             bcView.frame = CGRectMake(0, height, 320, 113);
+            bcView.delegate = self;
             bcView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:bcView];
             
@@ -184,9 +182,9 @@
                     bcView.btnOn.orderObj = obj;
                 } else if ([obj.SubType isEqualToString:@"off"]) {
                     bcView.btnOFF.orderObj = obj;
-                } else if ([obj.SubType isEqualToString:@"br"]) {
+                } else if ([obj.Type isEqualToString:@"br"]) {
                     [brOrderArr addObject:obj];
-                } else if ([obj.SubType isEqualToString:@"co"]) {
+                } else if ([obj.Type isEqualToString:@"co"]) {
                     [coOrderArr addObject:obj];
                 }
             }
@@ -200,6 +198,7 @@
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"LightBbView" owner:self options:nil];
             LightBbView *bbView = [controlArr objectAtIndex:0];
             bbView.frame = CGRectMake(0, height, 320, 113);
+            bbView.delegate = self;
             bbView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:bbView];
             
@@ -239,6 +238,7 @@
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"LightBriView" owner:self options:nil];
             LightBriView *briView = [controlArr objectAtIndex:0];
             briView.frame = CGRectMake(0, height, 320, 113);
+            briView.delegate = self;
             briView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:briView];
             
@@ -249,12 +249,12 @@
                     briView.btnOn.orderObj = obj;
                 } else if ([obj.SubType isEqualToString:@"off"]) {
                     briView.btnOff.orderObj = obj;
-                } else if ([obj.SubType isEqualToString:@"br"]) {
+                } else if ([obj.Type isEqualToString:@"br"]) {
                     [brOrderArr addObject:obj];
                 }
             }
             
-            briView.orderArr = brOrderArr;
+            briView.brOrderArr = brOrderArr;
             
             height += 113;
         }
@@ -338,7 +338,7 @@
 }
 
 #pragma mark -
-#pragma mark Sw1Delegate
+#pragma mark Sw1Delegate,LightBcViewDelegate,LightBriViewDelegate,LightBbViewDelegate
 
 -(void)handleLongPressed:(NSString *)deviceId andDeviceName:(NSString *)deviceName andLabel:(UILabel *)lTitle
 {
@@ -357,16 +357,11 @@
 -(void)orderDelegatePressed:(OrderButton *)sender
 {
     if (!sender.orderObj) {
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-//                                                        message:@"此按钮无效."
-//                                                       delegate:nil
-//                                              cancelButtonTitle:@"关闭"
-//                                              otherButtonTitles:nil, nil];
-//        [alert show];
         return;
     }
     
     NSLog(@"====%@",sender.orderObj.OrderName);
+    
     if ([DataUtil getGlobalIsAddSence]) {//添加场景模式
         if ([SQLiteUtil getShoppingCarCount] >= 40) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
@@ -389,7 +384,6 @@
             [alert show];
         }
     } else {
-//        [self sendSocketOrder:sender.orderObj.OrderCmd];
         [self load_typeSocket:999 andOrderObj:sender.orderObj];
     }
 }
