@@ -391,6 +391,8 @@
 		8A15D7D519F356BE002A2E41 /* SetupIpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7D419F356BE002A2E41 /* SetupIpViewController.m */; };
 		8A15D7DF19F36743002A2E41 /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7DC19F36743002A2E41 /* SimplePing.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8A15D7E019F36743002A2E41 /* SimplePingHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7DE19F36743002A2E41 /* SimplePingHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		8A15D7E319F3B38B002A2E41 /* ProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A15D7E219F3B38B002A2E41 /* ProgressView.m */; };
+		8A15D7E519F3B3A9002A2E41 /* ProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A15D7E419F3B3A9002A2E41 /* ProgressView.xib */; };
 		8A1ED4F719DA71AA0091DBB6 /* SANSAN_MACRO_ADD.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F319DA71AA0091DBB6 /* SANSAN_MACRO_ADD.png */; };
 		8A1ED4F819DA71AA0091DBB6 /* SANSAN_MACRO_ADD@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F419DA71AA0091DBB6 /* SANSAN_MACRO_ADD@2x.png */; };
 		8A1ED4F919DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */; };
@@ -935,6 +937,9 @@
 		8A15D7DC19F36743002A2E41 /* SimplePing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		8A15D7DD19F36743002A2E41 /* SimplePingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplePingHelper.h; sourceTree = "<group>"; };
 		8A15D7DE19F36743002A2E41 /* SimplePingHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePingHelper.m; sourceTree = "<group>"; };
+		8A15D7E119F3B38B002A2E41 /* ProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressView.h; sourceTree = "<group>"; };
+		8A15D7E219F3B38B002A2E41 /* ProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressView.m; sourceTree = "<group>"; };
+		8A15D7E419F3B3A9002A2E41 /* ProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProgressView.xib; sourceTree = "<group>"; };
 		8A1ED4F319DA71AA0091DBB6 /* SANSAN_MACRO_ADD.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SANSAN_MACRO_ADD.png; sourceTree = "<group>"; };
 		8A1ED4F419DA71AA0091DBB6 /* SANSAN_MACRO_ADD@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SANSAN_MACRO_ADD@2x.png"; sourceTree = "<group>"; };
 		8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SANSAN_MACRO_ADD_select.png; sourceTree = "<group>"; };
@@ -1547,6 +1552,9 @@
 				8A40C70519EC25810076B06E /* StudyTimerView.h */,
 				8A40C70619EC25810076B06E /* StudyTimerView.m */,
 				8A40C70819EC25930076B06E /* StudyTimerView.xib */,
+				8A15D7E119F3B38B002A2E41 /* ProgressView.h */,
+				8A15D7E219F3B38B002A2E41 /* ProgressView.m */,
+				8A15D7E419F3B3A9002A2E41 /* ProgressView.xib */,
 			);
 			path = MyView;
 			sourceTree = "<group>";
@@ -1970,6 +1978,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35131ED819D4039A005A3C17 /* dt_leftbottom@2x.png in Resources */,
+				8A15D7E519F3B3A9002A2E41 /* ProgressView.xib in Resources */,
 				352F558A19D7EB3D0027EB38 /* light_bb_down02.png in Resources */,
 				35131E5619D3A760005A3C17 /* sd_top_left@2x.png in Resources */,
 				35131E7719D3B048005A3C17 /* bstc_right.png in Resources */,
@@ -2440,6 +2449,7 @@
 				8AAEE85219C9D7EB00B01890 /* MainViewController.m in Sources */,
 				35A8A93319D1480A0018EB67 /* MyAlertView.m in Sources */,
 				352F559619D7ED7E0027EB38 /* LightBriView.m in Sources */,
+				8A15D7E319F3B38B002A2E41 /* ProgressView.m in Sources */,
 				35131E9619D3E292005A3C17 /* SwView1.m in Sources */,
 				8A1F45C219E0391100B19227 /* ActionNullClass.m in Sources */,
 				8AB5BEE619D0637000BC11EF /* IconViewController.m in Sources */,

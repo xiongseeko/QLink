@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "Model.h"
 
-
 @interface DataUtil : NSObject
 
 //获取沙盒地址

@@ -22,7 +22,9 @@
 #define ACTIONNULL @"NULL"
 #define ACTIONSETUP @"kfsetup"
 #define ACTIONSETUPZK @"setupzk"
+#define ACTIONSETUPZKOK @"zkok"
 #define ACTIONSETUPIP @"setupip"
+
 
 //请求次数
 #define NumberOfTimeout 3
@@ -49,6 +51,8 @@
 #define Model_Study @"Model_Study"//学习模式
 #define Model_ZK @"Model_Zk"//中控模式
 #define Model_JJ @"Model_Jj"//紧急模式
+
+#define UDP_NAME @"udpSocket"
 
 
 

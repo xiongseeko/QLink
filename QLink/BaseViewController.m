@@ -13,6 +13,7 @@
 #import "SVProgressHUD.h"
 #import "NetworkUtil.h"
 #import "XMLDictionary.h"
+#import "ProgressView.h"
 
 #define READ_TIMEOUT 15.0
 
@@ -24,6 +25,8 @@
     //中控参数&紧急模式
     NSMutableArray *cmdReadArr_;
     NSMutableArray *cmdOperArr_;
+    ProgressView *progressView_;
+    float avgValue_;//进度条的加量
     
     NSDictionary *sendCmdDic_;//当前发送的对象,用于中控参数
     Sence *sendSenceObj_;//紧急模式下发送的场景对象
@@ -84,7 +87,10 @@
     self.iTimeoutCount = 1;
     isSendZKFailAndSendLast_ = NO;
     
-    [SVProgressHUD showWithStatus:@"正在写入中控..."];
+//    [SVProgressHUD showWithStatus:@"正在写入中控..."];
+    NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
+    progressView_ = [controlArr objectAtIndex:0];
+    [self.view addSubview:progressView_];
     
     NSURL *url = [NSURL URLWithString:[[NetworkUtil getAction:ACTIONSETUPZK] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
@@ -109,13 +115,17 @@
         //拼接队列
         cmdReadArr_ = [NSMutableArray arrayWithArray:[DataUtil changeDicToArray:[info objectForKey:@"tecom"]]];
         cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
-        
+        int iCount = [cmdReadArr_ count];
         if ([cmdOperArr_ count] == 0) {
+            [progressView_ removeFromSuperview];
+            
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                                 message:@"没有定义中控命令." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
             [alertView show];
             return;
         }
+        
+        avgValue_ = 1/iCount;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf firstSendZkSocketOrder];
@@ -123,6 +133,8 @@
         
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"发生错误！%@",error);
+        
+        [progressView_ removeFromSuperview];
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
@@ -136,8 +148,8 @@
     sendContent_ = [sendCmdDic_ objectForKey:@"_sdcmd"];
     
     if ([[zkConfig_.SendType lowercaseString] isEqualToString:@"tcp"]) {
-        [self initTcp:zkConfig_.Ip andPort:zkConfig_.Port];
-//        [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
+//        [self initTcp:zkConfig_.Ip andPort:zkConfig_.Port];
+        [self initTcp:@"121.204.155.120" andPort:@"30000"];
     }
     else{
         [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
@@ -346,8 +358,7 @@
                                                                     message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
                     alert.tag = 999;
                     [alert show];
-                    
-                    [SVProgressHUD dismiss];
+                    [progressView_ removeFromSuperview];
                 }
                 
                 break;
@@ -433,20 +444,51 @@
             {
                 [cmdOperArr_ removeObject:sendCmdDic_];
                 
+                NSLog(@"===%d,%f",[cmdOperArr_ count],avgValue_);
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+//                    progressView_.pvControl.progress += avgValue_;
+                    [progressView_ setProgressValue:avgValue_];
+                });
+                
                 //发送完成，关闭连接
                 if ([cmdOperArr_ count] == 0) {
-                    
                     if (!isSendZKFailAndSendLast_) {
-                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                            message:@"写入中控成功."
-                                                                           delegate:nil
-                                                                  cancelButtonTitle:@"确定"
-                                                                  otherButtonTitles:nil, nil];
-                        [alertView show];
+                        NSString *sUrl = [NetworkUtil getAction:ACTIONSETUPZKOK];
+                        NSURL *url = [NSURL URLWithString:sUrl];
+                        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+                        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+                        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
+                         {
+                             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                                 message:@"写入中控成功."
+                                                                                delegate:nil
+                                                                       cancelButtonTitle:@"确定"
+                                                                       otherButtonTitles:nil, nil];
+                             [alertView show];
+                             
+                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    
+                             isSendZKFailAndSendLast_ = YES;
+                             sendCmdDic_ = [cmdOperArr_ lastObject];
+                             [cmdOperArr_ removeAllObjects];
+                             [cmdOperArr_ addObject:sendCmdDic_];
+                             
+                             [self sendZkSocketOrder];
+                             
+                             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                                 message:@"写入失败." delegate:nil
+                                                                       cancelButtonTitle:@"关闭"
+                                                                       otherButtonTitles:nil, nil];
+                             [alertView show];
+                         }];
+                        
+                        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+                        [queue addOperation:operation];
                     }
                     
                     [self disConnectionTCP];
-                    [SVProgressHUD dismiss];
+                    [progressView_ removeFromSuperview];
                     
                     return;
                 }
@@ -492,15 +534,17 @@
     if (alertView.tag == 999) {
         if (buttonIndex == 0) {//关闭
             isSendZKFailAndSendLast_ = YES;
-            
             sendCmdDic_ = [cmdOperArr_ lastObject];
             [cmdOperArr_ removeAllObjects];
             [cmdOperArr_ addObject:sendCmdDic_];
-            
             [self sendZkSocketOrder];
         } else if (buttonIndex == 1) {//重试
-            [SVProgressHUD showWithStatus:@"正在写入中控..."];
             
+            NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
+            progressView_ = [controlArr objectAtIndex:0];
+            [self.view addSubview:progressView_];
+            
+            isSendZKFailAndSendLast_ = NO;
             cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
             self.iTimeoutCount = 1;
             [self firstSendZkSocketOrder];

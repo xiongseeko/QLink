@@ -10,7 +10,7 @@
 #import "ActionNullClass.h"
 #import "SetupIpViewController.h"
 
-@interface LoginViewController : SetupIpViewController<UITextFieldDelegate,ActionNullClassDelegate>
+@interface LoginViewController : SetupIpViewController<UITextFieldDelegate>
 
 @property(nonatomic,strong) IBOutlet UITextField *tfKey;
 @property(nonatomic,strong) IBOutlet UITextField *tfName;

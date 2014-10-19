@@ -7,8 +7,8 @@
 //
 
 #import "SetupIpViewController.h"
-#import "DataUtil.h"
 #import "NSString+NSStringHexToBytes.h"
+#import "MainViewController.h"
 
 @interface SetupIpViewController ()
 {
@@ -18,6 +18,10 @@
     
     NSString *sendContent_;
     NSDictionary *sendDic_;
+    
+    NSString *ip_;
+    NSString *port_;
+    NSString *bindPort_;
 }
 @end
 
@@ -44,7 +48,7 @@
     
     NSDictionary *info = [dic objectForKey:@"info"];
     
-    infoTagReadArr_ = [NSMutableArray arrayWithObjects:@"onecmd",@"twocmd",@"threecmd",@"send_this_cmd",@"send_this_cmd1",@"send_this_cmd2", nil];
+    infoTagReadArr_ = [NSMutableArray arrayWithObjects:@"_onecmd",@"_twocmd",@"_threecmd",@"_send_this_cmd",@"_send_this_cmd1",@"_send_this_cmd2", nil];
     
     orderDicArr_ = [NSMutableArray arrayWithArray:[DataUtil changeDicToArray:[info objectForKey:@"kfsdevice"]]];
     [orderDicArr_ insertObject:info atIndex:0];
@@ -54,26 +58,35 @@
 
 -(void)sendLoopOrder
 {
-    infoTagArr_ = [NSMutableArray arrayWithArray:infoTagArr_];
+    infoTagArr_ = [NSMutableArray arrayWithArray:infoTagReadArr_];
     sendDic_ = [orderDicArr_ objectAtIndex:0];
+    
+    for (NSString *tag in infoTagReadArr_) {
+        if ([DataUtil checkNullOrEmpty:[sendDic_ objectForKey:tag]]) {
+            [infoTagArr_ removeObject:tag];
+        }
+    }
     
     [self sendLoopTag];
 }
 
 -(void)sendLoopTag
 {
-    for (NSString *tag in infoTagReadArr_) {
-        sendContent_ = [sendDic_ objectForKey:tag];
-        if ([DataUtil checkNullOrEmpty:sendContent_]) {
-            [infoTagArr_ removeObject:tag];
-        } else {
-            break;
-        }
+//    for (NSString *tag in infoTagArr_) {
+//        sendContent_ = [sendDic_ objectForKey:tag];
+        
+//    }
+    sendContent_ = [sendDic_ objectForKey:[infoTagArr_ objectAtIndex:0]];
+
+    if ([DataUtil checkNullOrEmpty:sendContent_]) {
+        NSLog(@"配置IP错误");
+        [self actionNULL];
+        return;
     }
     
-    NSString *toHera = [DataUtil checkNullOrEmpty:[sendDic_ objectForKey:@"to_here"]] ? [sendDic_ objectForKey:@"toip"] : [sendDic_ objectForKey:@"to_here"];
+    NSString *toHera = [DataUtil checkNullOrEmpty:[sendDic_ objectForKey:@"_to_here"]] ? [sendDic_ objectForKey:@"_toip"] : [sendDic_ objectForKey:@"_to_here"];
     NSArray *to_hereArr = [toHera componentsSeparatedByString:@":"];
-    NSArray *local_portArr = [[sendDic_ objectForKey:@"to_here"] componentsSeparatedByString:@":"];
+    NSArray *local_portArr = [[sendDic_ objectForKey:@"_local_port"] componentsSeparatedByString:@":"];
 
     [self initUdp:[to_hereArr objectAtIndex:1]
           andPort:[to_hereArr objectAtIndex:2]
@@ -91,14 +104,25 @@
 {
     /**************创建连接**************/
     
-    udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    NSError *error = nil;
+    if (![bindPort isEqualToString: bindPort_])
+    {
+        if (udpSocket_ != nil) {
+            [udpSocket_ close];
+            udpSocket_ = nil;
+        }
+        
+        udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+        
+        if (bindPort != nil && ![udpSocket_ bindToPort:[bindPort integerValue] error:&error])
+        {
+            NSLog(@"Error binding: %@", error);
+            return;
+        }
+        
+        bindPort_ = bindPort;
+    }
     
-	NSError *error = nil;
-	if (bindPort != nil && ![udpSocket_ bindToPort:[bindPort integerValue] error:&error])
-	{
-        NSLog(@"Error binding: %@", error);
-		return;
-	}
 	if (![udpSocket_ beginReceiving:&error])
 	{
 		NSLog(@"Error receiving: %@", error);
@@ -113,7 +137,11 @@
     /**************发送数据**************/
     
     NSData *data = [sendContent_ hexToBytes];
-    [udpSocket_ sendData: data toHost: host port: [port integerValue] withTimeout:-1 tag: -1];
+    [udpSocket_ sendData: data
+                  toHost: host
+                    port: [port integerValue]
+             withTimeout:-1
+                     tag: -1];
 }
 
 -(void)initTcp:(NSString *)host
@@ -139,16 +167,16 @@
     [NSThread sleepForTimeInterval:0.5];
     
     // 移除命令
-    [infoTagArr_ removeObject:0];
+    [infoTagArr_ removeObjectAtIndex:0];
     
     // 发完完毕, ping一下
     if ([infoTagArr_ count] == 0) {
-        NSArray *testIpArr = [[sendDic_ objectForKey:@"testip"] componentsSeparatedByString:@":"];
+        NSArray *testIpArr = [[sendDic_ objectForKey:@"_testip"] componentsSeparatedByString:@":"];
         NSString *pingIp = nil;
-        if ([testIpArr count] > 0) {
+        if ([testIpArr count] > 1) {
             pingIp = [testIpArr objectAtIndex:1];
         } else {
-            pingIp =[sendDic_ objectForKey:@"testip"];
+            pingIp =[sendDic_ objectForKey:@"_testip"];
         }
         
         [SimplePingHelper ping:pingIp
@@ -206,11 +234,15 @@
 -(void) pingSuccess
 {
     self.iTimeoutCount = 1;
-    [orderDicArr_ removeObject:0];
-    [self sendLoopOrder];
+    [orderDicArr_ removeObjectAtIndex:0];
+    if ([orderDicArr_ count] == 0) {
+        [self actionNULL];
+    } else {
+        [self sendLoopOrder];
+    }
 }
 
--(void) pingFailure
+-(void)pingFailure
 {
     if (NumberOfTimeout > [self iTimeoutCount]) {
         [self setITimeoutCount:[self iTimeoutCount] + 1];
@@ -222,6 +254,73 @@
     }
 }
 
+-(void)actionNULL
+{
+    Member *curMember = [Member getMember];
+    
+    NSString *curVersion = [SQLiteUtil getCurVersionNo];
+    
+    //重新解析配置文件
+    if ((curMember && ![curMember.uKey isEqualToString:_pKey])) {//更换用户
+        //清除本地配置数据
+        [SQLiteUtil clearData];
+    }
+    
+    //设置登录信息
+    [Member setUdMember:_pName
+                andUPwd:_pPwd
+                andUKey:_pKey
+           andIsRemeber:_pIsSelected];
+    
+    if ((curMember && ![curMember.uKey isEqualToString:_pKey]) || ![_pConfigTemp.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
+    {
+        ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
+        actionNullClass.delegate = self;
+        [actionNullClass initRequestActionNULL];
+        
+    }else{//读取本地数据配置
+        NSLog(@"读取本地");
+        
+        [SQLiteUtil setDefaultLayerIdAndRoomId];
+        
+        MainViewController *mainVC = [[MainViewController alloc] init];
+        [self.navigationController pushViewController:mainVC animated:YES];
+    }
+}
+
+#pragma mark -
+#pragma mark ActionNullClassDelegate
+
+-(void)failOper
+{
+    NSString *curVersion = [SQLiteUtil getCurVersionNo];
+    if (![DataUtil checkNullOrEmpty:curVersion]) {
+        //读取本地配置
+        [SQLiteUtil setDefaultLayerIdAndRoomId];
+        
+        MainViewController *mainVC = [[MainViewController alloc] init];
+        [self.navigationController pushViewController:mainVC animated:YES];
+    }else{
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+        [alertView show];
+    }
+}
+
+-(void)successOper
+{
+    //解析存储成功，覆盖本地配置数据
+    [Config setConfigObj:_pConfigTemp];
+    
+    [SVProgressHUD dismissWithSuccess:@"解析完成."];
+    
+    [SQLiteUtil setDefaultLayerIdAndRoomId];
+    
+    MainViewController *mainVC = [[MainViewController alloc] init];
+    [self.navigationController pushViewController:mainVC animated:YES];
+}
+
+
 #pragma mark -
 #pragma mark SimpDel
 
@@ -232,6 +331,7 @@
         [self pingFailure];
     }
 }
+
 
 - (void)didReceiveMemoryWarning
 {

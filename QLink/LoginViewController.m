@@ -83,8 +83,6 @@
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
-        [SVProgressHUD dismiss];
-        
         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
         
         NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
@@ -99,41 +97,20 @@
             return;
         }
         
-        Member *curMember = [Member getMember];
-        
         //处理配置信息
         configTempObj_ = [Config getTempConfig:configArr];
+        
+        weakSelf.pName = _tfName.text;
+        weakSelf.pPwd = _tfPassword.text;
+        weakSelf.pKey = _tfKey.text;
+        weakSelf.pIsSelected = _btnRemeber.selected;
+        weakSelf.pConfigTemp = configTempObj_;
+        
         if (configTempObj_.isSetIp) {//需要配置ip
-            [self initSetUpIp];
-        } else {
-            NSString *curVersion = [SQLiteUtil getCurVersionNo];
-            
-            //重新解析配置文件
-            if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text])) {//更换用户
-                //清除本地配置数据
-                [SQLiteUtil clearData];
-            }
-            
-            //设置登录信息
-            [Member setUdMember:_tfName.text
-                        andUPwd:_tfPassword.text
-                        andUKey:_tfKey.text
-                   andIsRemeber:_btnRemeber.selected];
-            
-            if ((curMember && ![curMember.uKey isEqualToString:_tfKey.text]) || ![configTempObj_.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
-            {
-                ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
-                actionNullClass.delegate = weakSelf;
-                [actionNullClass initRequestActionNULL];
-                
-            }else{//读取本地数据配置
-                NSLog(@"读取本地");
-                
-                [SQLiteUtil setDefaultLayerIdAndRoomId];
-                
-                MainViewController *mainVC = [[MainViewController alloc] init];
-                [weakSelf.navigationController pushViewController:mainVC animated:YES];
-            }
+            [weakSelf initSetUpIp];
+        } else
+        {
+            [weakSelf actionNULL];
         }
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
@@ -189,38 +166,6 @@
 }
 
 #pragma mark -
-#pragma mark ActionNullClassDelegate
-
--(void)failOper
-{
-    NSString *curVersion = [SQLiteUtil getCurVersionNo];
-    if (![DataUtil checkNullOrEmpty:curVersion]) {
-        //读取本地配置
-        [SQLiteUtil setDefaultLayerIdAndRoomId];
-        
-        MainViewController *mainVC = [[MainViewController alloc] init];
-        [self.navigationController pushViewController:mainVC animated:YES];
-    }else{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-        [alertView show];
-    }
-}
-
--(void)successOper
-{
-    //解析存储成功，覆盖本地配置数据
-    [Config setConfigObj:configTempObj_];
-    
-    [SVProgressHUD dismissWithSuccess:@"解析完成."];
-    
-    [SQLiteUtil setDefaultLayerIdAndRoomId];
-    
-    MainViewController *mainVC = [[MainViewController alloc] init];
-    [self.navigationController pushViewController:mainVC animated:YES];
-}
-
-#pragma mark -
 #pragma mark 通知注册
 
 //键盘出现时候调用的事件
@@ -242,41 +187,44 @@
 
 -(void)initSetUpIp
 {
-    NSString *sIpUrl = [NetworkUtil getAction:ACTIONSETUPIP];
-    NSURL *ipUrl = [NSURL URLWithString:sIpUrl];
-    NSURLRequest *ipRequest = [NSURLRequest requestWithURL:ipUrl];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:ipRequest];
+    [SVProgressHUD showWithStatus:@"正在配置ip..."];
+    
+    NSString *sUrl = [NetworkUtil getAction:ACTIONSETUPIP];
+    NSURL *url = [NSURL URLWithString:sUrl];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-         strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
-         NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
-         NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
+    {
+        NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+        strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
+        NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
          
-         if (!dict) {
-             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+        if (!dict) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                              message:@"配置ip出错,请重试."
                                                             delegate:nil
                                                    cancelButtonTitle:@"关闭"
                                                    otherButtonTitles:nil, nil];
-             [alert show];
-             
-             [SVProgressHUD dismiss];
-             return;
-         }
+            [alert show];
+            return;
+        }
          
-         //设置Ip Socket
-         [self load_setIpSocket:dict];
-         
-     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+        //设置Ip Socket
+        [self load_setIpSocket:dict];
+    
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                              message:@"连接失败\n请确认网络是否连接." delegate:nil
                                                    cancelButtonTitle:@"关闭"
                                                    otherButtonTitles:nil, nil];
-         [alertView show];
-         
-         [SVProgressHUD dismiss];
-     }];
+        [alertView show];
+        
+        [SVProgressHUD dismiss];
+    }];
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:operation];
 }
 
 #pragma mark -
