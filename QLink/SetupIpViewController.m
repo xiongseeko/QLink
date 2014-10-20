@@ -9,6 +9,7 @@
 #import "SetupIpViewController.h"
 #import "NSString+NSStringHexToBytes.h"
 #import "MainViewController.h"
+#import "NetworkUtil.h"
 
 @interface SetupIpViewController ()
 {
@@ -226,7 +227,19 @@
     self.iTimeoutCount = 1;
     [orderDicArr_ removeObjectAtIndex:0];
     if ([orderDicArr_ count] == 0) {
-        [self actionNULL];
+        NSString *sUrl = [NetworkUtil getAction:ACTIONSETUPIPOK];
+        NSURL *url = [NSURL URLWithString:sUrl];
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
+         {
+             [self actionNULL];
+             
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             [SVProgressHUD dismissWithError:@"配置ip失败"];
+         }];
+        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+        [queue addOperation:operation];
     } else {
         [self sendLoopOrder];
     }
@@ -238,11 +251,7 @@
         [self setITimeoutCount:[self iTimeoutCount] + 1];
         [self sendLoopOrder];
     } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"配置ip失败." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-        [alert show];
-        
-        [SVProgressHUD dismiss];
+        [SVProgressHUD dismissWithError:@"配置ip失败"];
         
         [self actionNULL];
     }

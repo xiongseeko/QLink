@@ -32,6 +32,7 @@
     Sence *sendSenceObj_;//紧急模式下发送的场景对象
     Control *zkConfig_;
     BOOL isSendZKFailAndSendLast_;
+    NSString *bindPort_;
 }
 @end
 
@@ -275,15 +276,25 @@
 {
     /**************创建连接**************/
     
-    udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    
-	NSError *error = nil;
-    //连接API
-	if (![udpSocket_ bindToPort:0 error:&error])
-	{
-        NSLog(@"Error binding: %@", error);
-		return;
-	}
+    NSError *error = nil;
+    if (![port isEqualToString:bindPort_])
+    {
+        if (udpSocket_ != nil) {
+            [udpSocket_ close];
+            udpSocket_ = nil;
+        }
+        
+        udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+        
+        if (port != nil && ![udpSocket_ bindToPort:[port integerValue] error:&error])
+        {
+            NSLog(@"Error binding: %@", error);
+            return;
+        }
+        
+        bindPort_ = port;
+    }
+
     //接收数据API
 	if (![udpSocket_ beginReceiving:&error])
 	{
@@ -319,12 +330,66 @@
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
 {
-	// You could add checks here
+	switch (self.socketType) {
+        case SocketTypeWriteZk:
+        {
+            
+            break;
+        }
+        case SocketTypeNormal:
+        {
+
+            break;
+        }
+        case SocketTypeEmergency:
+        {
+            if (self.isSence) {
+                sleep([sendSenceObj_.Timer intValue] * 0.05);
+                [cmdOperArr_ removeObjectAtIndex:0];
+                //发送完成
+                if ([cmdOperArr_ count] == 0) {
+                    return;
+                }
+                self.iTimeoutCount = 1;
+                [self sendEmergencySocketOrder];
+            }
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error
 {
-	// You could add checks here
+    switch (self.socketType) {
+        case SocketTypeWriteZk:
+        {
+            break;
+        }
+        case SocketTypeNormal:
+        {
+            break;
+        }
+        case SocketTypeEmergency:
+        {
+            if (NumberOfTimeout > [self iTimeoutCount]) {
+                [self setITimeoutCount:[self iTimeoutCount] + 1];
+                sleep(1);
+                [self sendEmergencySocketOrder];
+            } else if ([self iTimeoutCount] >= NumberOfTimeout) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                message:@"紧急模式发送失败." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+                [alert show];
+                
+                [SVProgressHUD dismiss];
+            }
+            
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 //接收UDP数据
@@ -437,7 +502,10 @@
             
             if (self.isSence) {
                 sleep([sendSenceObj_.Timer intValue] * 0.05);
-                [cmdOperArr_ removeObject:sendCmdDic_];
+                [cmdOperArr_ removeObjectAtIndex:0];
+                if ([cmdOperArr_ count] == 0) {
+                    return;
+                }
                 self.iTimeoutCount = 1;
                 [self sendEmergencySocketOrder];
             }
@@ -462,10 +530,7 @@
             {
                 [cmdOperArr_ removeObject:sendCmdDic_];
                 
-                NSLog(@"===%d,%f",[cmdOperArr_ count],avgValue_);
-                
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    progressView_.pvControl.progress += avgValue_;
                     [progressView_ setProgressValue:avgValue_];
                 });
                 
@@ -537,6 +602,7 @@
         }
         case SocketTypeEmergency:
         {
+            
             break;
         }
         default:

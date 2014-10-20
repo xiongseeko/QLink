@@ -24,6 +24,7 @@
 #define ACTIONSETUPZK @"setupzk"
 #define ACTIONSETUPZKOK @"zkok"
 #define ACTIONSETUPIP @"setupip"
+#define ACTIONSETUPIPOK @"setupipok"
 
 
 //请求次数
