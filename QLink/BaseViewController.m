@@ -63,10 +63,14 @@
         default:
         {
             NSString *so = [DataUtil getGlobalModel];
-            if ([so isEqualToString:Model_ZK]) {
+            if ([so isEqualToString:Model_ZKIp]) {
                 self.socketType = SocketTypeNormal;
-                [self sendNormalSocketOrder:order.OrderCmd];
-            } else if([so isEqualToString:Model_JJ]) { //紧急模式
+                [self sendNormalIpSocketOrder:order.OrderCmd];
+            } else if ([so isEqualToString:Model_ZKDOMAIN]){
+                self.socketType = SocketTypeNormal;
+                [self sendNormalDomainSocketOrder:order.OrderCmd];
+            }
+            else if([so isEqualToString:Model_JJ]) { //紧急模式
                 self.socketType = SocketTypeEmergency;
                 [self initEmergencySocketOrder:order];
             } else if ([so isEqualToString:Model_Study])
@@ -87,7 +91,6 @@
     self.iTimeoutCount = 1;
     isSendZKFailAndSendLast_ = NO;
     
-//    [SVProgressHUD showWithStatus:@"正在写入中控..."];
     NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
     progressView_ = [controlArr objectAtIndex:0];
     [self.view addSubview:progressView_];
@@ -148,8 +151,7 @@
     sendContent_ = [sendCmdDic_ objectForKey:@"_sdcmd"];
     
     if ([[zkConfig_.SendType lowercaseString] isEqualToString:@"tcp"]) {
-//        [self initTcp:zkConfig_.Ip andPort:zkConfig_.Port];
-        [self initTcp:@"121.204.155.120" andPort:@"30000"];
+        [self initTcp:zkConfig_.Ip andPort:zkConfig_.Port];
     }
     else{
         [self initUdp:zkConfig_.Ip andPort:zkConfig_.Port];
@@ -169,7 +171,21 @@
 #pragma mark -
 #pragma mark 正常模式发送场景，设备socket，也就是购买中控，全局发送Domain
 
--(void)sendNormalSocketOrder:(NSString *)cmd
+-(void)sendNormalIpSocketOrder:(NSString *)cmd
+{
+    sendContent_ = cmd;
+    
+    Control *controlObj = [SQLiteUtil getControlObj];
+    
+    if ([[controlObj.SendType lowercaseString] isEqualToString:@"tcp"]) {
+        [self initTcp:controlObj.Ip andPort:controlObj.Port];
+    }
+    else{
+        [self initUdp:controlObj.Ip andPort:controlObj.Port];
+    }
+}
+
+-(void)sendNormalDomainSocketOrder:(NSString *)cmd
 {
     sendContent_ = cmd;
     
@@ -237,6 +253,8 @@
 
 -(void)initStudySocketOrder:(NSString *)cmd andAddress:(NSString *)address
 {
+    sendContent_ = cmd;
+    
     NSArray *addArr = [address componentsSeparatedByString:@":"];
     NSString *type = addArr[0];
     NSString *ip = addArr[1];
@@ -539,7 +557,6 @@
             [cmdOperArr_ addObject:sendCmdDic_];
             [self sendZkSocketOrder];
         } else if (buttonIndex == 1) {//重试
-            
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
             progressView_ = [controlArr objectAtIndex:0];
             [self.view addSubview:progressView_];

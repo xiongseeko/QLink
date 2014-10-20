@@ -170,19 +170,17 @@
     
     svHeight_ = [UIScreen mainScreen].applicationFrame.size.height - 44 - 29;
     
-    //设置当前模式
-    Config *configObj = [Config getConfig];
-    if (configObj.isBuyCenterControl) {//购买中控
-        [DataUtil setGlobalModel:Model_ZK];//设置为中控模式
-    }
-    
     //设置是否添加场景模式
     [DataUtil setGlobalIsAddSence:NO];
+    
+    [self setZkConfig];
 }
 
 -(void)registerNotification
 {
     [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(refreshSenceTab) name:@"refreshSenceTab" object:nil];
+    
+    [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(refreshDeviceTab) name:@"refreshDeviceTab" object:nil];
 }
 
 #pragma mark -
@@ -608,7 +606,62 @@
 }
 
 #pragma mark -
+#pragma mark SimpDel
+
+- (void)pingResult:(NSNumber*)success {
+    if (success.boolValue) {
+        [DataUtil setGlobalModel:Model_ZKIp];
+    } else {
+        [DataUtil setGlobalModel:Model_ZKDOMAIN];
+    }
+}
+
+#pragma mark -
 #pragma mark Custom Methods
+
+-(void)setZkConfig
+{
+    //设置当前模式
+    Config *configObj = [Config getConfig];
+    if (configObj.isBuyCenterControl) {//购买中控
+        [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+        [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+            switch (status) {
+                case AFNetworkReachabilityStatusReachableViaWWAN:
+                {
+                    [DataUtil setGlobalModel:Model_ZKDOMAIN];
+                    break;
+                }
+                case AFNetworkReachabilityStatusReachableViaWiFi:
+                {
+                    Control *control = [SQLiteUtil getControlObj];
+                    [SimplePingHelper ping:control.Ip
+                                    target:self
+                                       sel:@selector(pingResult:)];
+                    break;
+                }
+                case AFNetworkReachabilityStatusNotReachable:{
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                        message:@"连接失败\n请确认网络是否连接." delegate:nil
+                                                              cancelButtonTitle:@"关闭"
+                                                              otherButtonTitles:nil, nil];
+                    [alertView show];
+                    break ;
+                }
+                default:
+                    break;
+            };
+        }];
+    
+    } else {
+        [DataUtil setGlobalModel:Model_JJ];
+    }
+}
+
+-(void)refreshDeviceTab
+{
+    [self initDevice];
+}
 
 //楼层菜单
 - (void)showCenterMenu
@@ -714,9 +767,8 @@
 //点击下拉事件
 - (void)pushMenuItem:(KxMenuItem *)sender
 {
-    NSLog(@"*****%@", sender);
     if ([sender.title isEqualToString:@"正常模式"]) {//写入中控
-        [DataUtil setGlobalModel:Model_ZK];
+        [self setZkConfig];
     } else if ([sender.title isEqualToString:@"紧急模式"])
     {
         [DataUtil setGlobalModel:Model_JJ];

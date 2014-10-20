@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "ActionNullClass.h"
+#import "BaseViewController.h"
 
-@interface DeviceConfigViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,ActionNullClassDelegate>
+@interface DeviceConfigViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,ActionNullClassDelegate>
 
 @property (strong, nonatomic) IBOutlet UITableView *tbDevice;
 

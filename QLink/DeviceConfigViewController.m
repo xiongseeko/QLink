@@ -14,11 +14,11 @@
 #import "DataUtil.h"
 #import "ILBarButtonItem.h"
 #import "MainViewController.h"
+#import "AFHTTPRequestOperation.h"
 
 @interface DeviceConfigViewController ()
 {
     NSArray *deviceArr_;
-    NSMutableData *responseData_;
     NSDictionary *iconDic_;
     
     NSString *typeTag_;
@@ -95,82 +95,68 @@
 
 -(void)initRequest:(NSString *)sUrl
 {
-    [SVProgressHUD showWithStatus:@"加载中..."];
+    [SVProgressHUD showWithStatus:@"加载中..." maskType:SVProgressHUDMaskTypeBlack];
     
     NSURL *url = [NSURL URLWithString:sUrl];
-    
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
-    MyURLConnection *connection = [[MyURLConnection alloc]
-                                   initWithRequest:request
-                                   delegate:self];
-    connection.sTag = ACTIONSETUP;
-    
-    if (connection) {
-        responseData_ = [NSMutableData new];
-    }
-}
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
 
-#pragma mark -
-#pragma mark NSURLConnection 回调方法
-- (void)connection:(MyURLConnection *)connection didReceiveData:(NSData *)data
-{
-    [responseData_ appendData:data];
-}
--(void) connection:(MyURLConnection *)connection didFailWithError: (NSError *)error
-{
-    NSLog(@"====fail");
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
+     {
+         [SVProgressHUD dismiss];
+         
+         NSString *sResult = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+         
+         if (![DataUtil checkNullOrEmpty:sResult]) {
+             if ([sResult isEqualToString:@"ok"]) {
+                 ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
+                 actionNullClass.delegate = self;
+                 [actionNullClass initRequestActionNULL];
+                 
+             } else {
+                 sResult = [sResult stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
+                 NSData *newData = [sResult dataUsingEncoding:NSUTF8StringEncoding];
+                 
+                 NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
+                 
+                 if (!dict) {
+                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                     message:@"解析出错,请重试."
+                                                                    delegate:nil
+                                                           cancelButtonTitle:@"关闭"
+                                                           otherButtonTitles:nil, nil];
+                     [alert show];
+                     
+                     return;
+                 }
+                 NSDictionary *info = [dict objectForKey:@"info"];
+                 deviceArr_ = [DataUtil changeDicToArray:[info objectForKey:tabName_]];
+                 
+                 [_tbDevice reloadData];
+             }
+         } else {
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                             message:@"解析出错,请重试."
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"关闭"
+                                                   otherButtonTitles:nil, nil];
+             [alert show];
+             
+             return;
+         }
+         
+     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                             message:@"连接失败\n请确认网络是否连接." delegate:nil
+                                                   cancelButtonTitle:@"关闭"
+                                                   otherButtonTitles:nil, nil];
+         [alertView show];
+         
+         [SVProgressHUD dismiss];
+     }];
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                    message:@"请求出错,请稍后重试."
-                                                   delegate:nil
-                                          cancelButtonTitle:@"关闭"
-                                          otherButtonTitles:nil, nil];
-    [alert show];
-    
-    [SVProgressHUD dismiss];
-}
-- (void)connectionDidFinishLoading: (MyURLConnection*)connection
-{
-    [SVProgressHUD dismiss];
-    
-    if ([connection.sTag isEqualToString:ACTIONSETUP]) {
-        NSString *sResult = [[NSString alloc] initWithData:responseData_ encoding:NSUTF8StringEncoding];
-        if (![DataUtil checkNullOrEmpty:sResult]) {
-            if ([sResult isEqualToString:@"ok"]) {
-                NSLog(@"==ok==");
-                
-//                ZKClass *zkClass = [[ZKClass alloc] init];
-//                zkClass.delegate = self;
-//                [zkClass initZhongKong];
-                
-            } else {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                message:@"添加设备出错,请重试."
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"关闭"
-                                                      otherButtonTitles:nil, nil];
-                [alert show];
-                
-                return;
-            }
-        } else {
-            NSDictionary *dict = [NSDictionary dictionaryWithXMLData:responseData_];
-            if (!dict) {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                message:@"解析出错,请重试."
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"关闭"
-                                                      otherButtonTitles:nil, nil];
-                [alert show];
-                
-                return;
-            }
-            NSDictionary *info = [dict objectForKey:@"info"];
-            deviceArr_ = [DataUtil changeDicToArray:[info objectForKey:tabName_]];
-            
-            [_tbDevice reloadData];
-        }
-    }
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:operation];
 }
 
 #pragma mark -
@@ -255,27 +241,32 @@
 }
 
 #pragma mark -
-#pragma mark ZKClassDelegate
-
--(void)successZKOper
-{
-    ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
-    actionNullClass.delegate = self;
-    [actionNullClass initRequestActionNULL];
-}
-
-#pragma mark -
 #pragma mark ActionNullClassDelegate
 
 -(void)failOper
 {
-    MainViewController *mainVC = [[MainViewController alloc] init];
-    [self.navigationController pushViewController:mainVC animated:NO];
+    NSString *curVersion = [SQLiteUtil getCurVersionNo];
+    if (![DataUtil checkNullOrEmpty:curVersion]) {
+        //读取本地配置
+        [SQLiteUtil setDefaultLayerIdAndRoomId];
+        
+        MainViewController *mainVC = [[MainViewController alloc] init];
+        [self.navigationController pushViewController:mainVC animated:YES];
+    }else{
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+        [alertView show];
+    }
 }
 
 -(void)successOper
 {
+    [SVProgressHUD dismissWithSuccess:@"解析完成."];
+    [SQLiteUtil setDefaultLayerIdAndRoomId];
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshDeviceTab" object:nil];
+    
+    [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
 }
 
 #pragma mark -

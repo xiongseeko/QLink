@@ -83,6 +83,8 @@
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
+        [SVProgressHUD dismiss];
+        
         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
         
         NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
@@ -106,7 +108,7 @@
         weakSelf.pIsSelected = _btnRemeber.selected;
         weakSelf.pConfigTemp = configTempObj_;
         
-        if (configTempObj_.isSetIp) {//需要配置ip
+        if (!configTempObj_.isSetIp) {//需要配置ip
             [weakSelf initSetUpIp];
         } else
         {
@@ -193,6 +195,7 @@
     NSURL *url = [NSURL URLWithString:sUrl];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    __weak __typeof(self)weakSelf = self;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
@@ -207,18 +210,24 @@
                                                    cancelButtonTitle:@"关闭"
                                                    otherButtonTitles:nil, nil];
             [alert show];
+            
+            [weakSelf actionNULL];
+            
             return;
         }
          
         //设置Ip Socket
-        [self load_setIpSocket:dict];
+        [weakSelf load_setIpSocket:dict];
     
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                             message:@"连接失败\n请确认网络是否连接." delegate:nil
-                                                   cancelButtonTitle:@"关闭"
-                                                   otherButtonTitles:nil, nil];
-        [alertView show];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"配置ip出错,请重试."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        
+        [weakSelf actionNULL];
         
         [SVProgressHUD dismiss];
     }];

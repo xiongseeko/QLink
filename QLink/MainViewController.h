@@ -13,8 +13,10 @@
 #import "RenameView.h"
 #import "SenceConfigViewController.h"
 #import "BaseViewController.h"
+#import "AFNetworking.h"
+#import "SimplePingHelper.h"
 
-@interface MainViewController : BaseViewController<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,iConViewDelegate,UIAlertViewDelegate,IconViewControllerDelegate,RenameViewDelegate,SenceConfigViewControllerDelegate>
+@interface MainViewController : BaseViewController<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,iConViewDelegate,UIAlertViewDelegate,IconViewControllerDelegate,RenameViewDelegate,SenceConfigViewControllerDelegate,SimplePingDelegate>
 
 @property (strong, nonatomic) REMenu *menu;
 

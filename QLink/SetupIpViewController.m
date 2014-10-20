@@ -72,17 +72,7 @@
 
 -(void)sendLoopTag
 {
-//    for (NSString *tag in infoTagArr_) {
-//        sendContent_ = [sendDic_ objectForKey:tag];
-        
-//    }
     sendContent_ = [sendDic_ objectForKey:[infoTagArr_ objectAtIndex:0]];
-
-    if ([DataUtil checkNullOrEmpty:sendContent_]) {
-        NSLog(@"配置IP错误");
-        [self actionNULL];
-        return;
-    }
     
     NSString *toHera = [DataUtil checkNullOrEmpty:[sendDic_ objectForKey:@"_to_here"]] ? [sendDic_ objectForKey:@"_toip"] : [sendDic_ objectForKey:@"_to_here"];
     NSArray *to_hereArr = [toHera componentsSeparatedByString:@":"];
@@ -251,6 +241,10 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                         message:@"配置ip失败." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
         [alert show];
+        
+        [SVProgressHUD dismiss];
+        
+        [self actionNULL];
     }
 }
 
@@ -331,7 +325,6 @@
         [self pingFailure];
     }
 }
-
 
 - (void)didReceiveMemoryWarning
 {
