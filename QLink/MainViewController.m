@@ -633,7 +633,7 @@
                     break;
                 }
                 case AFNetworkReachabilityStatusReachableViaWiFi:
-                {
+                {   
                     Control *control = [SQLiteUtil getControlObj];
                     [SimplePingHelper ping:control.Ip
                                     target:self

@@ -49,6 +49,14 @@
 
 + (NSString *)hexStringFromString:(NSString *)string;
 
++ (NSString *)localWiFiIPAddress;
+
+//设置udp端口
++(void)setUdpPort:(NSString *)port;
+
+//获取udp端口
++(NSString *)getUdpPort;
+
 @end
 
 /************************************************************************************/

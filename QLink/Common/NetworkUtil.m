@@ -41,6 +41,15 @@
     return sUrl;
 }
 
++(NSString *)handleIpRequest
+{
+    NSString *wifiIp = [DataUtil localWiFiIPAddress];
+    wifiIp = [NSString stringWithFormat:@"TCP:%@:1234",wifiIp];
+    
+    NSString *sUrl = [NSString stringWithFormat:@"%@&action=savekfchang&dx=3&ChangVar=%@",[self getBaseUrl],wifiIp];
+    return sUrl;
+}
+
 //修改设备名称URL
 +(NSString *)getChangeDeviceName:(NSString *)newName andDeviceId:(NSString *)deviceId
 {

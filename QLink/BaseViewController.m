@@ -285,7 +285,7 @@
         }
         
         udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-        
+
         if (port != nil && ![udpSocket_ bindToPort:[port integerValue] error:&error])
         {
             NSLog(@"Error binding: %@", error);
@@ -344,7 +344,8 @@
         case SocketTypeEmergency:
         {
             if (self.isSence) {
-                sleep([sendSenceObj_.Timer intValue] * 0.05);
+                float haomiao = [sendSenceObj_.Timer intValue] * 0.05;
+                [NSThread sleepForTimeInterval:haomiao];
                 [cmdOperArr_ removeObjectAtIndex:0];
                 //发送完成
                 if ([cmdOperArr_ count] == 0) {
@@ -501,7 +502,8 @@
             [self disConnectionTCP];
             
             if (self.isSence) {
-                sleep([sendSenceObj_.Timer intValue] * 0.05);
+                float haomiao = [sendSenceObj_.Timer intValue] * 0.05;
+                [NSThread sleepForTimeInterval:haomiao];
                 [cmdOperArr_ removeObjectAtIndex:0];
                 if ([cmdOperArr_ count] == 0) {
                     return;
@@ -654,6 +656,14 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)dealloc
+{
+    if (udpSocket_ != nil) {
+        [udpSocket_ close];
+        udpSocket_ = nil;
+    }
 }
 
 /*

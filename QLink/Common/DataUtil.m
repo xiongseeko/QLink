@@ -8,6 +8,13 @@
 
 #import "DataUtil.h"
 #import "FMDatabase.h"
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#include <net/if.h>
+#include <ifaddrs.h>
+#import <dlfcn.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 
 @implementation DataUtil
 
@@ -122,6 +129,22 @@
     [ud synchronize];
 }
 
+//设置udp端口
++(void)setUdpPort:(NSString *)port
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setObject:port forKey:@"port"];
+    [ud synchronize];
+}
+
+//获取udp端口
++(NSString *)getUdpPort
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSString *model = [ud objectForKey:@"port"];
+    return model;
+}
+
 + (NSString *)hexStringFromString:(NSString *)string
 {
     NSData *myD = [string dataUsingEncoding:NSUTF8StringEncoding];
@@ -144,7 +167,29 @@
     return hexStr; 
 }
 
-
++(NSString *)localWiFiIPAddress
+{
+    BOOL success;
+    struct ifaddrs * addrs;
+    const struct ifaddrs * cursor;
+    
+    success = getifaddrs(&addrs) == 0;
+    if (success) {
+        cursor = addrs;
+        while (cursor != NULL) {
+            // the second test keeps from picking up the loopback address
+            if (cursor->ifa_addr->sa_family == AF_INET && (cursor->ifa_flags & IFF_LOOPBACK) == 0)
+            {
+                NSString *name = [NSString stringWithUTF8String:cursor->ifa_name];
+                if ([name isEqualToString:@"en0"])  // Wi-Fi adapter
+                    return [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)cursor->ifa_addr)->sin_addr)];
+            }
+            cursor = cursor->ifa_next;
+        }
+        freeifaddrs(addrs);
+    }
+    return nil;
+}
 
 @end
 

@@ -26,6 +26,8 @@
 //修改设备名称URL
 +(NSString *)getChangeDeviceName:(NSString *)newName andDeviceId:(NSString *)deviceId;
 
++(NSString *)handleIpRequest;
+
 //编辑场景
 +(NSString *)getEditSence:(NSString *)senceId
              andSenceName:(NSString *)senceName
