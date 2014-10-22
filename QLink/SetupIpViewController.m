@@ -236,7 +236,8 @@
              [self actionNULL];
              
          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             [SVProgressHUD dismissWithError:@"配置ip失败"];
+//             [SVProgressHUD dismissWithError:@"配置ip失败"];
+             [SVProgressHUD dismiss];
          }];
         NSOperationQueue *queue = [[NSOperationQueue alloc] init];
         [queue addOperation:operation];

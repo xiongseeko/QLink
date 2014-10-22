@@ -276,31 +276,33 @@
 {
     /**************创建连接**************/
     
-    NSError *error = nil;
-    if (![port isEqualToString:bindPort_])
-    {
-        if (udpSocket_ != nil) {
-            [udpSocket_ close];
-            udpSocket_ = nil;
-        }
-        
-        udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+//    NSError *error = nil;
+//    if (![port isEqualToString:bindPort_])
+//    {
+//        if (udpSocket_ != nil) {
+//            [udpSocket_ close];
+//            udpSocket_ = nil;
+//        }
+//        
+//        udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+//
+//        if (port != nil && ![udpSocket_ bindToPort:[port integerValue] error:&error])
+//        {
+//            NSLog(@"Error binding: %@", error);
+//            return;
+//        }
+//        
+//        bindPort_ = port;
+//    }
 
-        if (port != nil && ![udpSocket_ bindToPort:[port integerValue] error:&error])
-        {
-            NSLog(@"Error binding: %@", error);
-            return;
-        }
-        
-        bindPort_ = port;
-    }
-
-    //接收数据API
-	if (![udpSocket_ beginReceiving:&error])
-	{
-		NSLog(@"Error receiving: %@", error);
-		return;
-	}
+//    //接收数据API
+//	if (![udpSocket_ beginReceiving:&error])
+//	{
+//		NSLog(@"Error receiving: %@", error);
+//		return;
+//	}
+    
+    udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
 	
 	NSLog(@"udp连接成功");
     
@@ -410,6 +412,7 @@
 //		NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
 //	}
 }
+
 
 #pragma mark -
 #pragma mark TCP 响应方法
