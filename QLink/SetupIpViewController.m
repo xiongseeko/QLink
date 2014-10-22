@@ -22,7 +22,6 @@
     
     NSString *ip_;
     NSString *port_;
-    NSString *bindPort_;
 }
 @end
 
@@ -96,22 +95,18 @@
     /**************创建连接**************/
     
     NSError *error = nil;
-    if (![bindPort isEqualToString: bindPort_])
+    
+    if (udpSocket_ != nil) {
+        [udpSocket_ close];
+        udpSocket_ = nil;
+    }
+    
+    udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    
+    if (bindPort != nil && ![udpSocket_ bindToPort:[bindPort integerValue] error:&error])
     {
-        if (udpSocket_ != nil) {
-            [udpSocket_ close];
-            udpSocket_ = nil;
-        }
-        
-        udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-        
-        if (bindPort != nil && ![udpSocket_ bindToPort:[bindPort integerValue] error:&error])
-        {
-            NSLog(@"Error binding: %@", error);
-            return;
-        }
-        
-        bindPort_ = bindPort;
+        NSLog(@"Error binding: %@", error);
+        return;
     }
     
 	if (![udpSocket_ beginReceiving:&error])

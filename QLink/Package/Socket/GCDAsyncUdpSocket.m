@@ -15,6 +15,32 @@
 // For more information see: https://github.com/robbiehanson/CocoaAsyncSocket/wiki/ARC
 #endif
 
+/**
+ * Does ARC support support GCD objects?
+ * It does if the minimum deployment target is iOS 6+ or Mac OS X 8+
+**/
+#if TARGET_OS_IPHONE
+
+  // Compiling for iOS
+
+  #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000 // iOS 6.0 or later
+    #define NEEDS_DISPATCH_RETAIN_RELEASE 0
+  #else                                         // iOS 5.X or earlier
+    #define NEEDS_DISPATCH_RETAIN_RELEASE 1
+  #endif
+
+#else
+
+  // Compiling for Mac OS X
+
+  #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080     // Mac OS X 10.8 or later
+    #define NEEDS_DISPATCH_RETAIN_RELEASE 0
+  #else
+    #define NEEDS_DISPATCH_RETAIN_RELEASE 1     // Mac OS X 10.7 or earlier
+  #endif
+
+#endif
+
 #if TARGET_OS_IPHONE
   #import <CFNetwork/CFNetwork.h>
   #import <UIKit/UIKit.h>
@@ -146,11 +172,7 @@ enum GCDAsyncUdpSocketConfig
 
 @interface GCDAsyncUdpSocket ()
 {
-#if __has_feature(objc_arc_weak)
-	__weak id delegate;
-#else
-	__unsafe_unretained id delegate;
-#endif
+	id delegate;
 	dispatch_queue_t delegateQueue;
 	
 	GCDAsyncUdpSocketReceiveFilterBlock receiveFilterBlock;
@@ -368,7 +390,7 @@ enum GCDAsyncUdpSocketConfig
 		if (dq)
 		{
 			delegateQueue = dq;
-			#if !OS_OBJECT_USE_OBJC
+			#if NEEDS_DISPATCH_RETAIN_RELEASE
 			dispatch_retain(delegateQueue);
 			#endif
 		}
@@ -389,7 +411,7 @@ enum GCDAsyncUdpSocketConfig
 			         @"The given socketQueue parameter must not be a concurrent queue.");
 			
 			socketQueue = sq;
-			#if !OS_OBJECT_USE_OBJC
+			#if NEEDS_DISPATCH_RETAIN_RELEASE
 			dispatch_retain(socketQueue);
 			#endif
 		}
@@ -453,12 +475,12 @@ enum GCDAsyncUdpSocketConfig
 	}
 	
 	delegate = nil;
-	#if !OS_OBJECT_USE_OBJC
+	#if NEEDS_DISPATCH_RETAIN_RELEASE
 	if (delegateQueue) dispatch_release(delegateQueue);
 	#endif
 	delegateQueue = NULL;
 	
-	#if !OS_OBJECT_USE_OBJC
+	#if NEEDS_DISPATCH_RETAIN_RELEASE
 	if (socketQueue) dispatch_release(socketQueue);
 	#endif
 	socketQueue = NULL;
@@ -537,7 +559,7 @@ enum GCDAsyncUdpSocketConfig
 {
 	dispatch_block_t block = ^{
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		if (delegateQueue) dispatch_release(delegateQueue);
 		if (newDelegateQueue) dispatch_retain(newDelegateQueue);
 		#endif
@@ -594,7 +616,7 @@ enum GCDAsyncUdpSocketConfig
 		
 		delegate = newDelegate;
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		if (delegateQueue) dispatch_release(delegateQueue);
 		if (newDelegateQueue) dispatch_retain(newDelegateQueue);
 		#endif
@@ -1765,7 +1787,7 @@ enum GCDAsyncUdpSocketConfig
 	
 	int theSocketFD = socket4FD;
 	
-	#if !OS_OBJECT_USE_OBJC
+	#if NEEDS_DISPATCH_RETAIN_RELEASE
 	dispatch_source_t theSendSource = send4Source;
 	dispatch_source_t theReceiveSource = receive4Source;
 	#endif
@@ -1774,7 +1796,7 @@ enum GCDAsyncUdpSocketConfig
 		
 		LogVerbose(@"send4CancelBlock");
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		LogVerbose(@"dispatch_release(send4Source)");
 		dispatch_release(theSendSource);
 		#endif
@@ -1790,7 +1812,7 @@ enum GCDAsyncUdpSocketConfig
 		
 		LogVerbose(@"receive4CancelBlock");
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		LogVerbose(@"dispatch_release(receive4Source)");
 		dispatch_release(theReceiveSource);
 		#endif
@@ -1876,7 +1898,7 @@ enum GCDAsyncUdpSocketConfig
 	
 	int theSocketFD = socket6FD;
 	
-	#if !OS_OBJECT_USE_OBJC
+	#if NEEDS_DISPATCH_RETAIN_RELEASE
 	dispatch_source_t theSendSource = send6Source;
 	dispatch_source_t theReceiveSource = receive6Source;
 	#endif
@@ -1885,7 +1907,7 @@ enum GCDAsyncUdpSocketConfig
 		
 		LogVerbose(@"send6CancelBlock");
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		LogVerbose(@"dispatch_release(send6Source)");
 		dispatch_release(theSendSource);
 		#endif
@@ -1901,7 +1923,7 @@ enum GCDAsyncUdpSocketConfig
 		
 		LogVerbose(@"receive6CancelBlock");
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		LogVerbose(@"dispatch_release(receive6Source)");
 		dispatch_release(theReceiveSource);
 		#endif
@@ -1967,6 +1989,17 @@ enum GCDAsyncUdpSocketConfig
 		{
 			if (errPtr)
 				*errPtr = [self errnoErrorWithReason:@"Error enabling address reuse (setsockopt)"];
+			
+			close(socketFD);
+			return SOCKET_NULL;
+		}
+
+		int reuseport = 1;
+		status = setsockopt(socketFD, SOL_SOCKET, SO_REUSEPORT, &reuseport, sizeof(reuseport));
+		if (status == -1)
+		{
+			if (errPtr)
+				*errPtr = [self errnoErrorWithReason:@"Error enabling port reuse (setsockopt)"];
 			
 			close(socketFD);
 			return SOCKET_NULL;
@@ -2243,7 +2276,7 @@ enum GCDAsyncUdpSocketConfig
 			LogWarn(@"Error in getsockname: %@", [self errnoError]);
 		}
 	}
-	else if (socketFamily == AF_INET6)
+	else if (socketFamily == AF_INET)
 	{
 		struct sockaddr_in6 sockaddr6;
 		socklen_t sockaddr6len = sizeof(sockaddr6);
@@ -3419,7 +3452,7 @@ enum GCDAsyncUdpSocketConfig
 			imreq.ipv6mr_multiaddr = nativeGroup->sin6_addr;
 			imreq.ipv6mr_interface = [self indexOfInterfaceAddr6:interfaceAddr6];
 			
-			int status = setsockopt(socket6FD, IPPROTO_IPV6, requestType, (const void *)&imreq, sizeof(imreq));
+			int status = setsockopt(socket6FD, IPPROTO_IP, requestType, (const void *)&imreq, sizeof(imreq));
 			if (status != 0)
 			{
 				err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
@@ -3619,14 +3652,14 @@ enum GCDAsyncUdpSocketConfig
 		
 		newFilterBlock = [filterBlock copy];
 		newFilterQueue = filterQueue;
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		dispatch_retain(newFilterQueue);
 		#endif
 	}
 	
 	dispatch_block_t block = ^{
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		if (sendFilterQueue) dispatch_release(sendFilterQueue);
 		#endif
 		
@@ -3992,7 +4025,7 @@ enum GCDAsyncUdpSocketConfig
 	if (sendTimer)
 	{
 		dispatch_source_cancel(sendTimer);
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		dispatch_release(sendTimer);
 		#endif
 		sendTimer = NULL;
@@ -4174,14 +4207,14 @@ enum GCDAsyncUdpSocketConfig
 		
 		newFilterBlock = [filterBlock copy];
 		newFilterQueue = filterQueue;
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		dispatch_retain(newFilterQueue);
 		#endif
 	}
 	
 	dispatch_block_t block = ^{
 		
-		#if !OS_OBJECT_USE_OBJC
+		#if NEEDS_DISPATCH_RETAIN_RELEASE
 		if (receiveFilterQueue) dispatch_release(receiveFilterQueue);
 		#endif
 		
@@ -5094,7 +5127,7 @@ Failed:
 
 - (int)socketFD
 {
-	if (! dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+	if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
 	{
 		LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
 				THIS_FILE, THIS_METHOD);
@@ -5109,7 +5142,7 @@ Failed:
 
 - (int)socket4FD
 {
-	if (! dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+	if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
 	{
 		LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
 				THIS_FILE, THIS_METHOD);
@@ -5121,7 +5154,7 @@ Failed:
 
 - (int)socket6FD
 {
-	if (! dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+	if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
 	{
 		LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
 				THIS_FILE, THIS_METHOD);
@@ -5135,7 +5168,7 @@ Failed:
 
 - (CFReadStreamRef)readStream
 {
-	if (! dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+	if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
 	{
 		LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
 				THIS_FILE, THIS_METHOD);
@@ -5159,7 +5192,7 @@ Failed:
 
 - (CFWriteStreamRef)writeStream
 {
-	if (! dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+	if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
 	{
 		LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
 				THIS_FILE, THIS_METHOD);
@@ -5181,7 +5214,7 @@ Failed:
 
 - (BOOL)enableBackgroundingOnSockets
 {
-	if (! dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+	if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
 	{
 		LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
 				THIS_FILE, THIS_METHOD);

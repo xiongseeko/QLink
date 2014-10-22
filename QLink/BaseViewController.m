@@ -32,7 +32,6 @@
     Sence *sendSenceObj_;//紧急模式下发送的场景对象
     Control *zkConfig_;
     BOOL isSendZKFailAndSendLast_;
-    NSString *bindPort_;
 }
 @end
 
@@ -276,34 +275,27 @@
 {
     /**************创建连接**************/
     
-//    NSError *error = nil;
-//    if (![port isEqualToString:bindPort_])
-//    {
-//        if (udpSocket_ != nil) {
-//            [udpSocket_ close];
-//            udpSocket_ = nil;
-//        }
-//        
-//        udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-//
-//        if (port != nil && ![udpSocket_ bindToPort:[port integerValue] error:&error])
-//        {
-//            NSLog(@"Error binding: %@", error);
-//            return;
-//        }
-//        
-//        bindPort_ = port;
-//    }
-
-//    //接收数据API
-//	if (![udpSocket_ beginReceiving:&error])
-//	{
-//		NSLog(@"Error receiving: %@", error);
-//		return;
-//	}
+    NSError *error = nil;
+    if (udpSocket_ != nil) {
+        [udpSocket_ close];
+        udpSocket_ = nil;
+    }
     
     udpSocket_ = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-	
+    
+    if (port != nil && ![udpSocket_ bindToPort:[port integerValue] error:&error])
+    {
+        NSLog(@"Error binding: %@", error);
+        return;
+    }
+
+    //接收数据API
+	if (![udpSocket_ beginReceiving:&error])
+	{
+		NSLog(@"Error receiving: %@", error);
+		return;
+	}
+    
 	NSLog(@"udp连接成功");
     
     /**************发送数据**************/
