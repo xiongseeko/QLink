@@ -121,7 +121,7 @@
                  
                  if (!dict) {
                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                     message:@"解析出错,请重试."
+                                                                     message:@"配置出错,请重试."
                                                                     delegate:nil
                                                            cancelButtonTitle:@"关闭"
                                                            otherButtonTitles:nil, nil];
@@ -136,7 +136,7 @@
              }
          } else {
              UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                             message:@"解析出错,请重试."
+                                                             message:@"配置出错,请重试."
                                                             delegate:nil
                                                    cancelButtonTitle:@"关闭"
                                                    otherButtonTitles:nil, nil];
@@ -254,18 +254,19 @@
         [self.navigationController pushViewController:mainVC animated:YES];
     }else{
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+                                                            message:@"配置失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
         [alertView show];
     }
 }
 
 -(void)successOper
 {
-    [SVProgressHUD dismissWithSuccess:@"解析完成."];
+    [SVProgressHUD dismissWithSuccess:@"配置完成."];
     [SQLiteUtil setDefaultLayerIdAndRoomId];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshDeviceTab" object:nil];
     
+    self.isAddDeviceSenceZK = YES;
     [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
 }
 

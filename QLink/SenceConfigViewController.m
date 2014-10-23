@@ -185,7 +185,12 @@
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"添加场景成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
             [alert show];
             
+            //刷新数据库
             [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
+            
+            //写入中控
+            self.isAddDeviceSenceZK = YES;
+            [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
             
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshSenceTab" object:nil];
             
@@ -206,16 +211,17 @@
     } else { //编辑
         if ([[[arr objectAtIndex:0] lowercaseString] isEqualToString:@"ok"]) {
             
+            //更新数据库
             [SQLiteUtil updateCmdListBySenceId:pDeviceId_ andSenceName:senceName andCmdList:ordercmd];
+            
+            //写入中控
+            self.isAddDeviceSenceZK = YES;
+            [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"更新场景成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
             [alert show];
             
             [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
-            
-//            if (self.delegate) {
-//                [self.delegate refreshSenceTab];
-//            }
             
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshSenceTab" object:nil];
             

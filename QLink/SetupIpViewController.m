@@ -165,6 +165,8 @@
             pingIp =[sendDic_ objectForKey:@"_testip"];
         }
         
+        [NSThread sleepForTimeInterval:1];
+        
         [SimplePingHelper ping:pingIp
                         target:self
                            sel:@selector(pingResult:)];
@@ -301,7 +303,7 @@
         [self.navigationController pushViewController:mainVC animated:YES];
     }else{
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"解析失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+                                                            message:@"配置失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
         [alertView show];
     }
 }
@@ -311,7 +313,7 @@
     //解析存储成功，覆盖本地配置数据
     [Config setConfigObj:_pConfigTemp];
     
-    [SVProgressHUD dismissWithSuccess:@"解析完成."];
+    [SVProgressHUD dismissWithSuccess:@"配置完成."];
     
     [SQLiteUtil setDefaultLayerIdAndRoomId];
     

@@ -22,7 +22,7 @@
 #define ACTIONNULL @"NULL"
 #define ACTIONSETUP @"kfsetup"
 #define ACTIONSETUPZK @"setupzk"
-#define ACTIONSETUPZKOK @"zkok"
+#define ACTIONSETUPZKOK @"izkok"
 #define ACTIONSETUPIP @"setupip"
 #define ACTIONSETUPIPOK @"setupipok"
 

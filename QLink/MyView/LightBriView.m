@@ -124,4 +124,27 @@
         [self.delegate orderDelegatePressed:sender];
     }
 }
+
+//设置长按事件
+-(void)setLongPressEvent
+{
+    //实例化长按手势监听
+    UILongPressGestureRecognizer *longPress =
+    [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressed:)];
+    longPress.minimumPressDuration = 1.0;//表示最短长按的时间
+    //将长按手势添加到需要实现长按操作的视图里
+    [self.vSw addGestureRecognizer:longPress];
+}
+
+//长按事件的实现方法
+- (void)handleLongPressed:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    if (self.delegate && [gestureRecognizer state] == UIGestureRecognizerStateBegan) {
+        
+        [self.delegate handleLongPressed:_pDeviceId andDeviceName:_pDeviceName andLabel:_plTitle];
+        
+        NSLog(@"deviceId=%@",_pDeviceId);
+    }
+}
+
 @end

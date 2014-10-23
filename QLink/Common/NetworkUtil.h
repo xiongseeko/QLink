@@ -20,6 +20,9 @@
 //获取 Action URL
 +(NSString *)getAction:(NSString *)action;
 
+//获取设置ip地址
++(NSString *)getSetUpIp:(NSString *)uName andPwd:(NSString *)uPwd andKey:(NSString *)uKey;
+
 //修改场景名称URL
 +(NSString *)getChangeSenceName:(NSString *)newName andSenceId:(NSString *)senceId;
 

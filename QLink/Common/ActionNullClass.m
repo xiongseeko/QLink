@@ -28,7 +28,7 @@
 //配置文件请求
 -(void)initRequestActionNULL
 {
-    [SVProgressHUD showWithStatus:@"正在解析..."];
+    [SVProgressHUD showWithStatus:@"配置中..."];
     
     NSString *sUrl = [NetworkUtil getBaseUrl];
     NSURL *url = [NSURL URLWithString:sUrl];
@@ -76,7 +76,7 @@
     
     if ([strXML isEqualToString:@"key error"]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"解析出错,请重试."
+                                                        message:@"配置出错,请重试."
                                                        delegate:nil
                                               cancelButtonTitle:@"关闭"
                                               otherButtonTitles:nil, nil];
@@ -95,7 +95,7 @@
     
     if (!dict) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"解析出错,请重试."
+                                                        message:@"配置出错,请重试."
                                                        delegate:nil
                                               cancelButtonTitle:@"关闭"
                                               otherButtonTitles:nil, nil];
@@ -182,7 +182,7 @@
         }
     }else{
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"解析失败,请重试."
+                                                            message:@"配置失败,请重试."
                                                            delegate:nil
                                                   cancelButtonTitle:@"关闭"
                                                   otherButtonTitles:nil, nil];

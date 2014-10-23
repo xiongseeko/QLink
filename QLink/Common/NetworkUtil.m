@@ -33,6 +33,12 @@
     return [NSString stringWithFormat:@"%@&action=%@",[self getBaseUrl],action];
 }
 
+//获取设置ip地址
++(NSString *)getSetUpIp:(NSString *)uName andPwd:(NSString *)uPwd andKey:(NSString *)uKey
+{
+    return [NSString stringWithFormat:@"http://qlink.cc/zq/lookmobile.asp?uname=%@&upsd=%@&passkey=%@&action=%@",uName,uPwd,uKey,ACTIONSETUPIP];
+}
+
 //修改场景名称URL
 +(NSString *)getChangeSenceName:(NSString *)newName andSenceId:(NSString *)senceId
 {

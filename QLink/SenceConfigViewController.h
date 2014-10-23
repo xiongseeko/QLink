@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SenceConfigTableViewCell.h"
 #import "RenameView.h"
+#import "BaseViewController.h"
 
 @protocol SenceConfigViewControllerDelegate <NSObject>
 
@@ -17,7 +18,7 @@
 
 @end
 
-@interface SenceConfigViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,RenameViewDelegate,SenceConfigCellDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
+@interface SenceConfigViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,RenameViewDelegate,SenceConfigCellDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 {
     NSMutableData *responseData_;
 }

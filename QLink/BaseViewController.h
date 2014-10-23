@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger, SocketType){
 
 @property(nonatomic,assign) SocketType socketType;
 @property(nonatomic,assign) BOOL isSence;
+@property(nonatomic,assign) BOOL isAddDeviceSenceZK;
 
 //写入中控，重复尝试 3 次
 @property(nonatomic,assign) int iTimeoutCount;

@@ -209,7 +209,7 @@
 {
     [SVProgressHUD showWithStatus:@"正在配置ip..."];
     
-    NSString *sUrl = [NetworkUtil getAction:ACTIONSETUPIP];
+    NSString *sUrl = [NetworkUtil getSetUpIp:_tfName.text andPwd:_tfPassword.text andKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];

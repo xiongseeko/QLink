@@ -26,7 +26,7 @@
     NSMutableArray *cmdReadArr_;
     NSMutableArray *cmdOperArr_;
     ProgressView *progressView_;
-    float avgValue_;//进度条的加量
+    double avgValue_;//进度条的加量
     
     NSDictionary *sendCmdDic_;//当前发送的对象,用于中控参数
     Sence *sendSenceObj_;//紧急模式下发送的场景对象
@@ -49,6 +49,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+}
+
+-(void)timerFireMethod
+{
+    [progressView_ setProgressValue:0.01];
 }
 
 -(void)load_typeSocket:(SocketType)socket andOrderObj:(Order *)order
@@ -93,6 +99,9 @@
     
     NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
     progressView_ = [controlArr objectAtIndex:0];
+    if (self.isAddDeviceSenceZK) {
+        progressView_.hidden = YES;
+    }
     [self.view addSubview:progressView_];
     
     NSURL *url = [NSURL URLWithString:[[NetworkUtil getAction:ACTIONSETUPZK] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -128,7 +137,7 @@
             return;
         }
         
-        avgValue_ = 1/iCount;
+        avgValue_ = (double)1/iCount;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf firstSendZkSocketOrder];
@@ -222,7 +231,6 @@
         NSString *port = addArr[2];
         if ([[type lowercaseString] isEqualToString:@"tcp"]) {
             [self initTcp:ip andPort:port];
-//            [self initTcp:@"117.25.254.193" andPort:@"30000"];//@"121.204.154.81"
         } else {
             [self initUdp:ip andPort:port];
         }
@@ -549,13 +557,6 @@
                              
                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     
-                             isSendZKFailAndSendLast_ = YES;
-                             sendCmdDic_ = [cmdOperArr_ lastObject];
-                             [cmdOperArr_ removeAllObjects];
-                             [cmdOperArr_ addObject:sendCmdDic_];
-                             
-                             [self sendZkSocketOrder];
-                             
                              UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                                                  message:@"写入失败." delegate:nil
                                                                        cancelButtonTitle:@"关闭"
@@ -587,7 +588,7 @@
                     alert.tag = 999;
                     [alert show];
                     
-                    [SVProgressHUD dismiss];
+                    [progressView_ removeFromSuperview];
                 }
             }
             

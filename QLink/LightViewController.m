@@ -170,7 +170,11 @@
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"LightBcView" owner:self options:nil];
             LightBcView *bcView = [controlArr objectAtIndex:0];
             bcView.frame = CGRectMake(0, height, 320, 113);
+            bcView.pDeviceId = deviceObj.DeviceId;
+            bcView.pDeviceName = deviceObj.DeviceName;
             bcView.delegate = self;
+            bcView.plTitle = bcView.lTitle;
+            [bcView setLongPressEvent];
             bcView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:bcView];
             
@@ -198,7 +202,11 @@
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"LightBbView" owner:self options:nil];
             LightBbView *bbView = [controlArr objectAtIndex:0];
             bbView.frame = CGRectMake(0, height, 320, 113);
+            bbView.pDeviceId = deviceObj.DeviceId;
+            bbView.pDeviceName = deviceObj.DeviceName;
             bbView.delegate = self;
+            bbView.plTitle = bbView.lTitle;
+            [bbView setLongPressEvent];
             bbView.lTitle.text = deviceObj.DeviceName;
             [svBg_ addSubview:bbView];
             
@@ -238,8 +246,12 @@
             NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"LightBriView" owner:self options:nil];
             LightBriView *briView = [controlArr objectAtIndex:0];
             briView.frame = CGRectMake(0, height, 320, 113);
+            briView.pDeviceId = deviceObj.DeviceId;
+            briView.pDeviceName = deviceObj.DeviceName;
             briView.delegate = self;
+            [briView setLongPressEvent];
             briView.lTitle.text = deviceObj.DeviceName;
+            briView.plTitle = briView.lTitle;
             [svBg_ addSubview:briView];
             
             NSMutableArray *brOrderArr = [NSMutableArray array];
