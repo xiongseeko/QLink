@@ -182,18 +182,16 @@
             obj.CmdList = ordercmd;
             [SQLiteUtil insertSence:obj];
             
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"添加场景成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-            [alert show];
-            
             //刷新数据库
             [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
             
             //写入中控
-            self.isAddDeviceSenceZK = YES;
+            self.zkOperType = ZkOperSence;
             [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
             
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshSenceTab" object:nil];
             
+            //页面跳转
             NSArray * viewcontrollers = self.navigationController.viewControllers;
             int idxInStack = 0;
             for (int i=0; i<[viewcontrollers count]; i++) {
@@ -215,25 +213,12 @@
             [SQLiteUtil updateCmdListBySenceId:pDeviceId_ andSenceName:senceName andCmdList:ordercmd];
             
             //写入中控
-            self.isAddDeviceSenceZK = YES;
+            self.zkOperType = ZkOperSence;
             [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"更新场景成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-            [alert show];
             
             [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
             
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshSenceTab" object:nil];
-            
-            NSArray * viewcontrollers = self.navigationController.viewControllers;
-            int idxInStack = 0;
-            for (int i=0; i<[viewcontrollers count]; i++) {
-                if ([[viewcontrollers objectAtIndex:i] isMemberOfClass:[MainViewController class]]) {
-                    idxInStack = i;
-                    break;
-                }
-            }
-            [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:idxInStack]animated:YES];
             
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"更新场景失败" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];

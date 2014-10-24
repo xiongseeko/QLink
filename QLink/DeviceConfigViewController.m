@@ -266,7 +266,7 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshDeviceTab" object:nil];
     
-    self.isAddDeviceSenceZK = YES;
+    self.zkOperType = ZkOperDevice;
     [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
 }
 

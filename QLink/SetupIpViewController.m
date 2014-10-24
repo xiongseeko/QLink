@@ -53,6 +53,8 @@
     orderDicArr_ = [NSMutableArray arrayWithArray:[DataUtil changeDicToArray:[info objectForKey:@"kfsdevice"]]];
     [orderDicArr_ insertObject:info atIndex:0];
     
+    NSLog(@"=======================");
+    
     [self sendLoopOrder];
 }
 
@@ -78,6 +80,8 @@
     NSArray *to_hereArr = [toHera componentsSeparatedByString:@":"];
     NSArray *local_portArr = [[sendDic_ objectForKey:@"_local_port"] componentsSeparatedByString:@":"];
 
+    NSLog(@"%@~~~~~~~%@",[infoTagArr_ objectAtIndex:0],sendContent_);
+    
     [self initUdp:[to_hereArr objectAtIndex:1]
           andPort:[to_hereArr objectAtIndex:2]
       andBindPort:[local_portArr objectAtIndex:1]

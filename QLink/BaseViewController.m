@@ -14,6 +14,7 @@
 #import "NetworkUtil.h"
 #import "XMLDictionary.h"
 #import "ProgressView.h"
+#import "MainViewController.h"
 
 #define READ_TIMEOUT 15.0
 
@@ -99,9 +100,6 @@
     
     NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
     progressView_ = [controlArr objectAtIndex:0];
-    if (self.isAddDeviceSenceZK) {
-        progressView_.hidden = YES;
-    }
     [self.view addSubview:progressView_];
     
     NSURL *url = [NSURL URLWithString:[[NetworkUtil getAction:ACTIONSETUPZK] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -548,12 +546,56 @@
                         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
                          {
-                             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                                 message:@"写入中控成功."
-                                                                                delegate:nil
-                                                                       cancelButtonTitle:@"确定"
-                                                                       otherButtonTitles:nil, nil];
-                             [alertView show];
+                             switch (self.zkOperType) {
+                                 case ZkOperSence:
+                                 {
+                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"设置场景成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                     [alert show];
+                                     
+                                     //页面跳转
+                                     NSArray * viewcontrollers = self.navigationController.viewControllers;
+                                     int idxInStack = 0;
+                                     for (int i=0; i<[viewcontrollers count]; i++) {
+                                         if ([[viewcontrollers objectAtIndex:i] isMemberOfClass:[MainViewController class]]) {
+                                             idxInStack = i;
+                                             break;
+                                         }
+                                     }
+                                     [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:idxInStack]animated:YES];
+                                     break;
+                                 }
+                                 case ZkOperDevice:
+                                 {
+                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"设置设备成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                                     [alert show];
+                                     
+                                     //页面跳转
+                                     NSArray * viewcontrollers = self.navigationController.viewControllers;
+                                     int idxInStack = 0;
+                                     for (int i=0; i<[viewcontrollers count]; i++) {
+                                         if ([[viewcontrollers objectAtIndex:i] isMemberOfClass:[MainViewController class]]) {
+                                             idxInStack = i;
+                                             break;
+                                         }
+                                     }
+                                     [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:idxInStack]animated:YES];
+                                     break;
+                                 }
+                                 case ZkOperNormal:
+                                 {
+                                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                                         message:@"写入中控成功."
+                                                                                        delegate:nil
+                                                                               cancelButtonTitle:@"确定"
+                                                                               otherButtonTitles:nil, nil];
+                                     [alertView show];
+                                     break;
+                                 }
+                                 default:
+                                     break;
+                             }
+                             
+                             
                              
                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     

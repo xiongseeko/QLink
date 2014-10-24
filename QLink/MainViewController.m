@@ -17,6 +17,7 @@
 #import "DeviceConfigViewController.h"
 #import "AboutViewController.h"
 #import "SenceConfigViewController.h"
+#import "SVProgressHUD.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -704,38 +705,60 @@
         return [KxMenu dismissMenu];
     }
     
-    NSMutableArray *menuItems = [NSMutableArray arrayWithObjects:[KxMenuItem menuItem:@"紧急模式"
-                                                                                image:nil
-                                                                               target:self
-                                                                               action:@selector(pushMenuItem:)],
-                                 
-                                 [KxMenuItem menuItem:@"写入中控"
-                                                image:nil
-                                               target:self
-                                               action:@selector(pushMenuItem:)],
-                                 
-                                 [KxMenuItem menuItem:@"初始化"
-                                                image:nil
-                                               target:self
-                                               action:@selector(pushMenuItem:)],
-                                 
-                                 [KxMenuItem menuItem:@"关于"
-                                                image:nil
-                                               target:self
-                                               action:@selector(pushMenuItem:)], nil];
+    NSMutableArray *menuItems = [NSMutableArray array];
     
     Config *configObj = [Config getConfig];
     if (configObj.isBuyCenterControl) {
-        KxMenuItem *item = [KxMenuItem menuItem:@"正常模式"
-                                      image:nil
-                                     target:self
-                                     action:@selector(pushMenuItem:)];
-        [menuItems insertObject:item atIndex:0];
+        KxMenuItem *zhengchangItem = [KxMenuItem menuItem:@"正常模式"
+                                                    image:nil
+                                                   target:self
+                                                   action:@selector(pushMenuItem:)];
+        
+        KxMenuItem *jinjiItem = [KxMenuItem menuItem:@"紧急模式"
+                                               image:nil
+                                              target:self
+                                              action:@selector(pushMenuItem:)];
+        
+        NSString *model = [DataUtil getGlobalModel];
+        
+        if ([model isEqualToString:Model_ZKDOMAIN] || [model isEqualToString:Model_ZKIp]) {
+            zhengchangItem = [KxMenuItem menuItem:@"正常模式"
+                                            image:[UIImage imageNamed:@"success"]
+                                           target:self
+                                           action:@selector(pushMenuItem:)];
+        } else if ([model isEqualToString:Model_JJ]) {
+            jinjiItem = [KxMenuItem menuItem:@"紧急模式"
+                                       image:[UIImage imageNamed:@"success"]
+                                      target:self
+                                      action:@selector(pushMenuItem:)];
+        }
+        
+        menuItems = [NSMutableArray arrayWithObjects:zhengchangItem,
+                     jinjiItem,
+                     
+                     [KxMenuItem menuItem:@"写入中控"
+                                    image:nil
+                                   target:self
+                                   action:@selector(pushMenuItem:)],
+                     
+                     [KxMenuItem menuItem:@"初始化"
+                                    image:nil
+                                   target:self
+                                   action:@selector(pushMenuItem:)],
+                     
+                     [KxMenuItem menuItem:@"关于"
+                                    image:nil
+                                   target:self
+                                   action:@selector(pushMenuItem:)], nil];
+    } else {
+        menuItems = [NSMutableArray arrayWithObjects:
+                     [KxMenuItem menuItem:@"关于"
+                                    image:nil
+                                   target:self
+                                   action:@selector(pushMenuItem:)], nil];
     }
     
-    KxMenuItem *first = menuItems[0];
-    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
-    first.alignment = NSTextAlignmentCenter;
+    
     
     CGRect rect = CGRectMake(215, -50, 100, 50);
     
@@ -767,13 +790,16 @@
 //点击下拉事件
 - (void)pushMenuItem:(KxMenuItem *)sender
 {
-    if ([sender.title isEqualToString:@"正常模式"]) {//写入中控
+    if ([sender.title isEqualToString:@"正常模式"]) {
+        [SVProgressHUD showSuccessWithStatus:@"正常模式"];
         [self setZkConfig];
     } else if ([sender.title isEqualToString:@"紧急模式"])
     {
+        [SVProgressHUD showSuccessWithStatus:@"紧急模式"];
         [DataUtil setGlobalModel:Model_JJ];
     } else if ([sender.title isEqualToString:@"写入中控"])
     {
+        self.zkOperType = ZkOperNormal;
         [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
         
     } else if ([sender.title isEqualToString:@"初始化"])

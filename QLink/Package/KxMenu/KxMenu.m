@@ -502,9 +502,10 @@ typedef enum {
             
             UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleFrame];
             titleLabel.text = menuItem.title;
+            titleLabel.tag = 633;
             titleLabel.font = titleFont;
             titleLabel.textAlignment = menuItem.alignment;
-//            titleLabel.textColor = menuItem.foreColor ? menuItem.foreColor : [UIColor whiteColor];
+            titleLabel.textColor = menuItem.foreColor ? menuItem.foreColor : [UIColor whiteColor];
             titleLabel.textColor = [UIColor whiteColor];
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.autoresizingMask = UIViewAutoresizingNone;

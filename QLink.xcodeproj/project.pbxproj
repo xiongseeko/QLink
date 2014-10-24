@@ -366,6 +366,7 @@
 		8A1ED4F919DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */; };
 		8A1ED4FA19DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F619DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png */; };
 		8A1F45C219E0391100B19227 /* ActionNullClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1F45C119E0391100B19227 /* ActionNullClass.m */; };
+		8A21895819FAA821007980F0 /* success@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A21895719FAA821007980F0 /* success@2x.png */; };
 		8A2256AD19E822A3009F7D03 /* sence_cancle.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AB19E822A3009F7D03 /* sence_cancle.png */; };
 		8A2256AE19E822A3009F7D03 /* sence_cancle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AC19E822A3009F7D03 /* sence_cancle@2x.png */; };
 		8A25548819EA1C360031B9F4 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A25548519EA1C360031B9F4 /* GCDAsyncSocket.m */; };
@@ -897,6 +898,7 @@
 		8A1ED4F619DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SANSAN_MACRO_ADD_select@2x.png"; sourceTree = "<group>"; };
 		8A1F45C019E0391100B19227 /* ActionNullClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionNullClass.h; sourceTree = "<group>"; };
 		8A1F45C119E0391100B19227 /* ActionNullClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionNullClass.m; sourceTree = "<group>"; };
+		8A21895719FAA821007980F0 /* success@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "success@2x.png"; sourceTree = "<group>"; };
 		8A2256AB19E822A3009F7D03 /* sence_cancle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sence_cancle.png; sourceTree = "<group>"; };
 		8A2256AC19E822A3009F7D03 /* sence_cancle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sence_cancle@2x.png"; sourceTree = "<group>"; };
 		8A25548419EA1C360031B9F4 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
@@ -1816,6 +1818,7 @@
 		8AAEE81C19C9CABA00B01890 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				8A21895719FAA821007980F0 /* success@2x.png */,
 				35A8A93419D166470018EB67 /* Device */,
 				35A8A97519D166470018EB67 /* Sence */,
 				35A4E56619D2DB16007A3C30 /* Button */,
@@ -2054,6 +2057,7 @@
 				35A4E5F119D2ECE7007A3C30 /* nm_right@2x.png in Resources */,
 				8AD5630419D7194A006E3285 /* sw3_top_on@2x.png in Resources */,
 				35A4E5EF19D2ECE7007A3C30 /* nm_middle02@2x.png in Resources */,
+				8A21895819FAA821007980F0 /* success@2x.png in Resources */,
 				35131E7919D3B048005A3C17 /* bstc_right02.png in Resources */,
 				35A8A9E819D166470018EB67 /* ty_select.png in Resources */,
 				35131E8B19D3B8B9005A3C17 /* tr_left@2x.png in Resources */,

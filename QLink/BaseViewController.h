@@ -18,6 +18,12 @@ typedef NS_ENUM(NSInteger, SocketType){
     SocketTypeStudy = 4
 };
 
+typedef NS_ENUM(NSInteger, ZkOper){
+    ZkOperNormal = 1,
+    ZkOperSence = 2,
+    ZkOperDevice = 3
+};
+
 @interface BaseViewController : UIViewController
 {
     long udpTag_;
@@ -28,7 +34,7 @@ typedef NS_ENUM(NSInteger, SocketType){
 
 @property(nonatomic,assign) SocketType socketType;
 @property(nonatomic,assign) BOOL isSence;
-@property(nonatomic,assign) BOOL isAddDeviceSenceZK;
+@property(nonatomic,assign) ZkOper zkOperType;
 
 //写入中控，重复尝试 3 次
 @property(nonatomic,assign) int iTimeoutCount;
