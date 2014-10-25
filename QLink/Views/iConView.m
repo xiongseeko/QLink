@@ -21,10 +21,6 @@
 
 -(void)setIcon:(NSString *)icon andTitle:(NSString *)title
 {
-    if ([icon isEqualToString:@"nodefine"]) {
-        icon = @"other";
-    }
-    
     self.imgName = [icon stringByAppendingString:@".png"];
     self.imgNameSel = [icon stringByAppendingString:@"_select.png"];
     

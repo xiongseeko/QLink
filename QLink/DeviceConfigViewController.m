@@ -25,6 +25,8 @@
     NSString *tabName_;
     
     UIButton *btnIconSel_;
+    
+    NSMutableArray *iconArr_;
 }
 
 @end
@@ -47,6 +49,8 @@
     typeTag_ = @"_producttype";
     tabName_ = @"kfsetup";
     
+    [self initIconArr];
+    
     [self initNavigation];
     
     [self initControl];
@@ -54,6 +58,15 @@
     [self initData];
 
     [self initRequest:[NetworkUtil getAction:ACTIONSETUP]];
+}
+
+-(void)initIconArr
+{
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"iConPlist" ofType:@"plist"];
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    iconArr_ = [NSMutableArray array];
+    [iconArr_ addObjectsFromArray:[dataDic objectForKey:@"Sence"]];
+    [iconArr_ addObjectsFromArray:[dataDic objectForKey:@"Device"]];
 }
 
 //设置导航
@@ -114,6 +127,16 @@
                  [actionNullClass initRequestActionNULL];
                  
              } else {
+                 if (sResult.length < 40) {
+                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                                     message:@"返回错误."
+                                                                    delegate:nil
+                                                           cancelButtonTitle:@"关闭"
+                                                           otherButtonTitles:nil, nil];
+                     [alert show];
+                     
+                     return;
+                 }
                  sResult = [sResult stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
                  NSData *newData = [sResult dataUsingEncoding:NSUTF8StringEncoding];
                  
@@ -186,15 +209,22 @@
     NSString *imgNameSel = @"";
     if ([tabName_ isEqualToString:@"kfsdevice"]) {
         NSString *type = [setDic objectForKey:@"_type"];
+        if (![iconArr_ containsObject:type]) {
+            type = @"other";
+        }
         //处理‘点动’和‘翻转’的图标
-        if ([type isEqualToString:@"light_1"] || [type isEqualToString:@"light_check"]) {
+        if ([type isEqualToString:@"light_1"] || [type isEqualToString:@"light_check"] || [type isEqualToString:@"light_bri"]) {
             type = @"light";
         }
         imgName = [NSString stringWithFormat:@"%@.png",type];
         imgNameSel = [NSString stringWithFormat:@"%@_select.png",type];
     }else{
-        imgName = [NSString stringWithFormat:@"%@.png",[iconDic_ objectForKey:[setDic objectForKey:typeTag_]]];
-        imgNameSel = [NSString stringWithFormat:@"%@02.png",[iconDic_ objectForKey:[setDic objectForKey:typeTag_]]];
+        NSString *type = [iconDic_ objectForKey:[setDic objectForKey:typeTag_]];
+//        if (![iconArr_ containsObject:type]) {
+//            type = @"other";
+//        }
+        imgName = [NSString stringWithFormat:@"%@.png",type];
+        imgNameSel = [NSString stringWithFormat:@"%@02.png",type];
     }
     
     UIButton *btnIcon = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -202,6 +232,7 @@
     [btnIcon setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
     [btnIcon setImage:[UIImage imageNamed:imgNameSel] forState:UIControlStateSelected];
     btnIcon.tag = 100 + indexPath.row;
+    [btnIcon addTarget:self action:@selector(btnIconPressed:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:btnIcon];
     
     UILabel *lTitle = [[UILabel alloc] init];
@@ -272,6 +303,25 @@
 
 #pragma mark -
 #pragma mark Custom Methods
+
+-(void)btnIconPressed:(UIButton *)sender
+{
+    int tag = sender.tag - 100;
+    
+    //设置图标选中
+    btnIconSel_.selected = NO;
+    sender.selected = YES;
+    btnIconSel_ = sender;
+    
+    //设置请求类型
+    typeTag_ = @"_type";
+    tabName_ = @"kfsdevice";
+    
+    //请求
+    NSDictionary *setDic = [deviceArr_ objectAtIndex:tag];
+    NSString *sUrl = [setDic objectForKey:@"_url"];
+    [self initRequest:sUrl];
+}
 
 -(void)btnBackPressed
 {

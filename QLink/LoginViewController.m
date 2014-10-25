@@ -110,7 +110,6 @@
         
         if (!configTempObj_.isSetIp) {//需要配置ip
             [weakSelf handleGetIp];
-            [weakSelf initSetUpIp];
         } else
         {
             [weakSelf actionNULL];
@@ -195,8 +194,11 @@
     NSURL *url = [NSURL URLWithString:sUrl];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    __weak __typeof(self)weakSelf = self;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
+         [weakSelf initSetUpIp];
+         
      }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
          
      }];

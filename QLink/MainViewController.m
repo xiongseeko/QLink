@@ -37,6 +37,8 @@
     RenameView *renameView_;
     
     int svHeight_;
+    
+    NSMutableArray *iconArr_;
 }
 @end
 
@@ -55,6 +57,8 @@
 {
     [super viewDidLoad];
     
+    [self initIconArr];
+    
     [self initData];
     
     [self initNavigation];
@@ -66,6 +70,17 @@
 
 #pragma mark -
 #pragma mark 初始化方法
+
+-(void)initIconArr
+{
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"iConPlist" ofType:@"plist"];
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    iconArr_ = [NSMutableArray array];
+    [iconArr_ addObjectsFromArray:[dataDic objectForKey:@"Sence"]];
+    [iconArr_ addObjectsFromArray:[dataDic objectForKey:@"Device"]];
+    [iconArr_ addObject:@"SANSAN_DEVICE_ADD"];
+    [iconArr_ addObject:@"SANSAN_MACRO_ADD"];
+}
 
 //设置导航
 -(void)initNavigation
@@ -281,11 +296,16 @@
             iconView.center = CGPointMake(kImageWidth *(0.5 + i), kImageHeight * 0.5);
             iconView.delegate = self;
             
+            NSString *icon = @"";
             if (obj.IconType) {
-                [iconView setIcon:obj.IconType andTitle:obj.SenceName];
+                icon = obj.IconType;
             }else{
-                [iconView setIcon:obj.Type andTitle:obj.SenceName];
+                icon = obj.Type;
             }
+            if (![iconArr_ containsObject:icon]) {
+                icon = @"other";
+            }
+            [iconView setIcon:icon andTitle:obj.SenceName];
             [iconView setValue:[NSNumber numberWithInt:index] forKey:@"index"];
             [iconView setValue:obj.Type forKey:@"pType"];
             
@@ -318,11 +338,16 @@
             iconView.bounds = CGRectMake(0, 0, kImageWidth, kImageHeight);
             iconView.center = CGPointMake(kImageWidth *(0.5 + i), kImageHeight * 0.5);
             iconView.delegate = self;
+            NSString *icon = @"";
             if (obj.IconType) {
-                [iconView setIcon:obj.IconType andTitle:obj.DeviceName];
+                icon = obj.IconType;
             }else{
-                [iconView setIcon:obj.Type andTitle:obj.DeviceName];
+                icon = obj.Type;
             }
+            if (![iconArr_ containsObject:icon]) {
+                icon = @"other";
+            }
+            [iconView setIcon:icon andTitle:obj.DeviceName];
             [iconView setValue:[NSNumber numberWithInt:index] forKey:@"index"];
             [iconView setValue:obj.Type forKey:@"pType"];
             
