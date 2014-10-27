@@ -115,13 +115,21 @@
             [weakSelf actionNULL];
         }
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"连接失败\n请确认网络是否连接." delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+//                                                            message:@"连接失败\n请确认网络是否连接." delegate:nil
+//                                                  cancelButtonTitle:@"关闭"
+//                                                  otherButtonTitles:nil, nil];
+//        [alertView show];
+//        
+//        [SVProgressHUD dismiss];
         
-        [SVProgressHUD dismiss];
+        weakSelf.pName = _tfName.text;
+        weakSelf.pPwd = _tfPassword.text;
+        weakSelf.pKey = _tfKey.text;
+        weakSelf.pIsSelected = _btnRemeber.selected;
+        weakSelf.pConfigTemp = configTempObj_;
+        
+        [weakSelf actionNULL];
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];

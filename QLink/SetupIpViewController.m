@@ -53,8 +53,6 @@
     orderDicArr_ = [NSMutableArray arrayWithArray:[DataUtil changeDicToArray:[info objectForKey:@"kfsdevice"]]];
     [orderDicArr_ insertObject:info atIndex:0];
     
-    NSLog(@"=======================");
-    
     [self sendLoopOrder];
 }
 
@@ -80,8 +78,6 @@
     NSArray *to_hereArr = [toHera componentsSeparatedByString:@":"];
     NSArray *local_portArr = [[sendDic_ objectForKey:@"_local_port"] componentsSeparatedByString:@":"];
 
-    NSLog(@"%@~~~~~~~%@",[infoTagArr_ objectAtIndex:0],sendContent_);
-    
     [self initUdp:[to_hereArr objectAtIndex:1]
           andPort:[to_hereArr objectAtIndex:2]
       andBindPort:[local_portArr objectAtIndex:1]
@@ -261,9 +257,9 @@
 
 -(void)actionNULL
 {
-    Member *curMember = [Member getMember];
-    
     NSString *curVersion = [SQLiteUtil getCurVersionNo];
+    
+    Member *curMember = [Member getMember];
     
     //重新解析配置文件
     if ((curMember && ![curMember.uKey isEqualToString:_pKey])) {//更换用户
@@ -306,9 +302,18 @@
         MainViewController *mainVC = [[MainViewController alloc] init];
         [self.navigationController pushViewController:mainVC animated:YES];
     }else{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"配置失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+//                                                            message:@"配置失败,请重试." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+//        [alertView show];
+        [SVProgressHUD dismiss];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"第一次配置必须连接Intenet"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        return;
     }
 }
 

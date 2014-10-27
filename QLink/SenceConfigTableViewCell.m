@@ -26,15 +26,7 @@
  andDeviceName:(NSString *)deviceName
   andOrderName:(NSString *)orderName
        andTime:(NSString *)timer
-{
-    if ([icon isEqualToString:@"light_1"] || [icon isEqualToString:@"light_check"]) {
-        icon = @"light";
-    }
-    
-    if ([icon isEqualToString:@"nodefine"]) {
-        icon = @"other";
-    }
-    
+{   
     self.ivIcon.image = [UIImage imageNamed:icon];
     self.lDeviceName.text = deviceName;
     self.lOrderName.text = orderName;

@@ -114,6 +114,7 @@
     self.navigationItem.rightBarButtonItem = rightBtn;
 }
 
+//添加左侧add菜单
 -(void)setAddSenceModelNavigation
 {
     ILBarButtonItem *senceModel =
@@ -123,7 +124,35 @@
                                action:@selector(btnCancleSenceModel)];
     
     self.navigationItem.leftBarButtonItem = senceModel;
+    
+    [self setAddSenceModelRightNavEnabledFalse];
 }
+
+//设置scrollview不能滚动，且右上角菜单隐藏
+-(void)setAddSenceModelRightNavEnabledFalse
+{
+    self.btnSceneControl.enabled = false;
+    self.svBig.scrollEnabled = false;
+    self.navigationItem.rightBarButtonItem = nil;
+}
+
+//设置scrollview能滚动，且右上角菜单显示
+-(void)setAddSenceModelRightNavEnabledYES
+{
+    self.btnSceneControl.selected = YES;
+    self.btnDeviceControl.selected = NO;
+    self.btnSceneControl.enabled = YES;
+    self.svBig.scrollEnabled = YES;
+    ILBarButtonItem *rightBtn =
+    [ILBarButtonItem barItemWithImage:[UIImage imageNamed:@"首页_三横.png"]
+                        selectedImage:[UIImage imageNamed:@"首页_三横.png"]
+                               target:self
+                               action:@selector(showRightMenu)];
+    
+    
+    self.navigationItem.rightBarButtonItem = rightBtn;
+}
+
 
 //设置控件
 -(void)initControl
@@ -188,6 +217,7 @@
     
     //设置是否添加场景模式
     [DataUtil setGlobalIsAddSence:NO];
+    [self setAddSenceModelRightNavEnabledYES];
     
     [self setZkConfig];
 }
@@ -416,7 +446,6 @@
         
         [DataUtil setUpdateInsertSenceInfo:@"" andSenceName:@""];
         
-        [DataUtil setGlobalIsAddSence:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                         message:@"您已进入选择模式,所有按键失效,请选择您要构成场景的动作."
                                                        delegate:nil
@@ -425,6 +454,8 @@
         [alert show];
         CGRect rect = CGRectMake(320, 0, 320, _svBig.frame.size.height);
         [_svBig scrollRectToVisible:rect animated:NO];
+        
+        [DataUtil setGlobalIsAddSence:YES];
         [self setAddSenceModelNavigation];
     } else { //设备
         Device *obj = [deviceArr_ objectAtIndex:index];
@@ -627,6 +658,8 @@
 -(void)goOnChoose
 {
     [DataUtil setGlobalIsAddSence:YES];
+    [self setAddSenceModelRightNavEnabledFalse];
+    
     CGRect rect = CGRectMake(320, 0, 320, _svBig.frame.size.height);
     [_svBig scrollRectToVisible:rect animated:NO];
 }
@@ -848,6 +881,8 @@
 -(void)btnCancleSenceModel
 {
     [DataUtil setGlobalIsAddSence:NO];
+    [self setAddSenceModelRightNavEnabledYES];
+    
     [SQLiteUtil removeShoppingCar];
     self.navigationItem.leftBarButtonItem = nil;
     CGRect rect = CGRectMake(0, 0, 320, _svBig.frame.size.height);

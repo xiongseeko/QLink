@@ -29,6 +29,7 @@
     
     NSString *pDeviceId_;
     NSString *pDeviceName_;
+    NSMutableArray *iconArr_;
 }
 
 @end
@@ -48,11 +49,22 @@
 {
     [super viewDidLoad];
     
+    [self initIconArr];
+    
     [self initNavigation];
     
     [self initControl];
     
     [self initData];
+}
+
+-(void)initIconArr
+{
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"iConPlist" ofType:@"plist"];
+    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    iconArr_ = [NSMutableArray array];
+    [iconArr_ addObjectsFromArray:[dataDic objectForKey:@"Sence"]];
+    [iconArr_ addObjectsFromArray:[dataDic objectForKey:@"Device"]];
 }
 
 //设置导航
@@ -318,6 +330,14 @@
     NSString *type = obj.IconType;
     if ([DataUtil checkNullOrEmpty:type]) {
         type = obj.Type;
+    }
+    
+    if (![iconArr_ containsObject:type]) {
+        type = @"other";
+    }
+    //处理‘点动’和‘翻转’的图标
+    if ([type isEqualToString:@"light_1"] || [type isEqualToString:@"light_check"] || [type isEqualToString:@"light_bri"]) {
+        type = @"light";
     }
     
     [cell setIcon:type andDeviceName:obj.SenceName andOrderName:obj.OrderName andTime:obj.Timer];
