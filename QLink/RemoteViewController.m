@@ -70,13 +70,15 @@
     
     self.navigationItem.titleView = btnTitle;
     
-    if ([SQLiteUtil isStudyModel:_deviceId]) {
-        ILBarButtonItem *rightBtn =
-        [ILBarButtonItem barItemWithImage:[UIImage imageNamed:@"首页_三横.png"]
-                            selectedImage:[UIImage imageNamed:@"首页_三横.png"]
-                                   target:self
-                                   action:@selector(showRightMenu)];
-        self.navigationItem.rightBarButtonItem = rightBtn;
+    if (![DataUtil getGlobalIsAddSence]) {
+        if ([SQLiteUtil isStudyModel:_deviceId]) {
+            ILBarButtonItem *rightBtn =
+            [ILBarButtonItem barItemWithImage:[UIImage imageNamed:@"首页_三横.png"]
+                                selectedImage:[UIImage imageNamed:@"首页_三横.png"]
+                                       target:self
+                                       action:@selector(showRightMenu)];
+            self.navigationItem.rightBarButtonItem = rightBtn;
+        }
     }
 }
 
@@ -230,8 +232,8 @@
         {
             height += JG;
             
-            int iCount = [orderArr count];
-            int iRowCount = iCount%4 == 0 ? iCount/4 : (iCount/4 + 1);
+            NSInteger iCount = [orderArr count];
+            NSInteger iRowCount = iCount%4 == 0 ? iCount/4 : (iCount/4 + 1);
             
             for (int row = 0; row < iRowCount; row ++)
             {
@@ -319,8 +321,8 @@
         {
             height += JG;
             
-            int iCount = [orderArr count];
-            int iRowCount = iCount%2 == 0 ? iCount/2 : (iCount/2 + 1);
+            NSInteger iCount = [orderArr count];
+            NSInteger iRowCount = iCount%2 == 0 ? iCount/2 : (iCount/2 + 1);
             
             for (int row = 0; row < iRowCount; row ++)
             {

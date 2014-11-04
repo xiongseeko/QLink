@@ -46,6 +46,13 @@
         longPress.minimumPressDuration = 1.0;//表示最短长按的时间
         //将长按手势添加到需要实现长按操作的视图里
         [self addGestureRecognizer:longPress];
+    } else {
+        //实例化长按手势监听
+        UILongPressGestureRecognizer *longPress =
+        [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLightLongPressed:)];
+        longPress.minimumPressDuration = 1.0;//表示最短长按的时间
+        //将长按手势添加到需要实现长按操作的视图里
+        [self addGestureRecognizer:longPress];
     }
     
     // 单击的 Recognizer
@@ -63,8 +70,20 @@
     if (self.delegate && [gestureRecognizer state] == UIGestureRecognizerStateBegan) {
         
         [self.delegate handleLongPressed:_index andType:_pType];
-        
         NSLog(@"第%d索引",_index);
+    }
+}
+
+//照明类设备长按事件的实现方法
+- (void)handleLightLongPressed:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    if (self.delegate && [gestureRecognizer state] == UIGestureRecognizerStateBegan) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"照明类设备请到设备详情进行操作"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
     }
 }
 

@@ -24,15 +24,15 @@
 
 @interface MainViewController ()
 {
-    NSArray *senceArr_;
-    NSArray *deviceArr_;
+    NSMutableArray *senceArr_;
+    NSMutableArray *deviceArr_;
     NSArray *roomArr_;
     
-    int senceCount_;
-    int deviceCount_;
+    NSInteger senceCount_;
+    NSInteger deviceCount_;
     
-    int senceRowCount_;
-    int deviceRowCount_;
+    NSInteger senceRowCount_;
+    NSInteger deviceRowCount_;
     
     RenameView *renameView_;
     
@@ -180,7 +180,7 @@
 -(void)initSence
 {
     GlobalAttr *obj = [DataUtil shareInstanceToRoom];
-    senceArr_ = [SQLiteUtil getSenceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
+    senceArr_ = [NSMutableArray arrayWithArray:[SQLiteUtil getSenceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId]];
     
     senceCount_ = [senceArr_ count];
     senceRowCount_ = senceCount_%3 == 0 ? senceCount_/3 : (senceCount_/3 + 1);
@@ -188,10 +188,14 @@
     [_tvScene reloadData];
 }
 
--(void)initDevice
+-(void)initDevice:(BOOL)isAddSence
 {
     GlobalAttr *obj = [DataUtil shareInstanceToRoom];
-    deviceArr_ = [SQLiteUtil getDeviceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
+    deviceArr_ = [NSMutableArray arrayWithArray:[SQLiteUtil getDeviceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId]];
+    
+    if (deviceArr_.count > 0 && isAddSence) {
+        [deviceArr_ removeLastObject];
+    }
     
     deviceCount_ = [deviceArr_ count];
     deviceRowCount_ = deviceCount_%3 == 0 ? deviceCount_/3 : (deviceCount_/3 + 1);
@@ -203,11 +207,11 @@
 {
     GlobalAttr *obj = [DataUtil shareInstanceToRoom];
     
-    senceArr_ = [SQLiteUtil getSenceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
+    senceArr_ = [NSMutableArray arrayWithArray:[SQLiteUtil getSenceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId]];
     senceCount_ = [senceArr_ count];
     senceRowCount_ = senceCount_%3 == 0 ? senceCount_/3 : (senceCount_/3 + 1);
     
-    deviceArr_ = [SQLiteUtil getDeviceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId];
+    deviceArr_ = [NSMutableArray arrayWithArray:[SQLiteUtil getDeviceList:obj.HouseId andLayerId:obj.LayerId andRoomId:obj.RoomId]];
     deviceCount_ = [deviceArr_ count];
     deviceRowCount_ = deviceCount_%3 == 0 ? deviceCount_/3 : (deviceCount_/3 + 1);
     
@@ -455,6 +459,8 @@
         CGRect rect = CGRectMake(320, 0, 320, _svBig.frame.size.height);
         [_svBig scrollRectToVisible:rect animated:NO];
         
+        [self initDevice:YES];
+        
         [DataUtil setGlobalIsAddSence:YES];
         [self setAddSenceModelNavigation];
     } else { //设备
@@ -475,7 +481,7 @@
     if ([pType isEqualToString:MACRO]) {
         [self initSence];
     }else{
-        [self initDevice];
+        [self initDevice:NO];
     }
 }
 
@@ -512,7 +518,7 @@
             [self initSence];
         }else{
             [SQLiteUtil renameDeviceName:deviceId andNewName:newName];
-            [self initDevice];
+            [self initDevice:NO];
         }
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
@@ -624,7 +630,7 @@
                 [self initSence];
             }else{
                 [SQLiteUtil removeDevice:alertView.pDeviceId];
-                [self initDevice];
+                [self initDevice:NO];
             }
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
@@ -657,6 +663,8 @@
 
 -(void)goOnChoose
 {
+    [self initDevice:YES];
+    
     [DataUtil setGlobalIsAddSence:YES];
     [self setAddSenceModelRightNavEnabledFalse];
     
@@ -719,7 +727,7 @@
 
 -(void)refreshDeviceTab
 {
-    [self initDevice];
+    [self initDevice:NO];
 }
 
 //楼层菜单
@@ -842,7 +850,7 @@
     
     [self initSence];
     
-    [self initDevice];
+    [self initDevice:NO];
 }
 
 //点击下拉事件
@@ -880,6 +888,8 @@
 //取消场景模式
 -(void)btnCancleSenceModel
 {
+    [self initDevice:NO];
+    
     [DataUtil setGlobalIsAddSence:NO];
     [self setAddSenceModelRightNavEnabledYES];
     

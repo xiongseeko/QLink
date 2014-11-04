@@ -432,6 +432,7 @@
         if (bResult) {
             [DataUtil setGlobalIsAddSence:NO];//设置当前为非添加模式
             MainViewController *mainVC = [[MainViewController alloc] init];
+            
             [self.navigationController pushViewController:mainVC animated:NO];
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"

@@ -29,4 +29,6 @@
 -(IBAction)btnScenePressed:(UIButton *)sender;
 -(IBAction)btnDevicePressed:(UIButton *)sender;
 
+-(void)initSence;
+
 @end
