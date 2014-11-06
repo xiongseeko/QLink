@@ -460,7 +460,7 @@
             }
             case SocketTypeEmergency:
             {
-                if (NumberOfTimeout > [self iTimeoutCount]) {
+                if (NumberOfTimeout > self.iTimeoutCount) {
                     [self setITimeoutCount:[self iTimeoutCount] + 1];
                     sleep(1);
                     [self sendEmergencySocketOrder];
@@ -481,7 +481,9 @@
         NSLog(@"连接失败\n");
         NSLog(@"错误信息 －－ socketDidDisconnect:%p withError: %@", sock, err);
     }else{
-        NSLog(@"断开连接\n");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"操作失败." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
+        [alert show];
     }
 }
 

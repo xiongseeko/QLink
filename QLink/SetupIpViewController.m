@@ -280,6 +280,8 @@
         [actionNullClass initRequestActionNULL];
         
     }else{//读取本地数据配置
+        [SVProgressHUD dismiss];
+        
         NSLog(@"读取本地");
         
         [SQLiteUtil setDefaultLayerIdAndRoomId];

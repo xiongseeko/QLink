@@ -83,8 +83,6 @@
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
-        [SVProgressHUD dismiss];
-        
         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
         
         NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
@@ -95,6 +93,8 @@
                                                   cancelButtonTitle:@"关闭"
                                                   otherButtonTitles:nil, nil];
             [alert show];
+            
+            [SVProgressHUD dismiss];
             
             return;
         }
@@ -115,21 +115,23 @@
             [weakSelf actionNULL];
         }
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-//                                                            message:@"连接失败\n请确认网络是否连接." delegate:nil
-//                                                  cancelButtonTitle:@"关闭"
-//                                                  otherButtonTitles:nil, nil];
-//        [alertView show];
+//        weakSelf.pName = _tfName.text;
+//        weakSelf.pPwd = _tfPassword.text;
+//        weakSelf.pKey = _tfKey.text;
+//        weakSelf.pIsSelected = _btnRemeber.selected;
+//        weakSelf.pConfigTemp = configTempObj_;
 //        
-//        [SVProgressHUD dismiss];
+//        [weakSelf actionNULL];
         
-        weakSelf.pName = _tfName.text;
-        weakSelf.pPwd = _tfPassword.text;
-        weakSelf.pKey = _tfKey.text;
-        weakSelf.pIsSelected = _btnRemeber.selected;
-        weakSelf.pConfigTemp = configTempObj_;
+        [SVProgressHUD dismiss];
         
-        [weakSelf actionNULL];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                        message:@"您输入的信息有误."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"关闭"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        return;
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
@@ -257,7 +259,7 @@
         
         [weakSelf actionNULL];
         
-        [SVProgressHUD dismiss];
+//        [SVProgressHUD dismiss];
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
