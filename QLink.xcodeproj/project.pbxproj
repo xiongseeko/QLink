@@ -413,6 +413,7 @@
 		8A64BF1C19FB5BCA007DBF9D /* Icon-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A64BF1819FB5BCA007DBF9D /* Icon-50.png */; };
 		8A64BF1D19FB5BCA007DBF9D /* Icon-80.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A64BF1919FB5BCA007DBF9D /* Icon-80.png */; };
 		8A74CBB719E4378D006E3175 /* libz.1.1.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A74CBB619E4378D006E3175 /* libz.1.1.3.dylib */; };
+		8A908ED71A0E511300AF9FB9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A908ED61A0E511300AF9FB9 /* AudioToolbox.framework */; };
 		8A97414D19CC877400E409A6 /* NetworkUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A97414C19CC877400E409A6 /* NetworkUtil.m */; };
 		8A9D984B19CE87C300D50CE6 /* MyURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9D984A19CE87C300D50CE6 /* MyURLConnection.m */; };
 		8A9D985119CE8C6700D50CE6 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9D985019CE8C6700D50CE6 /* XMLDictionary.m */; };
@@ -968,6 +969,7 @@
 		8A64BF1819FB5BCA007DBF9D /* Icon-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-50.png"; sourceTree = "<group>"; };
 		8A64BF1919FB5BCA007DBF9D /* Icon-80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-80.png"; sourceTree = "<group>"; };
 		8A74CBB619E4378D006E3175 /* libz.1.1.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.1.3.dylib; path = usr/lib/libz.1.1.3.dylib; sourceTree = SDKROOT; };
+		8A908ED61A0E511300AF9FB9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8A97414B19CC877400E409A6 /* NetworkUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkUtil.h; sourceTree = "<group>"; };
 		8A97414C19CC877400E409A6 /* NetworkUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkUtil.m; sourceTree = "<group>"; };
 		8A9D984919CE87C300D50CE6 /* MyURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyURLConnection.h; sourceTree = "<group>"; };
@@ -1124,6 +1126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A908ED71A0E511300AF9FB9 /* AudioToolbox.framework in Frameworks */,
 				8A2554C119EA84B60031B9F4 /* Security.framework in Frameworks */,
 				8A25549F19EA80010031B9F4 /* MobileCoreServices.framework in Frameworks */,
 				8A25549D19EA7FF80031B9F4 /* SystemConfiguration.framework in Frameworks */,
@@ -1708,6 +1711,7 @@
 		8AAEE7EB19C9CA9500B01890 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8A908ED61A0E511300AF9FB9 /* AudioToolbox.framework */,
 				8A2554C019EA84B60031B9F4 /* Security.framework */,
 				8A2554BE19EA84900031B9F4 /* CoreLocation.framework */,
 				8A25549E19EA80010031B9F4 /* MobileCoreServices.framework */,
@@ -2567,8 +2571,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2606,8 +2610,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2627,14 +2631,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QLink/QLink-Prefix.pch";
 				INFOPLIST_FILE = "QLink/QLink-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "cc368b76-9223-4ab4-b4f8-b1a8e696315e";
+				PROVISIONING_PROFILE = "909b1f2f-18de-473e-accc-78019748cce5";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2643,14 +2647,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QLink/QLink-Prefix.pch";
 				INFOPLIST_FILE = "QLink/QLink-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "cc368b76-9223-4ab4-b4f8-b1a8e696315e";
+				PROVISIONING_PROFILE = "909b1f2f-18de-473e-accc-78019748cce5";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

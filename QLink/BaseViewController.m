@@ -15,6 +15,7 @@
 #import "XMLDictionary.h"
 #import "ProgressView.h"
 #import "MainViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 #define READ_TIMEOUT 15.0
 
@@ -31,6 +32,7 @@
     
     NSDictionary *sendCmdDic_;//当前发送的对象,用于中控参数
     Sence *sendSenceObj_;//紧急模式下发送的场景对象
+    Order *sendDeviceObj_;//紧急模式下发送设备对象
     Control *zkConfig_;
     BOOL isSendZKFailAndSendLast_;
 }
@@ -50,7 +52,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
 }
 
 -(void)timerFireMethod
@@ -69,6 +70,7 @@
         }
         default:
         {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
             NSString *so = [DataUtil getGlobalModel];
             if ([so isEqualToString:Model_ZKIp]) {
                 self.socketType = SocketTypeNormal;
@@ -125,7 +127,7 @@
         //拼接队列
         cmdReadArr_ = [NSMutableArray arrayWithArray:[DataUtil changeDicToArray:[info objectForKey:@"tecom"]]];
         cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
-        int iCount = [cmdReadArr_ count];
+        NSInteger iCount = [cmdReadArr_ count];
         if ([cmdOperArr_ count] == 0) {
             [progressView_ removeFromSuperview];
             
@@ -220,6 +222,7 @@
         
         [self sendEmergencySocketOrder];
     } else {
+        sendDeviceObj_ = order;
         sendContent_ = order.OrderCmd;
         sendContent_ = [sendContent_ substringFromIndex:4];
         
@@ -238,11 +241,15 @@
 
 -(void)sendEmergencySocketOrder
 {
-    sendSenceObj_ = [cmdOperArr_ objectAtIndex:0];
-    sendContent_ = sendSenceObj_.OrderCmd;
-    sendContent_ = [sendContent_ substringFromIndex:4];
-    
-    NSArray *addArr = [sendSenceObj_.Address componentsSeparatedByString:@":"];
+    NSArray *addArr = nil;
+    if (self.isSence) {
+        sendSenceObj_ = [cmdOperArr_ objectAtIndex:0];
+        sendContent_ = sendSenceObj_.OrderCmd;
+        sendContent_ = [sendContent_ substringFromIndex:4];
+        addArr = [sendSenceObj_.Address componentsSeparatedByString:@":"];
+    } else {
+       addArr = [sendDeviceObj_.Address componentsSeparatedByString:@":"];
+    }
     NSString *type = addArr[0];
     NSString *ip = addArr[1];
     NSString *port = addArr[2];
@@ -316,9 +323,8 @@
     /**************创建连接**************/
     
     asyncSocket_ = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    
     NSError *error = nil;
-    if (![asyncSocket_ connectToHost:host onPort:[port integerValue] error:&error])
+    if (![asyncSocket_ connectToHost:host onPort:[port integerValue] withTimeout:1 error:&error])
     {
         NSLog(@"Error connecting");
         return;
@@ -461,7 +467,7 @@
             case SocketTypeEmergency:
             {
                 if (NumberOfTimeout > self.iTimeoutCount) {
-                    [self setITimeoutCount:[self iTimeoutCount] + 1];
+                    [self setITimeoutCount:[self iTimeoutCount] + 1]; 
                     sleep(1);
                     [self sendEmergencySocketOrder];
                 } else if ([self iTimeoutCount] >= NumberOfTimeout) {
@@ -480,10 +486,8 @@
         
         NSLog(@"连接失败\n");
         NSLog(@"错误信息 －－ socketDidDisconnect:%p withError: %@", sock, err);
-    }else{
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"操作失败." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
-        [alert show];
+    }else {
+        NSLog(@"断开连接\n");
     }
 }
 
