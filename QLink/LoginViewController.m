@@ -15,9 +15,7 @@
 #import "XMLDictionary.h"
 
 @interface LoginViewController ()
-{
-    Config *configTempObj_;//临时变量，存储Action=login请求对象
-}
+
 @end
 
 @implementation LoginViewController
@@ -100,15 +98,15 @@
         }
         
         //处理配置信息
-        configTempObj_ = [Config getTempConfig:configArr];
+        Config *configTempObj = [Config getTempConfig:configArr];//临时变量，存储Action=login请求对象
         
         weakSelf.pName = _tfName.text;
         weakSelf.pPwd = _tfPassword.text;
         weakSelf.pKey = _tfKey.text;
         weakSelf.pIsSelected = _btnRemeber.selected;
-        weakSelf.pConfigTemp = configTempObj_;
+        weakSelf.pConfigTemp = configTempObj;
         
-        if (!configTempObj_.isSetIp) {//需要配置ip
+        if (!configTempObj.isSetIp) {//需要配置ip
             [weakSelf handleGetIp];
         } else
         {
@@ -120,18 +118,30 @@
 //        weakSelf.pKey = _tfKey.text;
 //        weakSelf.pIsSelected = _btnRemeber.selected;
 //        weakSelf.pConfigTemp = configTempObj_;
-//        
+//
 //        [weakSelf actionNULL];
         
-        [SVProgressHUD dismiss];
+        Member *member = [Member getMember];
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"您输入的信息有误."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"关闭"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-        return;
+        if (member && [member.uName isEqualToString:_tfName.text] && [member.uPwd isEqualToString:_tfPassword.text] && [member.uKey isEqualToString:_tfKey.text]) {
+            weakSelf.pName = _tfName.text;
+            weakSelf.pPwd = _tfPassword.text;
+            weakSelf.pKey = _tfKey.text;
+            weakSelf.pIsSelected = _btnRemeber.selected;
+            weakSelf.pConfigTemp = [Config getConfig];
+
+            [weakSelf actionNULL];
+        } else {
+            [SVProgressHUD dismiss];
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+                                                            message:@"您输入的信息有误."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"关闭"
+                                                  otherButtonTitles:nil, nil];
+            [alert show];
+            return;
+        }
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
