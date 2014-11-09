@@ -268,8 +268,6 @@
         [alert show];
         
         [weakSelf actionNULL];
-        
-//        [SVProgressHUD dismiss];
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];

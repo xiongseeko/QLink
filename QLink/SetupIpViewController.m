@@ -234,7 +234,6 @@
              
          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //             [SVProgressHUD dismissWithError:@"配置ip失败"];
-             [SVProgressHUD dismiss];
          }];
         NSOperationQueue *queue = [[NSOperationQueue alloc] init];
         [queue addOperation:operation];
@@ -249,7 +248,7 @@
         [self setITimeoutCount:[self iTimeoutCount] + 1];
         [self sendLoopOrder];
     } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-        [SVProgressHUD dismissWithError:@"配置ip失败"];
+//        [SVProgressHUD dismissWithError:@"配置ip失败"];
         
         [self actionNULL];
     }
@@ -338,7 +337,7 @@
 
 - (void)pingResult:(NSNumber*)success {
     if (success.boolValue) {
-        [SVProgressHUD dismiss];
+//        [SVProgressHUD dismiss];
         [self pingSuccess];
     } else {
         [self pingFailure];
