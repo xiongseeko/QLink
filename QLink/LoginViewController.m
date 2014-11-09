@@ -72,7 +72,7 @@
 
 -(void)initRequestActionLogin
 {
-    [SVProgressHUD showWithStatus:@"正在验证..."];
+    [SVProgressHUD showWithStatus:@"正在验证..." maskType:SVProgressHUDMaskTypeClear];
     
     NSString *sUrl = [NetworkUtil getActionLogin:_tfName.text andUPwd:_tfPassword.text andUKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];
@@ -229,7 +229,7 @@
 
 -(void)initSetUpIp
 {
-    [SVProgressHUD showWithStatus:@"正在配置ip..."];
+    [SVProgressHUD showWithStatus:@"正在配置ip..." maskType:SVProgressHUDMaskTypeClear];
     
     NSString *sUrl = [NetworkUtil getSetUpIp:_tfName.text andPwd:_tfPassword.text andKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];

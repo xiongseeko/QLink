@@ -10,35 +10,65 @@
 #import <UIKit/UIKit.h>
 #import <AvailabilityMacros.h>
 
-enum {
+extern NSString * const SVProgressHUDDidReceiveTouchEventNotification;
+extern NSString * const SVProgressHUDWillDisappearNotification;
+extern NSString * const SVProgressHUDDidDisappearNotification;
+extern NSString * const SVProgressHUDWillAppearNotification;
+extern NSString * const SVProgressHUDDidAppearNotification;
+
+extern NSString * const SVProgressHUDStatusUserInfoKey;
+
+typedef NS_ENUM(NSUInteger, SVProgressHUDMaskType) {
     SVProgressHUDMaskTypeNone = 1, // allow user interactions while HUD is displayed
     SVProgressHUDMaskTypeClear, // don't allow
     SVProgressHUDMaskTypeBlack, // don't allow and dim the UI in the back of the HUD
     SVProgressHUDMaskTypeGradient // don't allow and dim the UI with a a-la-alert-view bg gradient
 };
 
-typedef NSUInteger SVProgressHUDMaskType;
-
 @interface SVProgressHUD : UIView
 
+#pragma mark - Customization
+
++ (void)setBackgroundColor:(UIColor*)color; // default is [UIColor whiteColor]
++ (void)setForegroundColor:(UIColor*)color; // default is [UIColor blackColor]
++ (void)setRingThickness:(CGFloat)width; // default is 4 pt
++ (void)setFont:(UIFont*)font; // default is [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]
++ (void)setSuccessImage:(UIImage*)image; // default is bundled success image from Glyphish
++ (void)setErrorImage:(UIImage*)image; // default is bundled error image from Glyphish
+
+#pragma mark - Show Methods
+
 + (void)show;
++ (void)showWithMaskType:(SVProgressHUDMaskType)maskType;
 + (void)showWithStatus:(NSString*)status;
 + (void)showWithStatus:(NSString*)status maskType:(SVProgressHUDMaskType)maskType;
-+ (void)showWithMaskType:(SVProgressHUDMaskType)maskType;
 
-+ (void)showSuccessWithStatus:(NSString*)string;
-+ (void)showSuccessWithStatus:(NSString *)string duration:(NSTimeInterval)duration;
-+ (void)showErrorWithStatus:(NSString *)string;
-+ (void)showErrorWithStatus:(NSString *)string duration:(NSTimeInterval)duration;
++ (void)showProgress:(float)progress;
++ (void)showProgress:(float)progress status:(NSString*)status;
++ (void)showProgress:(float)progress status:(NSString*)status maskType:(SVProgressHUDMaskType)maskType;
 
 + (void)setStatus:(NSString*)string; // change the HUD loading status while it's showing
 
-+ (void)dismiss; // simply dismiss the HUD with a fade+scale out animation
-+ (void)dismissWithSuccess:(NSString*)successString; // also displays the success icon image
-+ (void)dismissWithSuccess:(NSString*)successString afterDelay:(NSTimeInterval)seconds;
-+ (void)dismissWithError:(NSString*)errorString; // also displays the error icon image
-+ (void)dismissWithError:(NSString*)errorString afterDelay:(NSTimeInterval)seconds;
+// stops the activity indicator, shows a glyph + status, and dismisses HUD 1s later
++ (void)showSuccessWithStatus:(NSString*)string;
++ (void)showErrorWithStatus:(NSString *)string;
++ (void)showImage:(UIImage*)image status:(NSString*)status; // use 28x28 white pngs
+
++ (void)setOffsetFromCenter:(UIOffset)offset;
++ (void)resetOffsetFromCenter;
+
++ (void)popActivity;
++ (void)dismiss;
 
 + (BOOL)isVisible;
+
+@end
+
+
+@interface SVIndefiniteAnimatedView : UIView
+
+@property (nonatomic, assign) CGFloat strokeThickness;
+@property (nonatomic, assign) CGFloat radius;
+@property (nonatomic, strong) UIColor *strokeColor;
 
 @end

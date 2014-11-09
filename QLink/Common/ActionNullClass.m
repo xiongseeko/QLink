@@ -28,7 +28,7 @@
 //配置文件请求
 -(void)initRequestActionNULL
 {
-    [SVProgressHUD showWithStatus:@"配置中..."];
+    [SVProgressHUD showWithStatus:@"配置中..." maskType:SVProgressHUDMaskTypeClear];
     
     NSString *sUrl = [NetworkUtil getBaseUrl];
     NSURL *url = [NSURL URLWithString:sUrl];

@@ -13,7 +13,6 @@
 #import "SVProgressHUD.h"
 #import "NetworkUtil.h"
 #import "XMLDictionary.h"
-#import "ProgressView.h"
 #import "MainViewController.h"
 #import <AudioToolbox/AudioToolbox.h>
 
@@ -27,7 +26,7 @@
     //中控参数&紧急模式
     NSMutableArray *cmdReadArr_;
     NSMutableArray *cmdOperArr_;
-    ProgressView *progressView_;
+    double progressValue_;
     double avgValue_;//进度条的加量
     
     NSDictionary *sendCmdDic_;//当前发送的对象,用于中控参数
@@ -52,11 +51,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-}
-
--(void)timerFireMethod
-{
-    [progressView_ setProgressValue:0.01];
 }
 
 -(void)load_typeSocket:(SocketType)socket andOrderObj:(Order *)order
@@ -100,9 +94,7 @@
     self.iTimeoutCount = 1;
     isSendZKFailAndSendLast_ = NO;
     
-    NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
-    progressView_ = [controlArr objectAtIndex:0];
-    [self.view addSubview:progressView_];
+    [SVProgressHUD showWithStatus:@"请稍后" maskType:SVProgressHUDMaskTypeClear];
     
     NSURL *url = [NSURL URLWithString:[[NetworkUtil getAction:ACTIONSETUPZK] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
@@ -120,7 +112,7 @@
         NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
         NSDictionary *info = [dict objectForKey:@"info"];
         zkConfig_ = [[Control alloc] init];
-        zkConfig_.Ip = [info objectForKey:@"_ip"];
+        zkConfig_.Ip = @"110.80.99.198";//[info objectForKey:@"_ip"];
         zkConfig_.SendType = [info objectForKey:@"_tu"];
         zkConfig_.Port = [info objectForKey:@"_port"];
         
@@ -129,7 +121,7 @@
         cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
         NSInteger iCount = [cmdReadArr_ count];
         if ([cmdOperArr_ count] == 0) {
-            [progressView_ removeFromSuperview];
+            [SVProgressHUD dismiss];
             
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                                 message:@"没有定义中控命令." delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil, nil];
@@ -137,6 +129,11 @@
             return;
         }
         
+        NSString *strInfo = [NSString stringWithFormat:@"写入中控[0/%d]",[cmdReadArr_ count]];
+        
+        [SVProgressHUD showProgress:0 status:strInfo maskType:SVProgressHUDMaskTypeClear];
+        
+        progressValue_ = 0;
         avgValue_ = (double)1/iCount;
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -145,8 +142,7 @@
         
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"发生错误！%@",error);
-        
-        [progressView_ removeFromSuperview];
+        [SVProgressHUD dismiss];
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
@@ -449,7 +445,7 @@
                                                                     message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
                     alert.tag = 999;
                     [alert show];
-                    [progressView_ removeFromSuperview];
+                    [SVProgressHUD dismiss];
                 }
                 
                 break;
@@ -540,7 +536,10 @@
                 [cmdOperArr_ removeObject:sendCmdDic_];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [progressView_ setProgressValue:avgValue_];
+                    progressValue_ += avgValue_;
+                    NSString *strInfo = [NSString stringWithFormat:@"写入中控[%d/%d]",([cmdReadArr_ count]-[cmdOperArr_ count]),[cmdReadArr_ count]];
+                    
+                    [SVProgressHUD showProgress:progressValue_ status:strInfo maskType:SVProgressHUDMaskTypeClear];
                 });
                 
                 //发送完成，关闭连接
@@ -617,7 +616,8 @@
                     }
                     
                     [self disConnectionTCP];
-                    [progressView_ removeFromSuperview];
+//                    [progressView_ removeFromSuperview];
+                    [SVProgressHUD dismiss];
                     
                     return;
                 }
@@ -636,7 +636,7 @@
                     alert.tag = 999;
                     [alert show];
                     
-                    [progressView_ removeFromSuperview];
+                    [SVProgressHUD dismiss];
                 }
             }
             
@@ -669,9 +669,7 @@
             [cmdOperArr_ addObject:sendCmdDic_];
             [self sendZkSocketOrder];
         } else if (buttonIndex == 1) {//重试
-            NSArray *controlArr = [[NSBundle mainBundle] loadNibNamed:@"ProgressView" owner:self options:nil];
-            progressView_ = [controlArr objectAtIndex:0];
-            [self.view addSubview:progressView_];
+            [SVProgressHUD showProgress:0 status:@"写入中控" maskType:SVProgressHUDMaskTypeClear];
             
             isSendZKFailAndSendLast_ = NO;
             cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];

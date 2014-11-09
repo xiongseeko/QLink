@@ -108,7 +108,7 @@
 
 -(void)initRequest:(NSString *)sUrl
 {
-    [SVProgressHUD showWithStatus:@"加载中..." maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:@"加载中..." maskType:SVProgressHUDMaskTypeClear];
     
     NSURL *url = [NSURL URLWithString:sUrl];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
@@ -292,7 +292,7 @@
 
 -(void)successOper
 {
-    [SVProgressHUD dismissWithSuccess:@"配置完成."];
+    [SVProgressHUD showSuccessWithStatus:@"配置完成."];
     [SQLiteUtil setDefaultLayerIdAndRoomId];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshDeviceTab" object:nil];

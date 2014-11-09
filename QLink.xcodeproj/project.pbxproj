@@ -447,8 +447,6 @@
 		8AAC54BC19F95F3A0094C2BC /* OtView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8AAC549119F95F3A0094C2BC /* OtView.xib */; };
 		8AAC54BD19F95F3A0094C2BC /* PlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AAC549319F95F3A0094C2BC /* PlView.m */; };
 		8AAC54BE19F95F3A0094C2BC /* PlView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8AAC549419F95F3A0094C2BC /* PlView.xib */; };
-		8AAC54BF19F95F3A0094C2BC /* ProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AAC549619F95F3A0094C2BC /* ProgressView.m */; };
-		8AAC54C019F95F3A0094C2BC /* ProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8AAC549719F95F3A0094C2BC /* ProgressView.xib */; };
 		8AAC54C119F95F3A0094C2BC /* RenameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AAC549919F95F3A0094C2BC /* RenameView.m */; };
 		8AAC54C219F95F3A0094C2BC /* RenameView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8AAC549A19F95F3A0094C2BC /* RenameView.xib */; };
 		8AAC54C319F95F3A0094C2BC /* SdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AAC549C19F95F3A0094C2BC /* SdView.m */; };
@@ -1025,9 +1023,6 @@
 		8AAC549219F95F3A0094C2BC /* PlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlView.h; sourceTree = "<group>"; };
 		8AAC549319F95F3A0094C2BC /* PlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlView.m; sourceTree = "<group>"; };
 		8AAC549419F95F3A0094C2BC /* PlView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlView.xib; sourceTree = "<group>"; };
-		8AAC549519F95F3A0094C2BC /* ProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressView.h; sourceTree = "<group>"; };
-		8AAC549619F95F3A0094C2BC /* ProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressView.m; sourceTree = "<group>"; };
-		8AAC549719F95F3A0094C2BC /* ProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProgressView.xib; sourceTree = "<group>"; };
 		8AAC549819F95F3A0094C2BC /* RenameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenameView.h; sourceTree = "<group>"; };
 		8AAC549919F95F3A0094C2BC /* RenameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenameView.m; sourceTree = "<group>"; };
 		8AAC549A19F95F3A0094C2BC /* RenameView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RenameView.xib; sourceTree = "<group>"; };
@@ -1664,9 +1659,6 @@
 				8AAC549219F95F3A0094C2BC /* PlView.h */,
 				8AAC549319F95F3A0094C2BC /* PlView.m */,
 				8AAC549419F95F3A0094C2BC /* PlView.xib */,
-				8AAC549519F95F3A0094C2BC /* ProgressView.h */,
-				8AAC549619F95F3A0094C2BC /* ProgressView.m */,
-				8AAC549719F95F3A0094C2BC /* ProgressView.xib */,
 				8AAC549819F95F3A0094C2BC /* RenameView.h */,
 				8AAC549919F95F3A0094C2BC /* RenameView.m */,
 				8AAC549A19F95F3A0094C2BC /* RenameView.xib */,
@@ -2088,7 +2080,6 @@
 				35131EA619D3E5CD005A3C17 /* sw1_bottom_off@2x.png in Resources */,
 				35A8A9F719D166470018EB67 /* macro_上课@2x.png in Resources */,
 				35A8A9E019D166470018EB67 /* tv_select.png in Resources */,
-				8AAC54C019F95F3A0094C2BC /* ProgressView.xib in Resources */,
 				35A8A9FF19D166470018EB67 /* macro_下课@2x.png in Resources */,
 				35131E8D19D3B8B9005A3C17 /* tr_left02@2x.png in Resources */,
 				8AD562DD19D716AD006E3285 /* light_co@2x.png in Resources */,
@@ -2491,7 +2482,6 @@
 				8AAC54C119F95F3A0094C2BC /* RenameView.m in Sources */,
 				8A25549319EA36A90031B9F4 /* NSString+NSStringHexToBytes.m in Sources */,
 				8A3D3CF319DC3E7A009A083E /* SenceConfigViewController.m in Sources */,
-				8AAC54BF19F95F3A0094C2BC /* ProgressView.m in Sources */,
 				8A9D986819CEA58800D50CE6 /* FMDatabaseQueue.m in Sources */,
 				8AAC54AC19F95F3A0094C2BC /* DtView.m in Sources */,
 				8AAC54BB19F95F3A0094C2BC /* OtView.m in Sources */,

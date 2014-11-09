@@ -406,7 +406,7 @@
                  andNewName:(NSString *)newName
                     andType:(NSString *)pType
 {
-    [SVProgressHUD showWithStatus:@"请稍后..."];
+    [SVProgressHUD showWithStatus:@"请稍后..." maskType:SVProgressHUDMaskTypeClear];
     
     NSString *sUrl = [NetworkUtil getEditSence:pDeviceId_ andSenceName:renameView_.tfContent.text andCmd:orderIds_ andTime:times_];
     
