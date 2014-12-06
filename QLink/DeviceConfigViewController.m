@@ -23,7 +23,6 @@
     
     NSString *typeTag_;
     NSString *tabName_;
-    
     UIButton *btnIconSel_;
     
     NSMutableArray *iconArr_;

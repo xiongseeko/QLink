@@ -319,7 +319,7 @@
         }
         
         for (int i=0; i<3; i++) {
-            int index = 3*indexPath.row+i;
+            NSInteger index = 3*indexPath.row+i;
             if (index >= senceCount_) {
                 break;
             }
