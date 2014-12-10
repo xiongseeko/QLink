@@ -535,12 +535,15 @@
             {
                 [cmdOperArr_ removeObject:sendCmdDic_];
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    progressValue_ += avgValue_;
-                    NSString *strInfo = [NSString stringWithFormat:@"写入中控[%d/%d]",([cmdReadArr_ count]-[cmdOperArr_ count]),[cmdReadArr_ count]];
-                    
-                    [SVProgressHUD showProgress:progressValue_ status:strInfo maskType:SVProgressHUDMaskTypeClear];
-                });
+                if (!isSendZKFailAndSendLast_) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        progressValue_ += avgValue_;
+                        NSString *strInfo = [NSString stringWithFormat:@"写入中控[%d/%d]",([cmdReadArr_ count]-[cmdOperArr_ count]),[cmdReadArr_ count]];
+                        
+                        [SVProgressHUD showProgress:progressValue_ status:strInfo maskType:SVProgressHUDMaskTypeClear];
+                    });
+                }
+                
                 
                 //发送完成，关闭连接
                 if ([cmdOperArr_ count] == 0) {

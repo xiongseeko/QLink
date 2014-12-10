@@ -105,13 +105,32 @@
         weakSelf.pKey = _tfKey.text;
         weakSelf.pIsSelected = _btnRemeber.selected;
         weakSelf.pConfigTemp = configTempObj;
+
+        [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+        [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+            switch (status) {
+                case AFNetworkReachabilityStatusReachableViaWiFi:
+                {
+                    if (!configTempObj.isSetIp) {//需要配置ip
+                        [weakSelf handleGetIp];
+                    } else {
+                        [weakSelf actionNULL];
+                    }
+                    break;
+                }
+                default: {
+                    [weakSelf actionNULL];
+                }
+                    break;
+            };
+        }];
         
-        if (!configTempObj.isSetIp) {//需要配置ip
-            [weakSelf handleGetIp];
-        } else
-        {
-            [weakSelf actionNULL];
-        }
+//        if (!configTempObj.isSetIp) {//需要配置ip
+//            [weakSelf handleGetIp];
+//        } else
+//        {
+//            [weakSelf actionNULL];
+//        }
     }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //        weakSelf.pName = _tfName.text;
 //        weakSelf.pPwd = _tfPassword.text;
