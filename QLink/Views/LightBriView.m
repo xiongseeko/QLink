@@ -7,6 +7,7 @@
 //
 
 #import "LightBriView.h"
+#import "MySlider+touch.h"
 
 @implementation LightBriView
 
@@ -30,9 +31,16 @@
 
 -(void)awakeFromNib
 {
+    _sliderLight.continuous = NO;
     _sliderLight.frame = CGRectMake(100, 44, 206, 5);
     [_sliderLight setThumbImage:[UIImage imageNamed:@"light_roundButton.png"] forState:UIControlStateNormal];
     [_sliderLight setMaximumTrackTintColor:[UIColor clearColor]];
+    [_sliderLight addTapGestureWithTarget:self action:@selector(valueChange)];
+}
+
+-(void)valueChange
+{
+    [self brSliderValueChanged:_sliderLight];
 }
 
 -(IBAction)brSliderValueChanged:(UISlider *)slider

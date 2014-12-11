@@ -359,6 +359,7 @@
 		8A1ED4F919DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */; };
 		8A1ED4FA19DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F619DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png */; };
 		8A1F45C219E0391100B19227 /* ActionNullClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1F45C119E0391100B19227 /* ActionNullClass.m */; };
+		8A206E8D1A39DD860018A634 /* MySlider+touch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A206E8C1A39DD860018A634 /* MySlider+touch.m */; };
 		8A21895819FAA821007980F0 /* success@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A21895719FAA821007980F0 /* success@2x.png */; };
 		8A2256AD19E822A3009F7D03 /* sence_cancle.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AB19E822A3009F7D03 /* sence_cancle.png */; };
 		8A2256AE19E822A3009F7D03 /* sence_cancle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AC19E822A3009F7D03 /* sence_cancle@2x.png */; };
@@ -895,6 +896,8 @@
 		8A1ED4F619DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SANSAN_MACRO_ADD_select@2x.png"; sourceTree = "<group>"; };
 		8A1F45C019E0391100B19227 /* ActionNullClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionNullClass.h; sourceTree = "<group>"; };
 		8A1F45C119E0391100B19227 /* ActionNullClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionNullClass.m; sourceTree = "<group>"; };
+		8A206E8B1A39DD860018A634 /* MySlider+touch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MySlider+touch.h"; sourceTree = "<group>"; };
+		8A206E8C1A39DD860018A634 /* MySlider+touch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MySlider+touch.m"; sourceTree = "<group>"; };
 		8A21895719FAA821007980F0 /* success@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "success@2x.png"; sourceTree = "<group>"; };
 		8A2256AB19E822A3009F7D03 /* sence_cancle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sence_cancle.png; sourceTree = "<group>"; };
 		8A2256AC19E822A3009F7D03 /* sence_cancle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sence_cancle@2x.png"; sourceTree = "<group>"; };
@@ -1584,6 +1587,8 @@
 				8A25549219EA36A90031B9F4 /* NSString+NSStringHexToBytes.m */,
 				8AC7C1C919EAB2CE001ACDBC /* NSData+NSDataBytesToHex.h */,
 				8AC7C1CA19EAB2CE001ACDBC /* NSData+NSDataBytesToHex.m */,
+				8A206E8B1A39DD860018A634 /* MySlider+touch.h */,
+				8A206E8C1A39DD860018A634 /* MySlider+touch.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1631,6 +1636,7 @@
 				8AAC547619F95F3A0094C2BC /* BsTcView.m */,
 				8AAC547719F95F3A0094C2BC /* BsTcView.xib */,
 				8AAC547819F95F3A0094C2BC /* DtView.h */,
+				8AAC547919F95F3A0094C2BC /* DtView.m */,
 				8AAC547A19F95F3A0094C2BC /* DtView.xib */,
 				8AAC547B19F95F3A0094C2BC /* HsView.h */,
 				8AAC547C19F95F3A0094C2BC /* HsView.m */,
@@ -1645,7 +1651,6 @@
 				8AAC548519F95F3A0094C2BC /* LightBcView.xib */,
 				8AAC548619F95F3A0094C2BC /* LightBriView.h */,
 				8AAC548719F95F3A0094C2BC /* LightBriView.m */,
-				8AAC547919F95F3A0094C2BC /* DtView.m */,
 				8AAC548819F95F3A0094C2BC /* LightBriView.xib */,
 				8AAC548919F95F3A0094C2BC /* McView.h */,
 				8AAC548A19F95F3A0094C2BC /* McView.m */,
@@ -2468,6 +2473,7 @@
 				8AB5BEE619D0637000BC11EF /* IconViewController.m in Sources */,
 				8AAC54B519F95F3A0094C2BC /* LightBriView.m in Sources */,
 				8AAC54B119F95F3A0094C2BC /* LightBbView.m in Sources */,
+				8A206E8D1A39DD860018A634 /* MySlider+touch.m in Sources */,
 				8A2554B919EA84790031B9F4 /* AFSecurityPolicy.m in Sources */,
 				3574788219CD48E600A8E9FD /* SVProgressHUD.m in Sources */,
 				8A2554BD19EA84790031B9F4 /* AFURLSessionManager.m in Sources */,
