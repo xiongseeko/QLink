@@ -51,7 +51,11 @@
     }
     
     iNum --;
-    [_btnNum setTitle:[NSString stringWithFormat:@"%d",iNum] forState:UIControlStateNormal];
+    NSString *num = [NSString stringWithFormat:@"%d",iNum];
+    [_btnNum setTitle:num forState:UIControlStateNormal];
+    if (self.delegate) {
+        [self.delegate setOrderArrNewValue:_pSenceObj.OrderId andNewNum:num];
+    }
 }
 
 - (IBAction)btnJia
@@ -62,7 +66,11 @@
     }
     
     iNum ++;
-    [_btnNum setTitle:[NSString stringWithFormat:@"%d",iNum] forState:UIControlStateNormal];
+    NSString *num = [NSString stringWithFormat:@"%d",iNum];
+    [_btnNum setTitle:num forState:UIControlStateNormal];
+    if (self.delegate) {
+        [self.delegate setOrderArrNewValue:_pSenceObj.OrderId andNewNum:num];
+    }
 }
 
 - (IBAction)btnNumberPressed:(UIButton *)sender

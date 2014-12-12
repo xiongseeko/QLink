@@ -455,6 +455,15 @@
     self.viewPicker.hidden = NO;
 }
 
+-(void)setOrderArrNewValue:(NSString *)orderId andNewNum:(NSString *)newNum
+{
+    for (Sence *objSource in senceConfigArr_) {
+        if ([objSource.OrderId isEqualToString:orderId]) {
+            objSource.Timer = newNum;
+        }
+    }
+}
+
 -(void)handleLongPressed:(Sence *)obj
 {
     NSLog(@"orderId****%@",obj.OrderId);

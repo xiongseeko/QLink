@@ -11,6 +11,7 @@
 
 @protocol SenceConfigCellDelegate <NSObject>
 
+-(void)setOrderArrNewValue:(NSString *)orderId andNewNum:(NSString *)newNum;
 -(void)handleShowDDL:(UIButton *)sender andObj:(Sence *)obj;
 -(void)handleLongPressed:(Sence *)obj;
 
