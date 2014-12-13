@@ -18,11 +18,17 @@
 @implementation Control
 
 +(Control *)setIp:(NSString *)ip
-        andSendType:(NSString *)sendType
-            andPort:(NSString *)port
-          andDomain:(NSString *)domain
-             andUrl:(NSString *)url
-       andUpdatever:(NSString *)updatever
+      andSendType:(NSString *)sendType
+          andPort:(NSString *)port
+        andDomain:(NSString *)domain
+           andUrl:(NSString *)url
+     andUpdatever:(NSString *)updatever
+        andJsname:(NSString *)jsname
+         andJstel:(NSString *)jstel
+       andJsuname:(NSString *)jsuname
+      andJsaddess:(NSString *)jsaddess
+        andJslogo:(NSString *)jslogo
+          andJsqq:(NSString *)jsqq
 {
     Control *obj = [[Control alloc] init];
     obj.Ip = ip;
@@ -31,10 +37,15 @@
     obj.Domain = domain;
     obj.Url = url;
     obj.Updatever = updatever;
-    
+    obj.Jsname = jsname;
+    obj.Jstel = jstel;
+    obj.Jsuname = jsuname;
+    obj.Jsaddess = jsaddess;
+    obj.Jslogo = jslogo;
+    obj.Jsqq = jsqq;
     return obj;
 }
-                                                                                                                                                        
+
 @end
 
 /********************************************************************/

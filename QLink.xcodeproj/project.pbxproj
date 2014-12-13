@@ -363,6 +363,7 @@
 		8A21895819FAA821007980F0 /* success@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A21895719FAA821007980F0 /* success@2x.png */; };
 		8A2256AD19E822A3009F7D03 /* sence_cancle.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AB19E822A3009F7D03 /* sence_cancle.png */; };
 		8A2256AE19E822A3009F7D03 /* sence_cancle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AC19E822A3009F7D03 /* sence_cancle@2x.png */; };
+		8A24CF511A3C6B9500E2F41B /* QLink.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 8A24CF501A3C6B9500E2F41B /* QLink.sqlite */; };
 		8A25548819EA1C360031B9F4 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A25548519EA1C360031B9F4 /* GCDAsyncSocket.m */; };
 		8A25548919EA1C360031B9F4 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A25548719EA1C360031B9F4 /* GCDAsyncUdpSocket.m */; };
 		8A25549319EA36A90031B9F4 /* NSString+NSStringHexToBytes.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A25549219EA36A90031B9F4 /* NSString+NSStringHexToBytes.m */; };
@@ -386,7 +387,6 @@
 		8A378F7F19E0455B0089317B /* AboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A378F7D19E0455B0089317B /* AboutViewController.xib */; };
 		8A3D3CF319DC3E7A009A083E /* SenceConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3D3CF119DC3E7A009A083E /* SenceConfigViewController.m */; };
 		8A3D3CF419DC3E7A009A083E /* SenceConfigViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A3D3CF219DC3E7A009A083E /* SenceConfigViewController.xib */; };
-		8A3D3CF619DC4285009A083E /* QLink.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 8A3D3CF519DC4285009A083E /* QLink.sqlite */; };
 		8A3D3CFA19DC5367009A083E /* SenceConfigTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3D3CF819DC5367009A083E /* SenceConfigTableViewCell.m */; };
 		8A3D3CFB19DC5367009A083E /* SenceConfigTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A3D3CF919DC5367009A083E /* SenceConfigTableViewCell.xib */; };
 		8A3D3D0819DC552D009A083E /* senceConfig_left.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3D3CFC19DC552D009A083E /* senceConfig_left.png */; };
@@ -901,6 +901,7 @@
 		8A21895719FAA821007980F0 /* success@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "success@2x.png"; sourceTree = "<group>"; };
 		8A2256AB19E822A3009F7D03 /* sence_cancle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sence_cancle.png; sourceTree = "<group>"; };
 		8A2256AC19E822A3009F7D03 /* sence_cancle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sence_cancle@2x.png"; sourceTree = "<group>"; };
+		8A24CF501A3C6B9500E2F41B /* QLink.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = QLink.sqlite; sourceTree = "<group>"; };
 		8A25548419EA1C360031B9F4 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
 		8A25548519EA1C360031B9F4 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
 		8A25548619EA1C360031B9F4 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
@@ -941,7 +942,6 @@
 		8A3D3CF019DC3E7A009A083E /* SenceConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SenceConfigViewController.h; sourceTree = "<group>"; };
 		8A3D3CF119DC3E7A009A083E /* SenceConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SenceConfigViewController.m; sourceTree = "<group>"; };
 		8A3D3CF219DC3E7A009A083E /* SenceConfigViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SenceConfigViewController.xib; sourceTree = "<group>"; };
-		8A3D3CF519DC4285009A083E /* QLink.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = QLink.sqlite; sourceTree = "<group>"; };
 		8A3D3CF719DC5367009A083E /* SenceConfigTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SenceConfigTableViewCell.h; sourceTree = "<group>"; };
 		8A3D3CF819DC5367009A083E /* SenceConfigTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SenceConfigTableViewCell.m; sourceTree = "<group>"; };
 		8A3D3CF919DC5367009A083E /* SenceConfigTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SenceConfigTableViewCell.xib; sourceTree = "<group>"; };
@@ -1563,7 +1563,7 @@
 		8A97414A19CC875800E409A6 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				8A3D3CF519DC4285009A083E /* QLink.sqlite */,
+				8A24CF501A3C6B9500E2F41B /* QLink.sqlite */,
 				3543487B19D10B2900B53359 /* iConPlist.plist */,
 				8A0738FE19DEEEE3001E6F45 /* DeviceConfigIconPlist.plist */,
 				35131F3619D4321E005A3C17 /* RemotePlist.plist */,
@@ -2146,6 +2146,7 @@
 				35131F1019D40940005A3C17 /* pl_leftmiddle@2x.png in Resources */,
 				8A3D3D0C19DC552D009A083E /* senceConfig_middle.png in Resources */,
 				35131ED719D4039A005A3C17 /* dt_leftbottom.png in Resources */,
+				8A24CF511A3C6B9500E2F41B /* QLink.sqlite in Resources */,
 				35131E5819D3A760005A3C17 /* sd_top_left02@2x.png in Resources */,
 				35A8A9B019D166470018EB67 /* ac_select.png in Resources */,
 				35A4E5EB19D2ECE7007A3C30 /* nm_left02@2x.png in Resources */,
@@ -2392,7 +2393,6 @@
 				35131F2219D40940005A3C17 /* pl_rightbottom02@2x.png in Resources */,
 				35131EAC19D3E5CD005A3C17 /* sw1_top_on@2x.png in Resources */,
 				35131E8A19D3B8B9005A3C17 /* tr_left.png in Resources */,
-				8A3D3CF619DC4285009A083E /* QLink.sqlite in Resources */,
 				8AAC54B419F95F3A0094C2BC /* LightBcView.xib in Resources */,
 				8A1ED4FA19DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png in Resources */,
 				8A3D3D1219DC552D009A083E /* senceConfig_right02.png in Resources */,

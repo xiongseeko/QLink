@@ -299,9 +299,12 @@
         
         [btnNumSel_ setTitle:sNum forState:UIControlStateNormal];
         
+        
         for (Sence *objSource in senceConfigArr_) {
             if ([objSource.OrderId isEqualToString:objSel_.OrderId]) {
                 objSource.Timer = sNum;
+                [SQLiteUtil updateShoppingCarTimer:objSource.OrderId andDeviceId:objSource.SenceId andTimer:sNum];
+                break;
             }
         }
         
@@ -460,6 +463,8 @@
     for (Sence *objSource in senceConfigArr_) {
         if ([objSource.OrderId isEqualToString:orderId]) {
             objSource.Timer = newNum;
+            [SQLiteUtil updateShoppingCarTimer:objSource.OrderId andDeviceId:objSource.SenceId andTimer:newNum];
+            break;
         }
     }
 }
