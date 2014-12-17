@@ -110,13 +110,13 @@
     [SVProgressHUD showWithStatus:@"加载中..." maskType:SVProgressHUDMaskTypeClear];
     
     NSURL *url = [NSURL URLWithString:sUrl];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
 
+    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
-         [SVProgressHUD dismiss];
-         
          NSString *sResult = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
          
          if (![DataUtil checkNullOrEmpty:sResult]) {
@@ -126,6 +126,8 @@
                  [actionNullClass initRequestActionNULL];
                  
              } else {
+                 [SVProgressHUD dismiss];
+                 
                  if (sResult.length < 40) {
                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
                                                                      message:@"返回错误."
@@ -133,7 +135,6 @@
                                                            cancelButtonTitle:@"关闭"
                                                            otherButtonTitles:nil, nil];
                      [alert show];
-                     
                      return;
                  }
                  sResult = [sResult stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
@@ -148,7 +149,6 @@
                                                            cancelButtonTitle:@"关闭"
                                                            otherButtonTitles:nil, nil];
                      [alert show];
-                     
                      return;
                  }
                  NSDictionary *info = [dict objectForKey:@"info"];
@@ -163,6 +163,7 @@
                                                    cancelButtonTitle:@"关闭"
                                                    otherButtonTitles:nil, nil];
              [alert show];
+             [SVProgressHUD dismiss];
              
              return;
          }

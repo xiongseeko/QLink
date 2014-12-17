@@ -11,6 +11,7 @@
 @protocol RenameViewDelegate <NSObject>
 
 @optional
+
 -(void)handleCanclePressed;
 //场景设备确定 && 场景添加编辑确定事件
 -(void)handleConfirmPressed:(NSString *)deviceId

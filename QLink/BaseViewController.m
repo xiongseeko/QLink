@@ -15,6 +15,7 @@
 #import "XMLDictionary.h"
 #import "MainViewController.h"
 #import <AudioToolbox/AudioToolbox.h>
+#import "UIAlertView+MKBlockAdditions.h"
 
 #define READ_TIMEOUT 15.0
 
@@ -97,7 +98,8 @@
     [SVProgressHUD showWithStatus:@"请稍后" maskType:SVProgressHUDMaskTypeClear];
     
     NSURL *url = [NSURL URLWithString:[[NetworkUtil getAction:ACTIONSETUPZK] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     __weak __typeof(self)weakSelf = self;
@@ -441,10 +443,16 @@
                     sleep(1);
                     [self firstSendZkSocketOrder];
                 } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                    message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
-                    alert.tag = 999;
-                    [alert show];
+                    [UIAlertView alertViewWithTitle:@"温馨提示"
+                                            message:@"写入中控失败,请重试."
+                                  cancelButtonTitle:@"关闭"
+                                  otherButtonTitles:@[@"重试"]
+                                          onDismiss:^(int index){
+                                              [self sendZkTryAgain];
+                    }onCancel:^{
+                        [self sendZkLastOrder];
+                    }];
+                    
                     [SVProgressHUD dismiss];
                 }
                 
@@ -550,7 +558,9 @@
                     if (!isSendZKFailAndSendLast_) {
                         NSString *sUrl = [NetworkUtil getAction:ACTIONSETUPZKOK];
                         NSURL *url = [NSURL URLWithString:sUrl];
-                        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//                        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+                        NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+                        
                         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
                          {
@@ -634,10 +644,15 @@
                     [self setITimeoutCount:[self iTimeoutCount] + 1];
                     [self sendZkSocketOrder];
                 } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                                    message:@"写入中控失败,请重试." delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:@"重试", nil];
-                    alert.tag = 999;
-                    [alert show];
+                    [UIAlertView alertViewWithTitle:@"温馨提示"
+                                            message:@"写入中控失败,请重试."
+                                  cancelButtonTitle:@"关闭"
+                                  otherButtonTitles:@[@"重试"]
+                                          onDismiss:^(int index){
+                                              [self sendZkTryAgain];
+                                          }onCancel:^{
+                                              [self sendZkLastOrder];
+                                          }];
                     
                     [SVProgressHUD dismiss];
                 }
@@ -659,31 +674,50 @@
     }
 }
 
-#pragma mark -
-#pragma mark UIAlertViewDelegate
+//#pragma mark -
+//#pragma mark UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (alertView.tag == 999) {
-        if (buttonIndex == 0) {//关闭
-            isSendZKFailAndSendLast_ = YES;
-            sendCmdDic_ = [cmdOperArr_ lastObject];
-            [cmdOperArr_ removeAllObjects];
-            [cmdOperArr_ addObject:sendCmdDic_];
-            [self sendZkSocketOrder];
-        } else if (buttonIndex == 1) {//重试
-            [SVProgressHUD showProgress:0 status:@"写入中控" maskType:SVProgressHUDMaskTypeClear];
-            
-            isSendZKFailAndSendLast_ = NO;
-            cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
-            self.iTimeoutCount = 1;
-            [self firstSendZkSocketOrder];
-        }
-    }
-}
+//- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+//{
+//    if (alertView.tag == 999) {
+//        if (buttonIndex == 0) {//关闭
+//            isSendZKFailAndSendLast_ = YES;
+//            sendCmdDic_ = [cmdOperArr_ lastObject];
+//            [cmdOperArr_ removeAllObjects];
+//            [cmdOperArr_ addObject:sendCmdDic_];
+//            [self sendZkSocketOrder];
+//        } else if (buttonIndex == 1) {//重试
+//            [SVProgressHUD showProgress:0 status:@"写入中控" maskType:SVProgressHUDMaskTypeClear];
+//            
+//            isSendZKFailAndSendLast_ = NO;
+//            cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
+//            self.iTimeoutCount = 1;
+//            [self firstSendZkSocketOrder];
+//        }
+//    }
+//}
 
 #pragma mark -
 #pragma mark Custom Methods
+
+-(void)sendZkLastOrder
+{
+    isSendZKFailAndSendLast_ = YES;
+    sendCmdDic_ = [cmdOperArr_ lastObject];
+    [cmdOperArr_ removeAllObjects];
+    [cmdOperArr_ addObject:sendCmdDic_];
+    [self sendZkSocketOrder];
+}
+
+-(void)sendZkTryAgain
+{
+    [SVProgressHUD showProgress:0 status:@"写入中控" maskType:SVProgressHUDMaskTypeClear];
+    
+    isSendZKFailAndSendLast_ = NO;
+    cmdOperArr_ = [NSMutableArray arrayWithArray:cmdReadArr_];
+    self.iTimeoutCount = 1;
+    [self firstSendZkSocketOrder];
+}
 
 //断开释放一个连接实例
 -(void)disConnectionTCP

@@ -21,11 +21,7 @@
 }
 
 @property(nonatomic,assign) int iTimeoutCount;
-
-@property(nonatomic,strong) NSString *pName;
-@property(nonatomic,strong) NSString *pPwd;
-@property(nonatomic,strong) NSString *pKey;
-@property(nonatomic,assign) BOOL pIsSelected;
+@property(nonatomic,weak) Member *pLoginMember;
 @property(nonatomic,strong) Config *pConfigTemp;
 
 -(void)load_setIpSocket:(NSDictionary *)dic;

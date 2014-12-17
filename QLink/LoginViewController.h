@@ -16,8 +16,10 @@
 @property(nonatomic,strong) IBOutlet UITextField *tfName;
 @property(nonatomic,strong) IBOutlet UITextField *tfPassword;
 @property(nonatomic,strong) IBOutlet UIButton *btnRemeber;
+@property (weak, nonatomic) IBOutlet UILabel *lblCompany;
 
 -(IBAction)btnLogin;
 -(IBAction)btnRemeberPressed:(UIButton *)sender;
+- (IBAction)btnRegister:(id)sender;
 
 @end

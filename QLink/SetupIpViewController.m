@@ -226,7 +226,10 @@
     if ([orderDicArr_ count] == 0) {
         NSString *sUrl = [NetworkUtil getAction:ACTIONSETUPIPOK];
         NSURL *url = [NSURL URLWithString:sUrl];
-        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        
+        NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+        
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
          {
@@ -248,8 +251,6 @@
         [self setITimeoutCount:[self iTimeoutCount] + 1];
         [self sendLoopOrder];
     } else if ([self iTimeoutCount] >= NumberOfTimeout) {
-//        [SVProgressHUD dismissWithError:@"配置ip失败"];
-        
         [self actionNULL];
     }
 }
@@ -261,27 +262,29 @@
     Member *curMember = [Member getMember];
     
     //重新解析配置文件
-    if ((curMember && ![curMember.uKey isEqualToString:_pKey])) {//更换用户
+    if ((curMember && ![curMember.uKey isEqualToString:self.pLoginMember.uKey])) {//更换用户
         //清除本地配置数据
         [SQLiteUtil clearData];
     }
     
     //设置登录信息
-    [Member setUdMember:_pName
-                andUPwd:_pPwd
-                andUKey:_pKey
-           andIsRemeber:_pIsSelected];
+    [Member setUdMember:_pLoginMember.uName
+                andUPwd:_pLoginMember.uPwd
+                andUKey:_pLoginMember.uKey
+           andIsRemeber:_pLoginMember.isRemeber];
     
-    if ((curMember && ![curMember.uKey isEqualToString:_pKey]) || ![_pConfigTemp.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
+    if ((curMember && ![curMember.uKey isEqualToString:_pLoginMember.uKey]) || ![_pConfigTemp.configVersion isEqualToString:curVersion])//更换用户或者版本号不同则重新请求配置文件
     {
         ActionNullClass *actionNullClass = [[ActionNullClass alloc] init];
         actionNullClass.delegate = self;
         [actionNullClass initRequestActionNULL];
         
     }else{//读取本地数据配置
-        [SVProgressHUD dismiss];
-        
         NSLog(@"读取本地");
+        
+        //解析存储成功，覆盖本地配置数据
+        [Config setConfigObj:_pConfigTemp];
+        [SVProgressHUD dismiss];
         
         [SQLiteUtil setDefaultLayerIdAndRoomId];
         

@@ -11,6 +11,12 @@
 #import "DataUtil.h"
 
 @interface AboutViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *lblCompany;
+@property (weak, nonatomic) IBOutlet UILabel *lblAppVersion;
+@property (weak, nonatomic) IBOutlet UILabel *lblConfigVersion;
+@property (weak, nonatomic) IBOutlet UILabel *lblAddress;
+@property (weak, nonatomic) IBOutlet UILabel *lblTel;
+@property (weak, nonatomic) IBOutlet UILabel *lblName;
 
 @end
 
@@ -31,7 +37,7 @@
     
     [self initNavigation];
     
-    [self initValue];
+    [self initData];
 }
 
 //设置导航
@@ -56,10 +62,16 @@
     self.navigationItem.titleView = btnTitle;
 }
 
--(void)initValue
+-(void)initData
 {
-    NSString *curVersion = [SQLiteUtil getCurVersionNo];
-    _lVersion.text = curVersion;
+    Control *control = [SQLiteUtil getControlObj];
+    
+    self.lblAppVersion.text = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
+    self.lblConfigVersion.text = control.Updatever;
+    self.lblCompany.text = control.Jsname;
+    self.lblAddress.text = control.Jsaddess;
+    self.lblTel.text = control.Jstel;
+    self.lblName.text = control.Jsuname;
 }
 
 -(void)btnBackPressed

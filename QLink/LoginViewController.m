@@ -13,9 +13,12 @@
 #import "SVProgressHUD.h"
 #import "AFNetworking.h"
 #import "XMLDictionary.h"
+#import "UIAlertView+MKBlockAdditions.h"
 
 @interface LoginViewController ()
-
+{
+    Member *_loginMember;
+}
 @end
 
 @implementation LoginViewController
@@ -34,6 +37,8 @@
     [super viewDidLoad];
     
     [self initControlSet];
+    
+    [self registerObserver];
 }
 
 #pragma mark -
@@ -59,6 +64,14 @@
         _btnRemeber.selected = member.isRemeber;
     }
     
+    Control *control = [SQLiteUtil getControlObj];
+    if (control && control.Jsname) {
+        self.lblCompany.text = control.Jsname;
+    }
+}
+
+-(void)registerObserver
+{
     //注册键盘出现与隐藏时候的通知
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboadWillShow:)
@@ -74,14 +87,32 @@
 {
     [SVProgressHUD showWithStatus:@"正在验证..." maskType:SVProgressHUDMaskTypeClear];
     
+    //当前登录信息
+    _loginMember = [Member new];
+    _loginMember.uKey = self.tfKey.text;
+    _loginMember.uName = self.tfName.text;
+    _loginMember.uPwd = self.tfPassword.text;
+    _loginMember.isRemeber = self.btnRemeber.selected;
+    self.pLoginMember = _loginMember;
+    
     NSString *sUrl = [NetworkUtil getActionLogin:_tfName.text andUPwd:_tfPassword.text andUKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    
     __weak __typeof(self)weakSelf = self;
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+        if ([sConfig containsString:@"error"]) {
+            NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
+            if (errorArr.count > 1) {
+                [SVProgressHUD showErrorWithStatus:errorArr[1]];
+                return;
+            }
+        }
         
         NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
         if ([configArr count] < 2) {
@@ -99,68 +130,20 @@
         
         //处理配置信息
         Config *configTempObj = [Config getTempConfig:configArr];//临时变量，存储Action=login请求对象
-        
-        weakSelf.pName = _tfName.text;
-        weakSelf.pPwd = _tfPassword.text;
-        weakSelf.pKey = _tfKey.text;
-        weakSelf.pIsSelected = _btnRemeber.selected;
         weakSelf.pConfigTemp = configTempObj;
 
-        [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-        [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-            switch (status) {
-                case AFNetworkReachabilityStatusReachableViaWiFi:
-                {
-                    if (!configTempObj.isSetIp) {//需要配置ip
-                        [weakSelf handleGetIp];
-                    } else {
-                        [weakSelf actionNULL];
-                    }
-                    break;
-                }
-                default: {
-                    [weakSelf actionNULL];
-                }
-                    break;
-            };
-        }];
-        
-//        if (!configTempObj.isSetIp) {//需要配置ip
-//            [weakSelf handleGetIp];
-//        } else
-//        {
-//            [weakSelf actionNULL];
-//        }
-    }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        weakSelf.pName = _tfName.text;
-//        weakSelf.pPwd = _tfPassword.text;
-//        weakSelf.pKey = _tfKey.text;
-//        weakSelf.pIsSelected = _btnRemeber.selected;
-//        weakSelf.pConfigTemp = configTempObj_;
-//
-//        [weakSelf actionNULL];
-        
-        Member *member = [Member getMember];
-        
-        if (member && [member.uName isEqualToString:_tfName.text] && [member.uPwd isEqualToString:_tfPassword.text] && [member.uKey isEqualToString:_tfKey.text]) {
-            weakSelf.pName = _tfName.text;
-            weakSelf.pPwd = _tfPassword.text;
-            weakSelf.pKey = _tfKey.text;
-            weakSelf.pIsSelected = _btnRemeber.selected;
-            weakSelf.pConfigTemp = [Config getConfig];
-
-            [weakSelf actionNULL];
+        if ([DataUtil isWifiNewWork]) {
+            if (!configTempObj.isSetIp) {//需要配置ip
+                [weakSelf fetchIp];
+            } else {
+                [weakSelf actionNULL];
+            }
         } else {
-            [SVProgressHUD dismiss];
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                            message:@"您输入的信息有误."
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"关闭"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
-            return;
+            [weakSelf actionNULL];
         }
+    }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        weakSelf.pConfigTemp = [Config getConfig];
+        [weakSelf actionNULL];
     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
@@ -191,6 +174,17 @@
 -(IBAction)btnRemeberPressed:(UIButton *)sender
 {
     sender.selected = !sender.selected;
+}
+
+- (IBAction)btnRegister:(id)sender
+{
+    [UIAlertView alertViewWithTitle:@"温馨提示"
+                            message:@"即将跳转浏览器打开QLINK网站\n须从站点注册(需要邀请码)"
+                  cancelButtonTitle:@"取消"
+                  otherButtonTitles:@[@"确定"]
+                          onDismiss:^(int index){
+                              [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://qlink.cc/?action=apple"]];
+                          }onCancel:nil];
 }
 
 #pragma mark -
@@ -226,68 +220,74 @@
 #pragma mark -
 #pragma mark Custom Methods
 
--(void)handleGetIp
+-(void)fetchIp
 {
-    NSString *sUrl = [NetworkUtil handleIpRequest];
+    [SVProgressHUD showWithStatus:@"正在配置ip..." maskType:SVProgressHUDMaskTypeClear];
     
+    NSString *sUrl = [NetworkUtil handleIpRequest];
     NSURL *url = [NSURL URLWithString:sUrl];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     __weak __typeof(self)weakSelf = self;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
-         [weakSelf initSetUpIp];
+         NSString *strResult = operation.responseString;
+         if ([strResult containsString:@"error"]) {
+             NSArray *errorArr = [strResult componentsSeparatedByString:@":"];
+             if (errorArr.count > 1) {
+                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
+                 return;
+             }
+         }
+         
+         [weakSelf requestSetUpIp];
          
      }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         
+         [weakSelf actionNULL];
      }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue addOperation:operation];
 }
 
--(void)initSetUpIp
+-(void)requestSetUpIp
 {
-    [SVProgressHUD showWithStatus:@"正在配置ip..." maskType:SVProgressHUDMaskTypeClear];
-    
     NSString *sUrl = [NetworkUtil getSetUpIp:_tfName.text andPwd:_tfPassword.text andKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     __weak __typeof(self)weakSelf = self;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
-    {
-        NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-        strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
-        NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
+     {
+         NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+         strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
+         NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
+         NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
          
-        if (!dict) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                             message:@"配置ip出错,请重试."
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"关闭"
-                                                   otherButtonTitles:nil, nil];
-            [alert show];
-            
-            [weakSelf actionNULL];
-            
-            return;
-        }
+         if ([strXML containsString:@"error"]) {
+             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
+             if (errorArr.count > 1) {
+                 [weakSelf actionNULL];
+                 return;
+             }
+         }
          
-        //设置Ip Socket
-        [weakSelf load_setIpSocket:dict];
-    
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-                                                        message:@"配置ip出错,请重试."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"关闭"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-        
-        [weakSelf actionNULL];
-    }];
+         if (!dict) {
+             [weakSelf actionNULL];
+             return;
+         }
+         
+         //设置Ip Socket
+         [weakSelf load_setIpSocket:dict];
+         
+     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         [weakSelf actionNULL];
+     }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue addOperation:operation];

@@ -15,6 +15,7 @@
 #include <ifaddrs.h>
 #import <dlfcn.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+#import "Reachability.h"
 
 @implementation DataUtil
 
@@ -189,6 +190,28 @@
         freeifaddrs(addrs);
     }
     return nil;
+}
+
++(BOOL) isWifiNewWork{
+    BOOL isWifi = NO;
+    Reachability *r = [Reachability reachabilityWithHostname:@"www.baidu.com"];
+    switch ([r currentReachabilityStatus]) {
+        case NotReachable:
+            isWifi = NO;
+            //            NSLog(@"没有网络");
+            break;
+        case ReachableViaWWAN:
+            isWifi = NO;
+            //            NSLog(@"正在使用3G网络");
+            break;
+        case ReachableViaWiFi:
+            isWifi = YES;
+            //            NSLog(@"正在使用wifi网络");
+            break;
+    }
+    
+    return isWifi;
+    
 }
 
 @end
@@ -387,7 +410,7 @@
 //中控信息sql
 +(NSString *)connectControlSql:(Control *)obj
 {
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO CONTROL (\"Ip\", \"SendType\", \"Port\", \"Domain\", \"Url\", \"Updatever\") VALUES (\"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\")",obj.Ip, obj.SendType, obj.Port, obj.Domain, obj.Url, obj.Updatever];
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO CONTROL (\"Ip\", \"SendType\", \"Port\", \"Domain\", \"Url\", \"Updatever\",\"Jsname\",\"Jstel\",\"Jsuname\",\"Jsaddess\", \"Jslogo\", \"Jsqq\") VALUES (\"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\", \"%@\")",obj.Ip, obj.SendType, obj.Port, obj.Domain, obj.Url, obj.Updatever,obj.Jsname,obj.Jstel,obj.Jsuname,obj.Jsaddess,obj.Jslogo,obj.Jsqq];
     
     return sql;
 }

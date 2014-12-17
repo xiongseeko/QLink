@@ -18,6 +18,7 @@
 #import "AboutViewController.h"
 #import "SenceConfigViewController.h"
 #import "SVProgressHUD.h"
+#import "UIAlertView+MKBlockAdditions.h"
 
 #define kImageWidth  106 //UITableViewCell里面图片的宽度
 #define kImageHeight  106 //UITableViewCell里面图片的高度
@@ -66,6 +67,8 @@
     [self initControl];
     
     [self registerNotification];
+    
+    [self initLoginZK];
 }
 
 #pragma mark -
@@ -112,6 +115,24 @@
     
     
     self.navigationItem.rightBarButtonItem = rightBtn;
+}
+
+-(void)initLoginZK
+{
+    if ([DataUtil isWifiNewWork]) {
+        Config *configObj = [Config getConfig];
+        if (!configObj.isWriteCenterControl && configObj.isSetSign && configObj.isSetIp && configObj.isBuyCenterControl)
+        {
+            [UIAlertView alertViewWithTitle:@"温馨提示"
+                                    message:@"执行中控操作,是否继续?"
+                          cancelButtonTitle:@"取消"
+                          otherButtonTitles:@[@"继续"]
+                                  onDismiss:^(int index){
+                                      self.zkOperType = ZkOperNormal;
+                                      [self load_typeSocket:SocketTypeWriteZk andOrderObj:nil];
+                                  }onCancel:nil];
+        }
+    }
 }
 
 //添加左侧add菜单
@@ -508,7 +529,9 @@
     }
     
     NSURL *url = [NSURL URLWithString:sUrl];
+    
     NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    
     NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     NSString *sResult = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
     if ([[sResult lowercaseString] isEqualToString:@"ok"]) {
@@ -620,7 +643,9 @@
         }
         
         NSURL *url = [NSURL URLWithString:sUrl];
+        
         NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+        
         NSData *received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
         NSString *sResult = [[NSString alloc]initWithData:received encoding:NSUTF8StringEncoding];
         if ([[sResult lowercaseString] isEqualToString:@"ok"]) {
