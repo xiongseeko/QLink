@@ -118,6 +118,14 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          NSString *sResult = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+        
+         if ([sResult containsString:@"error"]) {
+             NSArray *errorArr = [sResult componentsSeparatedByString:@":"];
+             if (errorArr.count > 1) {
+                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
+                 return;
+             }
+         }
          
          if (![DataUtil checkNullOrEmpty:sResult]) {
              if ([sResult isEqualToString:@"ok"]) {

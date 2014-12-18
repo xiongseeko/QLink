@@ -65,7 +65,8 @@
         }
         default:
         {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+//            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+            AudioServicesPlaySystemSound(1012);
             NSString *so = [DataUtil getGlobalModel];
             if ([so isEqualToString:Model_ZKIp]) {
                 self.socketType = SocketTypeNormal;
@@ -76,7 +77,12 @@
             }
             else if([so isEqualToString:Model_JJ]) { //紧急模式
                 self.socketType = SocketTypeEmergency;
-                [self initEmergencySocketOrder:order];
+
+                dispatch_queue_t queue = dispatch_queue_create("name", NULL);
+                //创建一个子线程
+                dispatch_async(queue, ^{
+                    [self initEmergencySocketOrder:order];
+                });
             } else if ([so isEqualToString:Model_Study])
             {
                 self.socketType = SocketTypeStudy;
@@ -106,6 +112,14 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         NSString *strXML = operation.responseString;
+        
+        if ([strXML containsString:@"error"]) {
+            NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
+            if (errorArr.count > 1) {
+                [SVProgressHUD showErrorWithStatus:errorArr[1]];
+                return;
+            }
+        }
         
         strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
         NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
@@ -564,6 +578,15 @@
                         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
                          {
+                             NSString *strResult = operation.responseString;
+                             if ([strResult containsString:@"error"]) {
+                                 NSArray *errorArr = [strResult componentsSeparatedByString:@":"];
+                                 if (errorArr.count > 1) {
+                                     [SVProgressHUD showErrorWithStatus:errorArr[1]];
+                                     return;
+                                 }
+                             }
+                             
                              switch (self.zkOperType) {
                                  case ZkOperSence:
                                  {

@@ -265,6 +265,15 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+        
+//         if ([strXML containsString:@"error"]) {
+//             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
+//             if (errorArr.count > 1) {
+//                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                 return;
+//             }
+//         }
+         
          strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
          NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
          NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
