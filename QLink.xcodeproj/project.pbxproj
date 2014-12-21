@@ -2661,14 +2661,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QLink/QLink-Prefix.pch";
 				INFOPLIST_FILE = "QLink/QLink-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e7d99f5c-9707-450c-8351-1a3fe55fa3e6";
+				PROVISIONING_PROFILE = "cc368b76-9223-4ab4-b4f8-b1a8e696315e";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2677,14 +2677,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QLink/QLink-Prefix.pch";
 				INFOPLIST_FILE = "QLink/QLink-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e7d99f5c-9707-450c-8351-1a3fe55fa3e6";
+				PROVISIONING_PROFILE = "cc368b76-9223-4ab4-b4f8-b1a8e696315e";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
