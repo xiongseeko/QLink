@@ -112,14 +112,23 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         NSString *strXML = operation.responseString;
-        
-        if ([strXML containsString:@"error"]) {
+        NSRange range = [strXML rangeOfString:@"error"];
+        if (range.location != NSNotFound)
+        {
             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
             if (errorArr.count > 1) {
                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
                 return;
             }
         }
+        
+//        if ([strXML containsString:@"error"]) {
+//            NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
+//            if (errorArr.count > 1) {
+//                [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                return;
+//            }
+//        }
         
         strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
         NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
@@ -579,13 +588,22 @@
                         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
                          {
                              NSString *strResult = operation.responseString;
-                             if ([strResult containsString:@"error"]) {
+                             NSRange range = [strResult rangeOfString:@"error"];
+                             if (range.location != NSNotFound)
+                             {
                                  NSArray *errorArr = [strResult componentsSeparatedByString:@":"];
                                  if (errorArr.count > 1) {
                                      [SVProgressHUD showErrorWithStatus:errorArr[1]];
                                      return;
                                  }
                              }
+//                             if ([strResult containsString:@"error"]) {
+//                                 NSArray *errorArr = [strResult componentsSeparatedByString:@":"];
+//                                 if (errorArr.count > 1) {
+//                                     [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                                     return;
+//                                 }
+//                             }
                              
                              switch (self.zkOperType) {
                                  case ZkOperSence:

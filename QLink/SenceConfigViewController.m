@@ -428,14 +428,24 @@
          [DataUtil setGlobalIsAddSence:NO];
          
          NSString *sResult = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-         
-         if ([sResult containsString:@"error"]) {
+
+         NSRange range = [sResult rangeOfString:@"error"];
+         if (range.location != NSNotFound)
+         {
              NSArray *errorArr = [sResult componentsSeparatedByString:@":"];
              if (errorArr.count > 1) {
                  [SVProgressHUD showErrorWithStatus:errorArr[1]];
                  return;
              }
          }
+         
+//         if ([sResult containsString:@"error"]) {
+//             NSArray *errorArr = [sResult componentsSeparatedByString:@":"];
+//             if (errorArr.count > 1) {
+//                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                 return;
+//             }
+//         }
          
          NSString *ordercmd = [NSString stringWithFormat:@"%@|%@",orderIds_,times_];
          NSLog(@"%@-----%@",ordercmd,orderIds_);

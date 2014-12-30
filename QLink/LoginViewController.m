@@ -97,8 +97,6 @@
     
     NSString *sUrl = [NetworkUtil getActionLogin:_tfName.text andUPwd:_tfPassword.text andUKey:_tfKey.text];
     NSURL *url = [NSURL URLWithString:sUrl];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    
     NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
     
     __weak __typeof(self)weakSelf = self;
@@ -106,13 +104,22 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-        if ([sConfig containsString:@"error"]) {
+        NSRange range = [sConfig rangeOfString:@"error"];
+        if (range.location != NSNotFound)
+        {
             NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
             if (errorArr.count > 1) {
                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
                 return;
             }
         }
+//        if ([sConfig containsString:@"error"]) {
+//            NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
+//            if (errorArr.count > 1) {
+//                [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                return;
+//            }
+//        }
         
         NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
         if ([configArr count] < 2) {
@@ -148,6 +155,55 @@
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue addOperation:operation];
+//
+//    define_weakself;
+//    //创建请求
+//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+//    //设置请求的解析器为AFHTTPResponseSerializer（用于直接解析数据NSData），默认为AFJSONResponseSerializer（用于解析JSON）
+//    //    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    //发送GET请求
+//    [manager GET:sUrl parameters:nil success:^(AFHTTPRequestOperation *operation,id responseObject) {
+//        NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+//        if ([sConfig containsString:@"error"]) {
+//            NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
+//            if (errorArr.count > 1) {
+//                [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                return;
+//            }
+//        }
+//        
+//        NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
+//        if ([configArr count] < 2) {
+//            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
+//                                                            message:@"您输入的信息有误,请联系厂家"
+//                                                           delegate:nil
+//                                                  cancelButtonTitle:@"关闭"
+//                                                  otherButtonTitles:nil, nil];
+//            [alert show];
+//            
+//            [SVProgressHUD dismiss];
+//            
+//            return;
+//        }
+//        
+//        //处理配置信息
+//        Config *configTempObj = [Config getTempConfig:configArr];//临时变量，存储Action=login请求对象
+//        weakSelf.pConfigTemp = configTempObj;
+//        
+//        if ([DataUtil isWifiNewWork]) {
+//            if (!configTempObj.isSetIp) {//需要配置ip
+//                [weakSelf fetchIp];
+//            } else {
+//                [weakSelf actionNULL];
+//            }
+//        } else {
+//            [weakSelf actionNULL];
+//        }
+//
+//    } failure:^(AFHTTPRequestOperation *operation,NSError *error) {
+//        weakSelf.pConfigTemp = [Config getConfig];
+//        [weakSelf actionNULL];
+//    }];
 }
 
 #pragma mark -
@@ -226,10 +282,10 @@
     
     NSString *sUrl = [NetworkUtil handleIpRequest];
     NSURL *url = [NSURL URLWithString:sUrl];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    operation.responseSerializer = [AFPropertyListResponseSerializer serializer];
     __weak __typeof(self)weakSelf = self;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
@@ -265,26 +321,28 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-        
-//         if ([strXML containsString:@"error"]) {
-//             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
-//             if (errorArr.count > 1) {
-//                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
-//                 return;
-//             }
-//         }
          
          strXML = [strXML stringByReplacingOccurrencesOfString:@"\"GB2312\"" withString:@"\"utf-8\"" options:NSCaseInsensitiveSearch range:NSMakeRange(0,40)];
          NSData *newData = [strXML dataUsingEncoding:NSUTF8StringEncoding];
          NSDictionary *dict = [NSDictionary dictionaryWithXMLData:newData];
-         
-         if ([strXML containsString:@"error"]) {
+
+         NSRange range = [strXML rangeOfString:@"error"];
+         if (range.location != NSNotFound)
+         {
              NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
              if (errorArr.count > 1) {
-                 [weakSelf actionNULL];
+                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
                  return;
              }
          }
+         
+//         if ([strXML containsString:@"error"]) {
+//             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
+//             if (errorArr.count > 1) {
+//                 [weakSelf actionNULL];
+//                 return;
+//             }
+//         }
          
          if (!dict) {
              [weakSelf actionNULL];

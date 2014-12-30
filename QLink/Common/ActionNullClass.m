@@ -42,14 +42,23 @@
          [SQLiteUtil clearData];
          
          NSString *strXML = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-         
-         if ([strXML containsString:@"error"]) {
+
+         NSRange range = [strXML rangeOfString:@"error"];
+         if (range.location != NSNotFound)
+         {
              NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
              if (errorArr.count > 1) {
                  [SVProgressHUD showErrorWithStatus:errorArr[1]];
                  return;
              }
          }
+//         if ([strXML containsString:@"error"]) {
+//             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
+//             if (errorArr.count > 1) {
+//                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
+//                 return;
+//             }
+//         }
          
          if ([strXML isEqualToString:@"key error"]) {
              [SVProgressHUD showErrorWithStatus:@"配置出错,请重试."];
