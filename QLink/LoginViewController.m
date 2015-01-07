@@ -14,6 +14,7 @@
 #import "AFNetworking.h"
 #import "XMLDictionary.h"
 #import "UIAlertView+MKBlockAdditions.h"
+#import "RegisterViewController.h"
 
 @interface LoginViewController ()
 {
@@ -155,55 +156,6 @@
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue addOperation:operation];
-//
-//    define_weakself;
-//    //创建请求
-//    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-//    //设置请求的解析器为AFHTTPResponseSerializer（用于直接解析数据NSData），默认为AFJSONResponseSerializer（用于解析JSON）
-//    //    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-//    //发送GET请求
-//    [manager GET:sUrl parameters:nil success:^(AFHTTPRequestOperation *operation,id responseObject) {
-//        NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-//        if ([sConfig containsString:@"error"]) {
-//            NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
-//            if (errorArr.count > 1) {
-//                [SVProgressHUD showErrorWithStatus:errorArr[1]];
-//                return;
-//            }
-//        }
-//        
-//        NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
-//        if ([configArr count] < 2) {
-//            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示"
-//                                                            message:@"您输入的信息有误,请联系厂家"
-//                                                           delegate:nil
-//                                                  cancelButtonTitle:@"关闭"
-//                                                  otherButtonTitles:nil, nil];
-//            [alert show];
-//            
-//            [SVProgressHUD dismiss];
-//            
-//            return;
-//        }
-//        
-//        //处理配置信息
-//        Config *configTempObj = [Config getTempConfig:configArr];//临时变量，存储Action=login请求对象
-//        weakSelf.pConfigTemp = configTempObj;
-//        
-//        if ([DataUtil isWifiNewWork]) {
-//            if (!configTempObj.isSetIp) {//需要配置ip
-//                [weakSelf fetchIp];
-//            } else {
-//                [weakSelf actionNULL];
-//            }
-//        } else {
-//            [weakSelf actionNULL];
-//        }
-//
-//    } failure:^(AFHTTPRequestOperation *operation,NSError *error) {
-//        weakSelf.pConfigTemp = [Config getConfig];
-//        [weakSelf actionNULL];
-//    }];
 }
 
 #pragma mark -
@@ -234,13 +186,16 @@
 
 - (IBAction)btnRegister:(id)sender
 {
-    [UIAlertView alertViewWithTitle:@"温馨提示"
-                            message:@"即将跳转浏览器打开QLINK网站\n须从站点注册(需要邀请码)"
-                  cancelButtonTitle:@"取消"
-                  otherButtonTitles:@[@"确定"]
-                          onDismiss:^(int index){
-                              [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://qlink.cc/?action=apple"]];
-                          }onCancel:nil];
+//    [UIAlertView alertViewWithTitle:@"温馨提示"
+//                            message:@"即将跳转浏览器打开QLINK网站\n须从站点注册(需要邀请码)"
+//                  cancelButtonTitle:@"取消"
+//                  otherButtonTitles:@[@"确定"]
+//                          onDismiss:^(int index){
+//                              [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://qlink.cc/?action=apple"]];
+//                          }onCancel:nil];
+    RegisterViewController *registerVC = [[RegisterViewController alloc] init];
+    registerVC.loginVC = self;
+    [self.navigationController pushViewController:registerVC animated:YES];
 }
 
 #pragma mark -

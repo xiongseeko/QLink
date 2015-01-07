@@ -359,6 +359,8 @@
 		8A1ED4F919DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F519DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select.png */; };
 		8A1ED4FA19DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A1ED4F619DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png */; };
 		8A1F45C219E0391100B19227 /* ActionNullClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1F45C119E0391100B19227 /* ActionNullClass.m */; };
+		8A1FDBF11A5D7EB4004B1BBA /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1FDBF01A5D7EB4004B1BBA /* RegisterViewController.m */; };
+		8A1FDBF31A5D7ED5004B1BBA /* RegisterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A1FDBF21A5D7ED5004B1BBA /* RegisterViewController.xib */; };
 		8A206E8D1A39DD860018A634 /* MySlider+touch.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A206E8C1A39DD860018A634 /* MySlider+touch.m */; };
 		8A21895819FAA821007980F0 /* success@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A21895719FAA821007980F0 /* success@2x.png */; };
 		8A2256AD19E822A3009F7D03 /* sence_cancle.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A2256AB19E822A3009F7D03 /* sence_cancle.png */; };
@@ -900,6 +902,9 @@
 		8A1ED4F619DA71AA0091DBB6 /* SANSAN_MACRO_ADD_select@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SANSAN_MACRO_ADD_select@2x.png"; sourceTree = "<group>"; };
 		8A1F45C019E0391100B19227 /* ActionNullClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionNullClass.h; sourceTree = "<group>"; };
 		8A1F45C119E0391100B19227 /* ActionNullClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionNullClass.m; sourceTree = "<group>"; };
+		8A1FDBEF1A5D7EB4004B1BBA /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
+		8A1FDBF01A5D7EB4004B1BBA /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		8A1FDBF21A5D7ED5004B1BBA /* RegisterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RegisterViewController.xib; sourceTree = "<group>"; };
 		8A206E8B1A39DD860018A634 /* MySlider+touch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MySlider+touch.h"; sourceTree = "<group>"; };
 		8A206E8C1A39DD860018A634 /* MySlider+touch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MySlider+touch.m"; sourceTree = "<group>"; };
 		8A21895719FAA821007980F0 /* success@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "success@2x.png"; sourceTree = "<group>"; };
@@ -1766,6 +1771,9 @@
 				8AAEE82E19C9CB4A00B01890 /* LoginViewController.h */,
 				8AAEE82F19C9CB4A00B01890 /* LoginViewController.m */,
 				8AAEE83019C9CB4A00B01890 /* LoginViewController.xib */,
+				8A1FDBEF1A5D7EB4004B1BBA /* RegisterViewController.h */,
+				8A1FDBF01A5D7EB4004B1BBA /* RegisterViewController.m */,
+				8A1FDBF21A5D7ED5004B1BBA /* RegisterViewController.xib */,
 				8AAEE84F19C9D7EB00B01890 /* MainViewController.h */,
 				8AAEE85019C9D7EB00B01890 /* MainViewController.m */,
 				8AAEE85119C9D7EB00B01890 /* MainViewController.xib */,
@@ -2417,6 +2425,7 @@
 				35A4E5FD19D2F107007A3C30 /* mc_button.png in Resources */,
 				35131E5419D3A760005A3C17 /* sd_middle02@2x.png in Resources */,
 				35131F1319D40940005A3C17 /* pl_lefttop.png in Resources */,
+				8A1FDBF31A5D7ED5004B1BBA /* RegisterViewController.xib in Resources */,
 				8A2256AE19E822A3009F7D03 /* sence_cancle@2x.png in Resources */,
 				35131ED919D4039A005A3C17 /* dt_lefttop@2x.png in Resources */,
 				35131F1C19D40940005A3C17 /* pl_middlebottom@2x.png in Resources */,
@@ -2504,6 +2513,7 @@
 				8A3035E01A4076FA00D9EFDC /* UIActionSheet+MKBlockAdditions.m in Sources */,
 				8AB5BEE619D0637000BC11EF /* IconViewController.m in Sources */,
 				8A54F5A51A52FA420038896D /* AFHTTPRequestOperation.m in Sources */,
+				8A1FDBF11A5D7EB4004B1BBA /* RegisterViewController.m in Sources */,
 				8AAC54B519F95F3A0094C2BC /* LightBriView.m in Sources */,
 				8AAC54B119F95F3A0094C2BC /* LightBbView.m in Sources */,
 				8A206E8D1A39DD860018A634 /* MySlider+touch.m in Sources */,
@@ -2661,14 +2671,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QLink/QLink-Prefix.pch";
 				INFOPLIST_FILE = "QLink/QLink-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6b532536-a75f-415f-ace2-d5fa6e8e91b3";
+				PROVISIONING_PROFILE = "cc368b76-9223-4ab4-b4f8-b1a8e696315e";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2677,14 +2687,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: chen zhimin (4E3R2ZFY9A)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen HD Vision Electronics Co., Ltd. (55CQ84TYYM)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QLink/QLink-Prefix.pch";
 				INFOPLIST_FILE = "QLink/QLink-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6b532536-a75f-415f-ace2-d5fa6e8e91b3";
+				PROVISIONING_PROFILE = "cc368b76-9223-4ab4-b4f8-b1a8e696315e";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

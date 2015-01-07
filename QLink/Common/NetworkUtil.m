@@ -27,6 +27,14 @@
     return [NSString stringWithFormat:@"http://qlink.cc/zq/lookmobile.asp?uname=%@&upsd=%@&passkey=%@&action=login",uName,uPwd,uKey];
 }
 
+//注册
++(NSString *)getRegisterUrl:(NSString *)uName
+                     andPwd:(NSString *)uPwd
+                   andICode:(NSString *)icode
+{
+    return [NSString stringWithFormat:@"http://qlink.cc/zq/lookmobile.asp?uname=%@&psword=%@&icode=%@",uName,uPwd,icode];
+}
+
 //获取 Action URL
 +(NSString *)getAction:(NSString *)action
 {

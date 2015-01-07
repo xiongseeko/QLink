@@ -16,6 +16,8 @@
 
 //检测是否为空
 +(BOOL)checkNullOrEmpty:(NSString *)str;
+//验证手机号
++(BOOL) isValidateMobile:(NSString *)mobile;
 
 //判断节点类型并且转换为数组
 +(NSArray *)changeDicToArray:(NSObject *)obj;
