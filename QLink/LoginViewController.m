@@ -20,6 +20,8 @@
 {
     Member *_loginMember;
 }
+@property (weak, nonatomic) IBOutlet UIImageView *ivLogo;
+
 @end
 
 @implementation LoginViewController
@@ -66,8 +68,14 @@
     }
     
     Control *control = [SQLiteUtil getControlObj];
-    if (control && control.Jsname) {
-        self.lblCompany.text = control.Jsname;
+    if (control) {
+        if (control.Jsname) {
+            self.lblCompany.text = control.Jsname;
+        }
+        if (control.Jslogo) {
+            UIImage *image = [[UIImage alloc] initWithContentsOfFile:[[DataUtil getDirectoriesInDomains] stringByAppendingPathComponent:@"logo.png"]];
+            self.ivLogo.image = image;
+        }
     }
 }
 
@@ -114,13 +122,6 @@
                 return;
             }
         }
-//        if ([sConfig containsString:@"error"]) {
-//            NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
-//            if (errorArr.count > 1) {
-//                [SVProgressHUD showErrorWithStatus:errorArr[1]];
-//                return;
-//            }
-//        }
         
         NSArray *configArr = [sConfig componentsSeparatedByString:@"|"];
         if ([configArr count] < 2) {

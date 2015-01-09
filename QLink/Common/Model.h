@@ -36,6 +36,7 @@
 @property(nonatomic,strong) NSString *Jsaddess;
 @property(nonatomic,strong) NSString *Jslogo;
 @property(nonatomic,strong) NSString *Jsqq;
+@property(nonatomic,strong) NSString *OpenPic;
 
 +(Control *)setIp:(NSString *)ip
       andSendType:(NSString *)sendType
@@ -48,7 +49,8 @@
        andJsuname:(NSString *)jsuname
       andJsaddess:(NSString *)jsaddess
         andJslogo:(NSString *)jslogo
-          andJsqq:(NSString *)jsqq;
+          andJsqq:(NSString *)jsqq
+       andOpenPic:(NSString *)openPic;
 
 @end
 

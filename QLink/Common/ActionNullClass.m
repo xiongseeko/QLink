@@ -13,6 +13,10 @@
 #import "XMLDictionary.h"
 #import "AFHTTPRequestOperation.h"
 
+@interface ActionNullClass()
+
+@end
+
 @implementation ActionNullClass
 
 -(id)init
@@ -52,13 +56,6 @@
                  return;
              }
          }
-//         if ([strXML containsString:@"error"]) {
-//             NSArray *errorArr = [strXML componentsSeparatedByString:@":"];
-//             if (errorArr.count > 1) {
-//                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
-//                 return;
-//             }
-//         }
          
          if ([strXML isEqualToString:@"key error"]) {
              [SVProgressHUD showErrorWithStatus:@"配置出错,请重试."];
@@ -89,8 +86,16 @@
                                    andJsuname:[info objectForKey:@"_jsuname"]
                                   andJsaddess:[info objectForKey:@"_jsaddess"]
                                     andJslogo:[info objectForKey:@"_jslogo"]
-                                      andJsqq:[info objectForKey:@"_jsqq"]];
+                                      andJsqq:[info objectForKey:@"_jsqq"]
+                                   andOpenPic:[info objectForKey:@"_openpic"]];
          [sqlArr addObject:[SQLiteUtil connectControlSql:controlObj]];
+         
+         //logo下载
+         UIImage * imageFromURL = [self getImageFromURL:[info objectForKey:@"_jslogo"]];
+         [self saveImage:imageFromURL withFileName:@"logo" ofType:@"png" inDirectory:[DataUtil getDirectoriesInDomains]];
+         //引导页下载
+         imageFromURL = [self getImageFromURL:[info objectForKey:@"_openpic"]];
+         [self saveImage:imageFromURL withFileName:@"help" ofType:@"png" inDirectory:[DataUtil getDirectoriesInDomains]];
          
          NSArray *layerArr = [DataUtil changeDicToArray:[info objectForKey:@"layer"]];
          for (NSDictionary *layerDic in layerArr) {
@@ -191,5 +196,26 @@
         return nil;
     }
 }
+
+-(UIImage *) getImageFromURL:(NSString *)fileURL {
+    UIImage * result;
+    
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
+    result = [UIImage imageWithData:data];
+    
+    return result;
+}
+
+-(void) saveImage:(UIImage *)image withFileName:(NSString *)imageName ofType:(NSString *)extension inDirectory:(NSString *)directoryPath {
+    if ([[extension lowercaseString] isEqualToString:@"png"]) {
+        [UIImagePNGRepresentation(image) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"png"]] options:NSAtomicWrite error:nil];
+    } else if ([[extension lowercaseString] isEqualToString:@"jpg"] || [[extension lowercaseString] isEqualToString:@"jpeg"]) {
+        [UIImageJPEGRepresentation(image, 1.0) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"jpg"]] options:NSAtomicWrite error:nil];
+    } else {
+        //ALog(@"Image Save Failed\nExtension: (%@) is not recognized, use (PNG/JPG)", extension);
+        NSLog(@"文件后缀不认识");
+    }
+}
+
 
 @end

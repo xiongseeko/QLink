@@ -29,6 +29,7 @@
       andJsaddess:(NSString *)jsaddess
         andJslogo:(NSString *)jslogo
           andJsqq:(NSString *)jsqq
+       andOpenPic:(NSString *)openPic
 {
     Control *obj = [[Control alloc] init];
     obj.Ip = ip;
@@ -43,6 +44,7 @@
     obj.Jsaddess = jsaddess;
     obj.Jslogo = jslogo;
     obj.Jsqq = jsqq;
+    obj.OpenPic = openPic;
     return obj;
 }
 

@@ -32,7 +32,7 @@
                      andPwd:(NSString *)uPwd
                    andICode:(NSString *)icode
 {
-    return [NSString stringWithFormat:@"http://qlink.cc/zq/lookmobile.asp?uname=%@&psword=%@&icode=%@",uName,uPwd,icode];
+    return [NSString stringWithFormat:@"http://qlink.cc/zq/reg.asp?usname=%@&psword=%@&icode=%@",uName,uPwd,icode];
 }
 
 //获取 Action URL

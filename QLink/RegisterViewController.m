@@ -62,6 +62,12 @@
     [_tfInviteCode setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
     [_tfPassWord setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
     [_tfPassWordTwo setValue:[NSNumber numberWithInt:10] forKey:PADDINGLEFT];
+    
+    Control *control = [SQLiteUtil getControlObj];
+    if (control && control.Jslogo) {
+        UIImage *image = [[UIImage alloc] initWithContentsOfFile:[[DataUtil getDirectoriesInDomains] stringByAppendingPathComponent:@"logo.png"]];
+        self.ivLogo.image = image;
+    }
 }
 
 -(void)registerObserver
@@ -142,26 +148,28 @@
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
      {
-//         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
-//         NSRange range = [sConfig rangeOfString:@"error"];
-//         if (range.location != NSNotFound)
-//         {
-//             NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
-//             if (errorArr.count > 1) {
-//                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
-//                 return;
-//             }
-//         }
+         NSString *sConfig = [[NSString alloc] initWithData:responseObject encoding:[DataUtil getGB2312Code]];
+         NSRange range = [sConfig rangeOfString:@"error"];
+         if (range.location != NSNotFound)
+         {
+             NSArray *errorArr = [sConfig componentsSeparatedByString:@":"];
+             if (errorArr.count > 1) {
+                 [SVProgressHUD showErrorWithStatus:errorArr[1]];
+                 return;
+             }
+         }
          
-         [SVProgressHUD dismiss];
+         [SVProgressHUD showSuccessWithStatus:@"注册成功"];
          
-         weakSelf.loginVC.tfKey.text = @"123";
-         weakSelf.loginVC.tfName.text = @"456";
-         weakSelf.loginVC.tfPassword.text = @"789";
+         NSArray *infoArr = [sConfig componentsSeparatedByString:@":"];
+         weakSelf.loginVC.tfKey.text = infoArr[1];
+         weakSelf.loginVC.tfName.text = weakSelf.tfName.text;
+         weakSelf.loginVC.tfPassword.text = weakSelf.tfPassWord.text;
          [self.navigationController popViewControllerAnimated:YES];
          
      }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         
+         [SVProgressHUD dismiss];
+         [UIAlertView alertViewWithTitle:@"温馨提示" message:@"请检查网络链接"];
      }];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];

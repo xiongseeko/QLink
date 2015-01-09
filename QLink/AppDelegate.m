@@ -40,7 +40,24 @@
     [DataUtil setGlobalIsAddSence:NO];//设置当前为非添加模式
     [SQLiteUtil removeShoppingCar];
     
+    [self checkDefaultCustom];
+    
     return YES;
+}
+
+//是否有自定义引导页显示
+-(void)checkDefaultCustom
+{
+    Control *control = [SQLiteUtil getControlObj];
+    if (control && control.OpenPic) {
+        UIImage *image = [[UIImage alloc] initWithContentsOfFile:[[DataUtil getDirectoriesInDomains] stringByAppendingPathComponent:@"help.png"]];
+        UIImageView *ivDefault = [[UIImageView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        ivDefault.image = image;
+        [self.window addSubview:ivDefault];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [ivDefault removeFromSuperview];
+        });
+    }
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
